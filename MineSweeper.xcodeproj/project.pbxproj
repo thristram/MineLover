@@ -14,6 +14,19 @@
 		7F3034021ECC4F0000AFF021 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7F3034001ECC4F0000AFF021 /* LaunchScreen.storyboard */; };
 		7F30340D1ECC4F0000AFF021 /* MineSweeperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F30340C1ECC4F0000AFF021 /* MineSweeperTests.swift */; };
 		7F3034181ECC4F0000AFF021 /* MineSweeperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3034171ECC4F0000AFF021 /* MineSweeperUITests.swift */; };
+		7F30342F1ECC544900AFF021 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F30342C1ECC544900AFF021 /* index.html */; };
+		7F3034311ECC544900AFF021 /* JQuery.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F30342E1ECC544900AFF021 /* JQuery.js */; };
+		7F3034351ECCDDAA00AFF021 /* fontello in Resources */ = {isa = PBXBuildFile; fileRef = 7F3034341ECCDDAA00AFF021 /* fontello */; };
+		7F4398D51ED1EFAA00613C92 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CB1ED1ED9E00613C92 /* OpenSans-Bold.ttf */; };
+		7F4398D61ED1EFAD00613C92 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CC1ED1ED9E00613C92 /* OpenSans-BoldItalic.ttf */; };
+		7F4398D71ED1EFB000613C92 /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CD1ED1ED9E00613C92 /* OpenSans-ExtraBold.ttf */; };
+		7F4398D81ED1EFB200613C92 /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CE1ED1ED9E00613C92 /* OpenSans-ExtraBoldItalic.ttf */; };
+		7F4398D91ED1EFB400613C92 /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CF1ED1ED9E00613C92 /* OpenSans-Italic.ttf */; };
+		7F4398DA1ED1EFB700613C92 /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D01ED1ED9E00613C92 /* OpenSans-Light.ttf */; };
+		7F4398DB1ED1EFB900613C92 /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D11ED1ED9E00613C92 /* OpenSans-LightItalic.ttf */; };
+		7F4398DC1ED1EFBB00613C92 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D21ED1ED9E00613C92 /* OpenSans-Regular.ttf */; };
+		7F4398DD1ED1EFBE00613C92 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */; };
+		7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +60,20 @@
 		7F3034131ECC4F0000AFF021 /* MineSweeperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MineSweeperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F3034171ECC4F0000AFF021 /* MineSweeperUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MineSweeperUITests.swift; sourceTree = "<group>"; };
 		7F3034191ECC4F0000AFF021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7F30342C1ECC544900AFF021 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = ../../../../Desktop/Minesweeper/index.html; sourceTree = "<group>"; };
+		7F30342E1ECC544900AFF021 /* JQuery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = JQuery.js; path = ../../../../Desktop/Minesweeper/JQuery.js; sourceTree = "<group>"; };
+		7F3034341ECCDDAA00AFF021 /* fontello */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fontello; path = ../../../../Desktop/Minesweeper/fontello; sourceTree = "<group>"; };
+		7F4398C91ED09D0100613C92 /* MineSweeper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MineSweeper.entitlements; sourceTree = "<group>"; };
+		7F4398CB1ED1ED9E00613C92 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
+		7F4398CC1ED1ED9E00613C92 /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		7F4398CD1ED1ED9E00613C92 /* OpenSans-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-ExtraBold.ttf"; sourceTree = "<group>"; };
+		7F4398CE1ED1ED9E00613C92 /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		7F4398CF1ED1ED9E00613C92 /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Italic.ttf"; sourceTree = "<group>"; };
+		7F4398D01ED1ED9E00613C92 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Light.ttf"; sourceTree = "<group>"; };
+		7F4398D11ED1ED9E00613C92 /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
+		7F4398D21ED1ED9E00613C92 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = "<group>"; };
+		7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
+		7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +124,9 @@
 		7F3033F61ECC4F0000AFF021 /* MineSweeper */ = {
 			isa = PBXGroup;
 			children = (
+				7F4398CA1ED1ED9100613C92 /* Font */,
+				7F4398C91ED09D0100613C92 /* MineSweeper.entitlements */,
+				7F3034251ECC50E400AFF021 /* html */,
 				7F3033F71ECC4F0000AFF021 /* AppDelegate.swift */,
 				7F3033F91ECC4F0000AFF021 /* ViewController.swift */,
 				7F3033FB1ECC4F0000AFF021 /* Main.storyboard */,
@@ -123,6 +153,33 @@
 				7F3034191ECC4F0000AFF021 /* Info.plist */,
 			);
 			path = MineSweeperUITests;
+			sourceTree = "<group>";
+		};
+		7F3034251ECC50E400AFF021 /* html */ = {
+			isa = PBXGroup;
+			children = (
+				7F30342C1ECC544900AFF021 /* index.html */,
+				7F3034341ECCDDAA00AFF021 /* fontello */,
+				7F30342E1ECC544900AFF021 /* JQuery.js */,
+			);
+			name = html;
+			sourceTree = "<group>";
+		};
+		7F4398CA1ED1ED9100613C92 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				7F4398CB1ED1ED9E00613C92 /* OpenSans-Bold.ttf */,
+				7F4398CC1ED1ED9E00613C92 /* OpenSans-BoldItalic.ttf */,
+				7F4398CD1ED1ED9E00613C92 /* OpenSans-ExtraBold.ttf */,
+				7F4398CE1ED1ED9E00613C92 /* OpenSans-ExtraBoldItalic.ttf */,
+				7F4398CF1ED1ED9E00613C92 /* OpenSans-Italic.ttf */,
+				7F4398D01ED1ED9E00613C92 /* OpenSans-Light.ttf */,
+				7F4398D11ED1ED9E00613C92 /* OpenSans-LightItalic.ttf */,
+				7F4398D21ED1ED9E00613C92 /* OpenSans-Regular.ttf */,
+				7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */,
+				7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */,
+			);
+			name = Font;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,7 +250,13 @@
 				TargetAttributes = {
 					7F3033F31ECC4F0000AFF021 = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = WBZ6T2AKNS;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					7F3034071ECC4F0000AFF021 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -232,8 +295,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */,
 				7F3034021ECC4F0000AFF021 /* LaunchScreen.storyboard in Resources */,
+				7F4398D91ED1EFB400613C92 /* OpenSans-Italic.ttf in Resources */,
+				7F4398D51ED1EFAA00613C92 /* OpenSans-Bold.ttf in Resources */,
+				7F4398D71ED1EFB000613C92 /* OpenSans-ExtraBold.ttf in Resources */,
+				7F3034311ECC544900AFF021 /* JQuery.js in Resources */,
+				7F30342F1ECC544900AFF021 /* index.html in Resources */,
+				7F4398DA1ED1EFB700613C92 /* OpenSans-Light.ttf in Resources */,
+				7F3034351ECCDDAA00AFF021 /* fontello in Resources */,
 				7F3033FF1ECC4F0000AFF021 /* Assets.xcassets in Resources */,
+				7F4398DD1ED1EFBE00613C92 /* OpenSans-Semibold.ttf in Resources */,
+				7F4398D81ED1EFB200613C92 /* OpenSans-ExtraBoldItalic.ttf in Resources */,
+				7F4398DC1ED1EFBB00613C92 /* OpenSans-Regular.ttf in Resources */,
+				7F4398D61ED1EFAD00613C92 /* OpenSans-BoldItalic.ttf in Resources */,
+				7F4398DB1ED1EFB900613C92 /* OpenSans-LightItalic.ttf in Resources */,
 				7F3033FD1ECC4F0000AFF021 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,6 +490,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MineSweeper/MineSweeper.entitlements;
+				DEVELOPMENT_TEAM = WBZ6T2AKNS;
 				INFOPLIST_FILE = MineSweeper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SeraphTechnology.MineSweeper;
@@ -426,6 +504,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MineSweeper/MineSweeper.entitlements;
+				DEVELOPMENT_TEAM = WBZ6T2AKNS;
 				INFOPLIST_FILE = MineSweeper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SeraphTechnology.MineSweeper;
@@ -507,6 +587,7 @@
 				7F30341E1ECC4F0000AFF021 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7F30341F1ECC4F0000AFF021 /* Build configuration list for PBXNativeTarget "MineSweeperTests" */ = {
 			isa = XCConfigurationList;
@@ -515,6 +596,7 @@
 				7F3034211ECC4F0000AFF021 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7F3034221ECC4F0000AFF021 /* Build configuration list for PBXNativeTarget "MineSweeperUITests" */ = {
 			isa = XCConfigurationList;
@@ -523,6 +605,7 @@
 				7F3034241ECC4F0000AFF021 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
