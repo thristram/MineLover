@@ -14,9 +14,6 @@
 		7F3034021ECC4F0000AFF021 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7F3034001ECC4F0000AFF021 /* LaunchScreen.storyboard */; };
 		7F30340D1ECC4F0000AFF021 /* MineSweeperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F30340C1ECC4F0000AFF021 /* MineSweeperTests.swift */; };
 		7F3034181ECC4F0000AFF021 /* MineSweeperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3034171ECC4F0000AFF021 /* MineSweeperUITests.swift */; };
-		7F30342F1ECC544900AFF021 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F30342C1ECC544900AFF021 /* index.html */; };
-		7F3034311ECC544900AFF021 /* JQuery.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F30342E1ECC544900AFF021 /* JQuery.js */; };
-		7F3034351ECCDDAA00AFF021 /* fontello in Resources */ = {isa = PBXBuildFile; fileRef = 7F3034341ECCDDAA00AFF021 /* fontello */; };
 		7F4398D51ED1EFAA00613C92 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CB1ED1ED9E00613C92 /* OpenSans-Bold.ttf */; };
 		7F4398D61ED1EFAD00613C92 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CC1ED1ED9E00613C92 /* OpenSans-BoldItalic.ttf */; };
 		7F4398D71ED1EFB000613C92 /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398CD1ED1ED9E00613C92 /* OpenSans-ExtraBold.ttf */; };
@@ -27,6 +24,9 @@
 		7F4398DC1ED1EFBB00613C92 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D21ED1ED9E00613C92 /* OpenSans-Regular.ttf */; };
 		7F4398DD1ED1EFBE00613C92 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */; };
 		7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */; };
+		7F4398E21ED2129E00613C92 /* fontello in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398DF1ED2129E00613C92 /* fontello */; };
+		7F4398E31ED2129E00613C92 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398E01ED2129E00613C92 /* index.html */; };
+		7F4398E41ED2129E00613C92 /* JQuery.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398E11ED2129E00613C92 /* JQuery.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,9 +60,6 @@
 		7F3034131ECC4F0000AFF021 /* MineSweeperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MineSweeperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F3034171ECC4F0000AFF021 /* MineSweeperUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MineSweeperUITests.swift; sourceTree = "<group>"; };
 		7F3034191ECC4F0000AFF021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7F30342C1ECC544900AFF021 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = ../../../../Desktop/Minesweeper/index.html; sourceTree = "<group>"; };
-		7F30342E1ECC544900AFF021 /* JQuery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = JQuery.js; path = ../../../../Desktop/Minesweeper/JQuery.js; sourceTree = "<group>"; };
-		7F3034341ECCDDAA00AFF021 /* fontello */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fontello; path = ../../../../Desktop/Minesweeper/fontello; sourceTree = "<group>"; };
 		7F4398C91ED09D0100613C92 /* MineSweeper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MineSweeper.entitlements; sourceTree = "<group>"; };
 		7F4398CB1ED1ED9E00613C92 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		7F4398CC1ED1ED9E00613C92 /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
@@ -74,6 +71,9 @@
 		7F4398D21ED1ED9E00613C92 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
+		7F4398DF1ED2129E00613C92 /* fontello */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fontello; path = html/fontello; sourceTree = "<group>"; };
+		7F4398E01ED2129E00613C92 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = html/index.html; sourceTree = "<group>"; };
+		7F4398E11ED2129E00613C92 /* JQuery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = JQuery.js; path = html/JQuery.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,9 +158,9 @@
 		7F3034251ECC50E400AFF021 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				7F30342C1ECC544900AFF021 /* index.html */,
-				7F3034341ECCDDAA00AFF021 /* fontello */,
-				7F30342E1ECC544900AFF021 /* JQuery.js */,
+				7F4398DF1ED2129E00613C92 /* fontello */,
+				7F4398E01ED2129E00613C92 /* index.html */,
+				7F4398E11ED2129E00613C92 /* JQuery.js */,
 			);
 			name = html;
 			sourceTree = "<group>";
@@ -295,15 +295,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F4398E31ED2129E00613C92 /* index.html in Resources */,
 				7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */,
 				7F3034021ECC4F0000AFF021 /* LaunchScreen.storyboard in Resources */,
 				7F4398D91ED1EFB400613C92 /* OpenSans-Italic.ttf in Resources */,
+				7F4398E41ED2129E00613C92 /* JQuery.js in Resources */,
 				7F4398D51ED1EFAA00613C92 /* OpenSans-Bold.ttf in Resources */,
 				7F4398D71ED1EFB000613C92 /* OpenSans-ExtraBold.ttf in Resources */,
-				7F3034311ECC544900AFF021 /* JQuery.js in Resources */,
-				7F30342F1ECC544900AFF021 /* index.html in Resources */,
+				7F4398E21ED2129E00613C92 /* fontello in Resources */,
 				7F4398DA1ED1EFB700613C92 /* OpenSans-Light.ttf in Resources */,
-				7F3034351ECCDDAA00AFF021 /* fontello in Resources */,
 				7F3033FF1ECC4F0000AFF021 /* Assets.xcassets in Resources */,
 				7F4398DD1ED1EFBE00613C92 /* OpenSans-Semibold.ttf in Resources */,
 				7F4398D81ED1EFB200613C92 /* OpenSans-ExtraBoldItalic.ttf in Resources */,
