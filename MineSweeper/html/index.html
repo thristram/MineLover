@@ -44,13 +44,14 @@
             width: 30px;
             height: 30px;
             display: inline-block;
-            margin: 0;
+            margin: 0 auto;
             text-align: center;
             cursor: pointer;
             -webkit-user-select: none;
             -webkit-touch-callout: none !important;
             -webkit-tap-highlight-color: transparent;
-            border-radius: 15px
+            border-radius: 15px;
+
         }
 
         #map span {
@@ -88,48 +89,8 @@
             margin: 30px auto 0;
         }
         */
-        #score tr {
-            height: 30px;
-        }
 
-        #score .timer, #score .remainingMines {
-            width: 100px;
-            height: 60px;
-            font-family: "Helvetica", Helvetica Neue;
-            font-size: 150%;
-            text-align: center
-        }
 
-        #score .remainingMines {
-            text-align: center
-        }
-
-        #score .centerTitle {
-            width: 200px;
-            text-align: center;
-            cursor: pointer
-        }
-
-        #mode tr {
-            height: 30px;
-        }
-
-        #mode td {
-            height: 40px;
-            text-align: center;
-            font-family: "Helvetica", Helvetica Neue;
-            border-left: 1px solid #999999;
-            cursor: pointer
-        }
-
-        #mode td input {
-            height: 100%;
-            text-align: center
-        }
-
-        .modeCell {
-            width: 100px
-        }
 
 
     </style>
@@ -162,6 +123,10 @@
         /*Default Icon Color*/
         #map span i {
             color: #665019;
+        }
+
+        #map .squared i {
+            color: #FFFFFF;
         }
 
         #map .sweeped {
@@ -243,31 +208,6 @@
             color: #8a4945
         }
 
-        #score .normal {
-            color: #ff9900
-        }
-
-        #score .gameover {
-            color: #dc5b4f !important;
-        }
-
-        #mode td {
-            background: #F3F3F3;
-            border-color: #999999;
-        }
-
-        #mode td.current {
-            background: #5a63f8;
-            color: #FFFFFF
-        }
-
-        #score .timer {
-            background: #F3F3F3;
-        }
-
-        #score .remainingMines {
-            background: #F3F3F3;
-        }
 
 
     </style>
@@ -447,29 +387,62 @@
             line-height: 30px
         }
 
+
+    </style>
+    <style>
+        #map .squaredFull {
+            background-color: rgb(241, 193, 43);
+        }
+
+        #map .squared.squaredAlpha {
+            background-color: rgba(241, 193, 43, 0.2);
+        }
+        #map .squared.checked {
+            background-color: rgba(241, 193, 43, 0.2);
+        }
+        #map .protectorActive span{
+            display:none;
+        }
+
+
+
+        #map .squaredFull {
+
+            background-color: rgb(247, 92, 3);
+            /*
+            animation-name: squareFillChange;
+            animation-iteration-count: infinite;
+            animation-duration: 2s;
+            */
+            border-radius: 10px;
+        }
+        #map .squared.squaredAlpha {
+            background-color: rgba(247, 92, 3, 0.2);
+        }
+        #map .squared.checked {
+            background-color: rgba(247, 92, 3, 0.2);
+        }
+
+        /* Standard syntax */
+        @keyframes squareFillChange {
+            0%   {background-color: #9C89B8;}
+            50%  {background-color: #E8B4BC;}
+            100%  {background-color: #9C89B8;}
+        }
+
+
+
+    </style>
+    <style id="customizedCSS">
+
+
     </style>
 </head>
 <body>
 <div class="content">
 
 
-
-    <table style="display:none">
-        <tbody id="score">
-        <tr>
-            <td class="timer"><span id="timer">0:00</span></td>
-            <td class="titleSP"></td>
-            <td class="centerTitle" onclick="restartGame()"><span><i class="fa fa-smile-o fa-3x"></i></span></td>
-            <td class="titleSP"></td>
-            <td class="remainingMines"><span id="minesLeft"></span></td>
-        </tr>
-
-
-        </tbody>
-
-    </table>
-
-    <table>
+    <table border="0" cellspacing="0" cellpadding="0" >
         <tbody id="map">
 
 
@@ -486,54 +459,12 @@
 
     </div>
 
-    <table style="display:none">
-        <tbody id="mode">
-        <tr>
-            <td class="lv1 modeCell" style="border: none" onclick="changeMode(10,10,10,1)"><span>Beginner</span></td>
-            <td class="lv2 modeCell current" onclick="changeMode(16,16,50,2)"><span>Intermediate</span></td>
-            <td class="lv3 modeCell" onclick="changeMode(16,32,99,3)"><span>Expert</span></td>
-            <td class="lv4 modeCell" onclick="changeMode(16,32,120,4)"><span>Crazy</span></td>
-
-        </tr>
-        <tr></tr>
-        <tr>
-            <td class="modeCell" style="border: none"><input type="text" placeholder="Width" id="inputWidth"></td>
-            <td class="modeCell"><input type="text" placeholder="Height" id="inputHeight"></td>
-            <td class="modeCell"><input type="text" placeholder="Mines" id="inputMines"></td>
-            <td class="lv5 modeCell" onclick="changeMode(32,20,120,5)"><span>Customize</span></td>
-
-        </tr>
-
-
-        </tbody>
-
-    </table>
 
 </div>
 
 
 <script src="./JQuery.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-    (function ($) {
-        var IS_IOS = /iphone|ipad/i.test(navigator.userAgent);
-        $.fn.nodoubletapzoom = function () {
-            if (IS_IOS)
-                $(this).bind('touchstart', function preventZoom(e) {
-                    var t2 = e.timeStamp
-                        , t1 = $(this).data('lastTouch') || t2
-                        , dt = t2 - t1
-                        , fingers = e.originalEvent.touches.length;
-                    $(this).data('lastTouch', t2);
-                    if (!dt || dt > 500 || fingers > 1) return; // not double-tap
-
-                    e.preventDefault(); // double tap - prevent the zoom
-                    // also synthesize click events we just swallowed up
-                    $(this).trigger('click').trigger('click');
-                });
-        };
-    })(jQuery);
-</script>
+<script type="text/javascript" src="./plugin.js"></script>
 <script type="text/javascript">
 
     //UI Elements
@@ -544,1045 +475,31 @@
 
     //Map Parameter
     var width = 8;
-    var height = 14;
+    var height = 13;
     var totalMines = 20;
     var defaultScale = 1.6
-
-    //Map Arrays
-    var mines = [];
-    var blankBlockCoords = [];
-    var numberBlockCoords = [];
-    var mapBlockCoords = {};
-
-
-    //Instance Statistics
-    var clicks = 0;
-    var checked = 0;
-    var minesSweeped = 0;
-    var sweepCorrected = 0;
-    var sweepNotCorrected = 0;
-
-    var ifWin = false;
-    var stopMove = false;
-    var timerStop = true;
-    var ifMaped = false;
-
-    //Timer
-    var tFlag = 0;
-    var tPass = 0;
-
-    //Config
-    var mineHelper = true;
-
-    //TouchEvent
-    var timeOutEvent = 0;
+    var param_marginTop = 2,
+        param_marginLeft = 2,
+        param_tdWidth = 31,
+        param_tdHeight = 31,
+        param_divWidth = 30,
+        param_divHeight = 30,
+        param_fontSize = "100%",
+        param_iconFontSize = "150%";
 
 
     //iOS Linking
     var connectSwift = true;
     var ifAgentIsTouch = true;
 
-    var ifReadLove = false;
-
-    $("#map").nodoubletapzoom();
-
-
-
-    function readLove(){
-        ifReadLove = true;
-    }
-    //Touch Method
-
-    function longTouchStart(i, j, e) {
-        console.log("Touch started")
-        if (e.touches.length == 1) {
-            timeOutEvent = setTimeout(function () {
-                console.log("Long Touch triggered")
-                sweepMine(i, j);
-            }, 500);
-        }
-        var t2 = e.timeStamp
-            , t1 = $(this).data('lastTouch') || t2
-            , dt = t2 - t1
-            , fingers = e.originalEvent.touches.length;
-        $(this).data('lastTouch', t2);
-        if (!dt || dt > 500 || fingers > 1) return; // not double-tap
-
-        e.preventDefault(); // double tap - prevent the zoom
-        // also synthesize click events we just swallowed up
-
-        return false;
-    }
-    function longTouchMove(i, j) {
-        clearTimeout(timeOutEvent);
-        console.log("Long Touch Moved")
-        timeOutEvent = 0;
-        return false;
-    }
-    function longTouchEnd(i, j,e) {
-        clearTimeout(timeOutEvent);
-        if (timeOutEvent != 0) {
-            console.log("Long Touch Filed, this is a short touch");
-            e.preventDefault();
-            checkMine(i, j);
-        }
-        return false;
-    }
-    function onClickEvent(i, j) {
-        if (!ifAgentIsTouch) {
-            console.log("clicked");
-            checkMine(i, j);
-        }
-        return false
-    }
-    function onContextMenuEvent(i, j) {
-        console.log("Right clicked");
-        sweepMine(i, j);
-        return false;
-    }
-
-    //Public
-
-    function checkCoordIf(coord, method) {
-        var targetArray = [];
-        var ifcheck = true;
-        switch (method) {
-            case "mine":
-                targetArray = mines;
-                break;
-            case "blank":
-                targetArray = blankBlockCoords;
-                break;
-            case "number":
-                targetArray = numberBlockCoords;
-                break;
-
-            default:
-                ifcheck = false;
-                if ($(".cell-" + coord).hasClass(method)) {
-                    return true;
-                } else {
-                    return false;
-                }
-                break;
-        }
-        if (ifcheck) {
-            //console.log("checking " + method + ".....")
-            if (targetArray.indexOf(coord) > -1) {
-                return true;
-            } else {
-                return false
-            }
-        }
-
-    }
-
-
-    //Construct Maps
-    function constructMap() {
-        var DOMObject = "";
-        var spbg = "";
-        for (var i = 0; i < height; i++) {
-            DOMObject += "<tr>";
-            for (var j = 0; j < width; j++) {
-
-                if (((i % 2 + j % 2) % 2) == 0) {
-                    spbg = "spbg"
-                } else {
-                    spbg = ""
-                }
-                DOMObject += "<td><div \
-                    class = 'cell cell-" + i + "-" + j + " unchecked " + spbg + " iCoord-" + i + " jCoord-" + j + "' \
-                    onclick = 'onClickEvent(" + i + ", " + j + ");'\
-                    oncontextmenu = 'onContextMenuEvent(" + i + ", " + j + ");'\
-                    ontouchstart= 'longTouchStart(" + i + ", " + j + ",event);'\
-                    ontouchmove='longTouchMove(" + i + ", " + j + ");'\
-                    ontouchend='longTouchEnd(" + i + ", " + j + ", event);'\
-                ></div></td>";
-
-            }
-            DOMObject += "</tr>";
-        }
-
-        $('#map').html(DOMObject);
-    }
-
-    function reConstructMap() {
-        $("#map").html("");
-        constructMap()
-    }
-
-    //Construct Blocks
-
-    function constructMines(index) {
-        if (index < totalMines) {
-            var mine = constructSingleMine(width, height);
-            if (mines.indexOf(mine) > -1) {
-                constructMines(index);
-
-
-            } else {
-                mines.push(mine);
-                mapBlockCoords[mine] = -1;
-                constructMines(index + 1);
-                //console.log(mine);
-            }
-        } else {
-            console.log("Mines Constructed");
-            console.log(mines);
-        }
-    }
-
-    function constructSingleMine(maxWidth, maxHeight) {
-        var mineX = Math.floor(Math.random() * maxWidth + 0);
-        var mineY = Math.floor(Math.random() * maxHeight + 0);
-        var mineCoord = mineY + "-" + mineX;
-        return mineCoord;
-    }
-
-    function constructAllBlockContents() {
-        constructMines(0);
-        console.log("Constructing Blocks");
-        checkMinesArounds(1, 1, 1);
-
-        for (var i = 0; i < height; i++) {
-            for (var j = 0; j < width; j++) {
-                var cellName = i + "-" + j;
-
-                if (!mapBlockCoords[cellName]) {
-                    var coordContnet = checkMinesArounds(i, j, 1);
-                    if (coordContnet == 0) {
-                        blankBlockCoords.push(i + "-" + j)
-                    } else {
-                        numberBlockCoords.push(i + "-" + j)
-                    }
-                    mapBlockCoords[cellName] = coordContnet;
-                }
-
-
-            }
-        }
-        /*
-         console.log("Blank Blocks:");
-         console.log(blankBlockCoords)
-         console.log("Number Blocks:");
-         console.log(numberBlockCoords);
-         console.log("All Blocks:");
-         console.log(mapBlockCoords);
-         */
-
-
-    }
-
-    function checkMinesArounds(i, j, mode) {
-        //Mode 1: Mine, Mode 2: Sweeped
-        //console.log("Checking i=" + i + ", j=" + j);
-        var numberOfMines = 0;
-        for (var a = -1; a < 2; a++) {
-            for (var b = -1; b < 2; b++) {
-                if ((!(a == 0 && b == 0)) && ((i + a) > -1) && ((j + b) > -1) && ((i + a) < height) && ((j + b) < width)) {
-                    var cellName = (i + a) + "-" + (j + b);
-                    if (mode == 1) {
-                        //console.log("Checking Surrding x=" + a + ", y=" + b);
-                        if (checkCoordIf(cellName, "mine")) {
-                            numberOfMines++;
-                        }
-                    } else if (mode == 2) {
-                        if (checkCoordIf(cellName, "sweeped")) {
-                            numberOfMines++;
-                        }
-                    }
-                }
-            }
-        }
-        return numberOfMines;
-    }
-
-
-    function mapBlocks() {
-        for (var i = 0; i < height; i++) {
-            for (var j = 0; j < width; j++) {
-                var cellName = i + "-" + j;
-                switch (mapBlockCoords[cellName]) {
-                    case -1:
-                        $(".cell-" + cellName).html("<span><i class='" + mineIcon + "'></i></span>");
-                        $(".cell-" + cellName).addClass("mine");
-                        break;
-                    case 0:
-                        $(".cell-" + cellName).html("<span></span>")
-                        $(".cell-" + cellName).attr("mValue", "")
-                        $(".cell-" + cellName).addClass("blank");
-                        break;
-                    default:
-                        $(".cell-" + cellName).html("<span>" + mapBlockCoords[cellName] + "</span>")
-                        $(".cell-" + cellName).attr("mValue", mapBlockCoords[cellName]);
-                        $(".cell-" + cellName).addClass("n" + mapBlockCoords[cellName]);
-                        break;
-                }
-            }
-        }
-    }
-
-    function mineHelperChangeMap() {
-        resetMapVariables();
-        constructAllBlockContents()
-        console.log("Map Layout Changed");
-
-    }
-    function gameStart(i, j) {
-        console.log("Game Start");
-        if (connectSwift) {
-            callSwift.postContent("gameStart", "0");
-            callSwift.postContent("currentMap", JSON.stringify(mapBlockCoords))
-        }
-        mapBlocks();
-        resetTimer();
-        timerStop = false;
-        timer();
-    }
-    function checkMine(i, j) {
-        var cellName = i + "-" + j;
-
-        if (!stopMove) {
-            console.log("Valid Click");
-            if (!(checkCoordIf(cellName, "sweeped"))) {
-
-                if (mineHelper && clicks == 0 && (!(checkCoordIf(cellName, "blank")))) {
-                    mineHelperChangeMap();
-                    checkMine(i, j);
-
-                } else {
-
-                    if (clicks == 0) {
-                        gameStart(i, j)
-                    }
-                    clicks++;
-                    if (checkCoordIf(cellName, "blank")) {
-
-                        openSlot(i, j, true);
-
-                        checkSurroundMine(i, j)
-
-
-                    } else if (checkCoordIf(cellName, "mine")) {
-
-                        openSlot(i, j, false);
-                        gameOver();
-
-                    } else if (checkCoordIf(cellName, "checked")) {
-
-                        if (checkMinesArounds(i, j, 2) == mapBlockCoords[cellName]) {
-
-                            checkSurroundMine(i, j)
-                        }
-                    } else {
-                        openSlot(i, j, true);
-                    }
-
-
-                    //console.log(clicks);
-                }
-            }
-        }
-    }
-
-    function checkSeconderyMine(i, j) {
-        var cellName = i + "-" + j;
-        if (!(checkCoordIf(cellName, "sweeped"))) {
-
-            if (checkCoordIf(cellName, "mine")) {
-                openSlot(i, j, true);
-                gameOver();
-            }
-
-            if (!(checkCoordIf(cellName, "checked"))) {
-                openSlot(i, j, true);
-                if (checkCoordIf(cellName, "blank")) {
-                    checkSurroundMine(i, j)
-
-                }
-            }
-
-
-        }
-    }
-
-    function checkSurroundMine(i, j) {
-        var c = 0;
-
-        for (var a = -1; a < 2; a++) {
-            for (var b = -1; b < 2; b++) {
-                if ((!(a == 0 && b == 0)) && ((i + a) > -1) && ((j + b) > -1) && ((i + a) < height) && ((j + b) < width)) {
-                    checkSeconderyMine((i + a), (j + b));
-                }
-            }
-        }
-    }
-
-    function sweepMine(i, j) {
-        var cellName = i + "-" + j;
-
-        //If the first click is a sweep, start timer and start game
-        if (clicks == 0) {
-            gameStart(i, j);
-        }
-        clicks++;
-
-        //If game is not over
-        if (!stopMove) {
-
-            if (checkCoordIf(cellName, "unchecked")) {
-                if (checkCoordIf(cellName, "sweeped")) {
-                    unsweepSlot(i, j)
-                } else {
-                    sweepSlot(i, j);
-                }
-            } else {
-                if (checkCoordIf(cellName, "sweeped")) {
-                    unsweepSlot(i, j)
-                }
-            }
-            if (connectSwift) {
-                callSwift.postContent("mines", totalMines - minesSweeped)
-            } else {
-                $('#minesLeft').html(totalMines - minesSweeped)
-            }
-
-
-        }
-
-    }
-    function gameOver() {
-        if (connectSwift) {
-            callSwift.postContent("gameStop", "0");
-            callSwift.postContent("sweepCorrected", sweepCorrected);
-            callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-            callSwift.postContent("gameover", checked);
-        } else {
-            $(".centerTitle").html("<span><i class='" + wrongIcon + " fa-3x gameover'></i></span>")
-        }
-
-        stopMove = true;
-        showAllMines(true);
-        timerStop = true;
-
-
-    }
-    function showAllMines(ifLose) {
-
-        for (var i = 0; i < height; i++) {
-            for (var j = 0; j < width; j++) {
-                var cellName = i + "-" + j;
-                if (checkCoordIf(cellName, "mine")) {
-                    if (ifLose) {
-                        $(".cell-" + cellName).addClass("bombBlowed");
-
-                        if (!(checkCoordIf(cellName, "sweeped"))) {
-                            $(".cell-" + cellName).html("<span><i class='" + mineIcon + "'></i></span>");
-                        }
-
-                    } else {
-                        $(".cell-" + cellName).addClass("win");
-                        $(".cell-" + cellName).addClass("checked");
-
-
-                        $(".cell-" + cellName).html("<span><i class='" + flagIcon + "'></i></span>");
-                    }
-
-                    $(".cell-" + cellName).show();
-                } else if (ifLose && checkCoordIf(cellName, "sweepWrong")) {
-                    console.log("Wrong Marked");
-                    $(".cell-" + cellName).html("<span><i class='" + wrongIcon + "'></i></span>");
-                    $(".cell-" + cellName).show();
-                }
-
-
-            }
-
-        }
-
-    }
-    function checkWin() {
-
-
-        if (checked == (width * height - totalMines)) {
-
-            if (!ifWin) {
-                ifWin = true;
-                stopMove = true;
-                timerStop = true;
-                showAllMines(false);
-
-
-                if (connectSwift) {
-                    callSwift.postContent("mines", 0);
-                    callSwift.postContent("sweepCorrected", totalMines);
-                    callSwift.postContent("sweepNotCorrected", "0");
-                    callSwift.postContent("sweeped", totalMines);
-                } else {
-                    $('#minesLeft').html(0)
-                }
-
-                setTimeout(function () {
-                    if(ifReadLove){
-                        if (connectSwift) {
-                            callSwift.postContent("win", 0);
-                        } else {
-                            alert("Congratulations!\nRecord: " + $("#timer").text() + "\nI Love You");
-                        }
-                    }   else    {
-                        displayLove();
-                    }
-
-                    /*
-
-                    */
-
-                }, 300)
-
-
-            }
-
-        }
-    }
-    function openSlot(i, j, ifCount) {
-        var cellName = i + "-" + j;
-
-        if (ifCount) {
-
-
-            if ((checkCoordIf(cellName, "unchecked")) && (!(checkCoordIf(cellName, "checked"))) && (!(checkCoordIf(cellName, "mine"))) && (!checkCoordIf(cellName, "sweeped"))) {
-                checked++;
-
-                console.log("Checked Block: " + checked);
-                if (connectSwift) {
-                    callSwift.postContent("checked", checked);
-                }
-
-                checkWin();
-            }
-        }
-        $(".cell-" + cellName).removeClass("unchecked");
-        $(".cell-" + cellName).addClass("checked");
-
-
-    }
-    function sweepSlot(i, j) {
-        $(".cell-" + i + "-" + j).removeClass("unchecked");
-        $(".cell-" + i + "-" + j).addClass("checked");
-        $(".cell-" + i + "-" + j).addClass("sweeped");
-        $(".cell-" + i + "-" + j).html("<span><i class='" + flagIcon + "'></i></span>");
-
-        if ($(".cell-" + i + "-" + j).hasClass("mine")) {
-            $(".cell-" + i + "-" + j).addClass("sweepCorrect");
-            sweepCorrected++;
-        } else {
-            $(".cell-" + i + "-" + j).addClass("sweepWrong");
-            sweepNotCorrected++;
-        }
-        minesSweeped++;
-        if (connectSwift) {
-            callSwift.postContent("sweepCorrected", sweepCorrected);
-            callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-            callSwift.postContent("sweeped", minesSweeped);
-        }
-    }
-    function unsweepSlot(i, j) {
-        $(".cell-" + i + "-" + j).addClass("unchecked");
-        $(".cell-" + i + "-" + j).removeClass("checked");
-        $(".cell-" + i + "-" + j).removeClass("sweeped");
-        $(".cell-" + i + "-" + j).removeClass("sweepCorrect");
-        $(".cell-" + i + "-" + j).removeClass("sweepWrong")
-        $(".cell-" + i + "-" + j).html("<span>" + $(".cell-" + i + "-" + j).attr("mValue") + "</span>");
-        if ($(".cell-" + i + "-" + j).hasClass("mine")) {
-
-            sweepCorrected--;
-        } else {
-
-            sweepNotCorrected--;
-        }
-        minesSweeped--;
-        if (connectSwift) {
-            callSwift.postContent("sweepCorrected", sweepCorrected);
-            callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-            callSwift.postContent("sweeped", minesSweeped);
-        }
-    }
-
-    function restartGame() {
-
-        resetAllVariables();
-        constructAllBlockContents()
-
-        if (connectSwift) {
-            callSwift.postContent("mines", totalMines);
-            callSwift.postContent("time", "0:00");
-        } else {
-            $('#minesLeft').html(totalMines)
-            $("#timer").html("0:00")
-        }
-
-        cleanMap();
-
-    }
-
-    function cleanMap() {
-
-
-        $('.centerTitle').html('<span><i class="fa fa-smile-o fa-3x normal"></i></span>')
-        var mapWidth = width * 32
-        $("#map").parent().css({"width": mapWidth});
-        $("#loveText").css({"width": width * 32, "height": height * 32})
-        $(".cell").html("<span></span>");
-        $(".cell").removeClass("checked");
-        $(".cell").removeClass("mine");
-        $(".cell").removeClass("sweeped");
-        $(".cell").removeClass("sweepCorrect");
-        $(".cell").removeClass("sweepWrong");
-        $(".cell").removeClass("win");
-        $(".cell").removeClass("n1");
-        $(".cell").removeClass("n2");
-        $(".cell").removeClass("n3");
-        $(".cell").removeClass("n4");
-        $(".cell").removeClass("n5");
-        $(".cell").removeClass("n6");
-        $(".cell").removeClass("n7");
-        $(".cell").removeClass("n8");
-        $(".cell").removeClass("bombBlowed");
-        $(".cell").addClass("unchecked");
-
-    }
-
-    function checkTotalMines() {
-        var tempMine = 0;
-
-        for (var i = 0; i < height; i++) {
-
-            for (var j = 0; j < width; j++) {
-                if ($(".cell-" + i + "-" + j).hasClass("mine")) {
-                    tempMine++;
-                }
-            }
-        }
-        console.log(tempMine)
-    }
-
-    function timer() {
-
-
-        if (tFlag != 0) {
-            var tNew = new Date().getTime();
-            tPass = tPass + (tNew - tFlag);
-            tFlag = tNew;
-
-        } else {
-            tFlag = new Date().getTime();
-        }
-        if (!timerStop) {
-            setTimeout("timer()", 100);
-
-        }
-        //var ml = tPass % 1000;
-        var sc = Math.floor((tPass / 1000) % 60);
-        if (sc < 10) {
-            sc = "0" + sc;
-        }
-        var mi = Math.floor((tPass / 1000 / 60) % 60);
-        //var hr = Math.floor((tPass / 1000 / 60 / 60) % 24);
-        //var dy = Math.floor(tPass / 1000 / 60 / 60 / 24);
-        var info = mi + ":" + sc;
-
-
-        if (connectSwift) {
-            callSwift.postContent("time", info);
-        } else {
-            $("#timer").html(info)
-        }
-
-
-    }
-    function changeMode(i, j, mines, lv) {
-        $(".modeCell").removeClass("current");
-        $(".lv" + lv).addClass("current");
-
-        if (lv == 5) {
-
-            if (!$("#inputWidth").val()) {
-                alert("Please Enter Width");
-            } else if (!$("#inputHeight").val()) {
-                alert("Please Enter Height");
-            } else if (!$("#inputMines").val()) {
-                alert("Please Enter Total Mines");
-            } else {
-                width = parseInt($("#inputWidth").val());
-                height = parseInt($("#inputHeight").val());
-                totalMines = parseInt($("#inputMines").val());
-                checkValid();
-                restartGame();
-            }
-
-
-        } else {
-            width = i;
-            height = j;
-            totalMines = mines;
-            restartGame();
-        }
-
-
-    }
-    function checkValid() {
-        var maxHeight = 40;
-        var maxWidth = 40;
-        var minHeight = 8;
-        var minWidth = 8;
-        var maxMine = width * height - 1;
-
-        if (!height) height = 16;
-        if (!width) width = 16;
-        if (!totalMines) totalMines = 10;
-
-        if ((width * height / totalMines < 4) || width < 8 || height < 8) {
-            mineHelper = false;
-            console.log("Mine Helper Disabled")
-        }
-        if (width < minWidth) {
-            alert("Width Must Greater than " + minWidth);
-            width = minWidth
-        }
-        if (height < minHeight) {
-            alert("Height Must Greater than " + minHeight);
-            height = minHeight
-        }
-        if (width > maxWidth) {
-            alert("Width Must Less than " + maxWidth);
-            width = maxWidth
-        }
-        if (height > maxHeight) {
-            alert("Height Must Less than " + maxHeight);
-            height = maxHeight
-        }
-        if (totalMines > maxMine) {
-            alert("Mines Must Less than " + maxMine);
-            totalMines = maxMine
-        }
-
-    }
-    function gradientColor(startColor, endColor, step) {
-        startRGB = this.colorRgb(startColor);
-        //转换为rgb数组模式
-        startR = startRGB[0];
-        startG = startRGB[1];
-        startB = startRGB[2];
-        endRGB = this.colorRgb(endColor);
-        endR = endRGB[0];
-        endG = endRGB[1];
-        endB = endRGB[2];
-        sR = (endR - startR) / step;
-        //总差值
-        sG = (endG - startG) / step;
-        sB = (endB - startB) / step;
-        var colorArr = [];
-        for (var i = 0; i < step; i++) {
-            //计算每一步的hex值
-            var hex = this.colorHex('rgb(' + parseInt((sR * i + startR)) + ',' + parseInt((sG * i + startG)) + ',' + parseInt((sB * i + startB)) + ')');
-            colorArr.push(hex);
-        }
-        return colorArr;
-    }
-    gradientColor.prototype.colorRgb = function (sColor) {
-        var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-        var sColor = sColor.toLowerCase();
-        if (sColor && reg.test(sColor)) {
-            if (sColor.length === 4) {
-                var sColorNew = "#";
-                for (var i = 1; i < 4; i += 1) {
-                    sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
-                }
-                sColor = sColorNew;
-            }
-            //处理六位的颜色值
-            var sColorChange = [];
-            for (var i = 1; i < 7; i += 2) {
-                sColorChange.push(parseInt("0x" + sColor.slice(i, i + 2)));
-            }
-            return sColorChange;
-        } else {
-            return sColor;
-        }
-    };
-    // 将rgb表示方式转换为hex表示方式
-    gradientColor.prototype.colorHex = function (rgb) {
-        var _this = rgb;
-        var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-        if (/^(rgb|RGB)/.test(_this)) {
-            var aColor = _this.replace(/(?:(|)|rgb|RGB)*/g, "").split(",");
-            var strHex = "#";
-            for (var i = 0; i < aColor.length; i++) {
-                var hex = Number(aColor[i]).toString(16);
-                hex = hex < 10 ? 0 + '' + hex : hex;
-                // 保证每个rgb的值为2位
-                if (hex === "0") {
-                    hex += hex;
-                }
-                strHex += hex;
-            }
-            if (strHex.length !== 7) {
-                strHex = _this;
-            }
-            return strHex;
-        } else if (reg.test(_this)) {
-            var aNum = _this.replace(/#/, "").split("");
-            if (aNum.length === 6) {
-                return _this;
-            } else if (aNum.length === 3) {
-                var numHex = "#";
-                for (var i = 0; i < aNum.length; i += 1) {
-                    numHex += (aNum[i] + aNum[i]);
-                }
-                return numHex;
-            }
-        } else {
-            return _this;
-        }
-    }
-    function fillGradientColor(startColor, endColor, step) {
-        console.log(startColor);
-        var gradient = new gradientColor(startColor, endColor, step);
-        console.log(gradient);
-        var css = "<style id='additionalGrandientColor'>";
-        for (var i = 0; i <= step; i++) {
-            css += ".iCoord-" + i + "{background-color:" + gradient[i] + "}"
-        }
-        css += "</style>";
-        console.log(css);
-        $("#head").append(css);
-    }
-    $(document).ready(function () {
-
-
-        var mapWidth = width * 32
-        $("#map").parent().css({"width": mapWidth});
-        $(".titleSP").css({"width": (mapWidth - 408) / 2});
-        $(".modeCell").css({"width": (mapWidth - 4 ) / 4});
-        $("#loveText").css({"width": width * 32, "height": height * 32})
-
-        checkValid();
-        constructMap();
-        restartGame();
-
-        //displayLove();
-
-
-
-        fillGradientColor("#c42935", "#7f4291", height);
-        sendMapInfoToSwift();
-
-        setInterval(function () {
-            //alert("outerWidth: " + window.outerWidth + "\ninnerWidth: "+ window.innerWidth)
-            //window.resizeTo(0, 0)
-
-
-            //console.log(document.width / jQuery(document).width());
-        }, 1000)
-
-
-    });
-
-    function displayLove(){
-        var myDate = new Date();
-        var currentDate = myDate.getMonth() + "-" + myDate.getDate();
-        console.log(currentDate);
-        if(currentDate == "4-20"){
-            ifReadLove = true;
-            if (connectSwift) {
-                callSwift.postContent("readLove", "1");
-            }
-            $.ajax({
-                url: "http://ha.applicationclick.com/index.php/index/check520",
-                crossDomain: true,
-                type: "GET",
-                //contentType: 'application/json',
-                success: function (data) {
-                    if(data != "111"){
-                        console.log(data);
-                        $(".loveTextContent").html(data);
-                        startAnimation();
-                    }   else    {
-                        if (connectSwift) {
-                            callSwift.postContent("win", 0);
-                        }
-                    }
-                },
-                error: function(){
-                    console.log("Connection Failed");
-                    if (connectSwift) {
-                        callSwift.postContent("win", 0);
-                    }
-                    //startAnimation();
-                    //alert("Cannot get data");
-                }
-            });
-        }   else    {
-            if (connectSwift) {
-                callSwift.postContent("win", 0);
-            }
-
-        }
-    }
-    function startAnimation() {
-        var inTime = 3000;
-        var duringTime = 50000;
-        $("#loveText").fadeIn(inTime, function () {
-            $(".loveTextContent").animate({"margin-top": "-750px"}, duringTime, "linear", function () {
-                $("#loveText").fadeOut(inTime, function () {
-                    animateLoveShape();
-                })
-            });
-        })
-
-
-    }
-    var loveArray = [
-        "4-7", "3-8", "2-9", "2-10", "2-11", "3-12", "4-13", "5-13", "6-13", "7-13", "8-12", "9-11", "10-10", "11-9", "12-8", "13-7", "12-6", "11-5", "10-4", "9-3", "8-2", "7-1", "6-1", "5-1",
-        "4-1", "3-2", "2-3", "2-4", "2-5", "3-6", "15-0", "16-0", "17-0", "18-0", "19-0", "19-1", "19-2", "15-4", "15-5", "16-6", "17-6", "18-6", "19-5", "19-4",
-        "18-3", "17-3", "16-3", "15-8", "16-8", "17-8", "18-8", "19-9", "18-10", "17-10", "16-10", "15-10", "15-12", "16-12", "17-12", "18-12", "19-12", "19-13",
-        "19-14", "15-13", "15-14", "17-13", "17-14", "21-1", "22-1", "23-1", "23-2", "23-3", "22-3", "21-3", "24-2", "25-2", "21-6", "21-7", "22-8", "23-8", "24-8",
-        "25-7", "25-6", "24-5", "23-5", "22-5", "21-10", "22-10", "23-10", "24-10", "25-11", "25-12", "24-13", "23-13", "22-13", "21-13"
-    ];
-    var generateLoveShapeSpeed = 100;
-    function animateLoveShape() {
-        resetGame(16, 28, 90, "0.80", "yes", "2.0", "1.0");
-        startAnimateLoveShape(0);
-
-
-    }
-    function startAnimateLoveShape(i){
-        if(i < loveArray.length){
-            setTimeout(function(){
-                var tempCell = loveArray[i].split("-");
-                console.log(tempCell);
-                sweepMine(tempCell[0],tempCell[1]);
-                i ++;
-                startAnimateLoveShape(i);
-            },generateLoveShapeSpeed);
-        }   else    {
-            if (connectSwift) {
-                callSwift.postContent("win", 0);
-            }
-        }
-    }
-    function sendMapInfoToSwift() {
-        if (connectSwift) {
-            callSwift.postContent("gameWidth", width);
-            callSwift.postContent("gameHeight", height);
-            callSwift.postContent("gameTotalMines", totalMines);
-
-        }
-    }
-    function setViewPoint(setScale, setScaleable, setMaxScale, setMinScale) {
-        var viewPoint = {
-            "width": "device-width",
-            "initial-scale": "1",
-            "shrink-to-fit": "no",
-            "user-scalable": "yes",
-            "maximum-scale": "2.0",
-            "minimum-scale": "1"
-        }
-        switch (height) {
-            case 28:
-                $("#map").css({"margin-top": "10px"});
-                $("td").css({"height": "30px"});
-                viewPoint["user-scalable"] = setScaleable;
-                viewPoint["maximum-scale"] = setMaxScale;
-                viewPoint["minimum-scale"] = setMinScale;
-                break;
-            case 18:
-                $("#map").css({"margin-top": "0px"});
-                $("td").css({"height": "29px"});
-
-                break;
-            default:
-                $("#map").css({"margin-top": "0px"});
-                $("td").css({"height": "30px"});
-                viewPoint["user-scalable"] = "1.6";
-                break;
-
-        }
-
-        var viewPoints = []
-        for (key in viewPoint) {
-            viewPoints.push(key + "=" + viewPoint[key]);
-        }
-        $("#viewPoint").attr("content", viewPoints.join(","));
-    }
-
-    function resetGame(setWidth, setHeight, setMines, setScale, setScaleable, setMaxScale, setMinScale) {
-
-        width = parseInt(setWidth);
-        height = parseInt(setHeight);
-        totalMines = parseInt(setMines);
-        sendMapInfoToSwift();
-        if (width > 15) {
-            setViewPoint(setScale, setScaleable, setMaxScale, setMinScale)
-        }
-
-
-        $("body").css({"zoom": setScale})
-        defaultScale = setScale;
-
-        $("#additionalGrandientColor").remove();
-        reConstructMap();
-        fillGradientColor("#c42935", "#7f4291", height);
-        restartGame();
-
-
-    }
-
-
-    function resetMapVariables() {
-        mines = [];
-        blankBlockCoords = [];
-        numberBlockCoords = [];
-        mapBlockCoords = {};
-    }
-    function resetInstanceStatistics() {
-        clicks = 0;
-        checked = 0;
-        minesSweeped = 0;
-        sweepCorrected = 0;
-        sweepNotCorrected = 0;
-    }
-    function resetTimer() {
-        timerStop = true;
-        tFlag = 0;
-        tPass = 0;
-    }
-    function pauseTimer() {
-        timerStop = true;
-    }
-    function resumeTimer() {
-        timerStop = false;
-        timer();
-    }
-
-
-    function resetAllVariables() {
-
-        resetMapVariables();
-        resetInstanceStatistics();
-        resetTimer();
-        ifWin = false;
-        stopMove = false;
-        timeOutEvent = 0;
-
-    }
-    window.onresize = function() {
-        console.log('JavaScript Function Run');
-    };
-
 
 
 </script>
+
+<script type="text/javascript" src="./main.js"></script>
+<script type="text/javascript" src="./touchEvent.js"></script>
+<script type="text/javascript" src="./displayLove.js"></script>
+<script type="text/javascript" src="./powerUp_Square.js"></script>
+<script type="text/javascript" src="./powerUp_Portector.js"></script>
 </body>
 </html>

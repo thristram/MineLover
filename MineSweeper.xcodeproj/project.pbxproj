@@ -25,7 +25,6 @@
 		7F4398DD1ED1EFBE00613C92 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */; };
 		7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */; };
 		7F4398E21ED2129E00613C92 /* fontello in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398DF1ED2129E00613C92 /* fontello */; };
-		7F4398E31ED2129E00613C92 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398E01ED2129E00613C92 /* index.html */; };
 		7F4398E41ED2129E00613C92 /* JQuery.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F4398E11ED2129E00613C92 /* JQuery.js */; };
 		7FC70FBC1ED424A1002D176C /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FBB1ED424A1002D176C /* main.js */; };
 		7FC70FC11ED428B0002D176C /* displayLove.js in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FBD1ED428B0002D176C /* displayLove.js */; };
@@ -33,6 +32,7 @@
 		7FC70FC31ED428B0002D176C /* powerUp_Square.js in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FBF1ED428B0002D176C /* powerUp_Square.js */; };
 		7FC70FC41ED428B0002D176C /* touchEvent.js in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FC01ED428B0002D176C /* touchEvent.js */; };
 		7FC70FC61ED481A5002D176C /* powerUp_Portector.js in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FC51ED481A5002D176C /* powerUp_Portector.js */; };
+		7FC70FC81ED52FC2002D176C /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FC71ED52FC2002D176C /* index.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,7 +78,6 @@
 		7F4398D31ED1ED9E00613C92 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		7F4398D41ED1ED9E00613C92 /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		7F4398DF1ED2129E00613C92 /* fontello */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fontello; path = html/fontello; sourceTree = "<group>"; };
-		7F4398E01ED2129E00613C92 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = html/index.html; sourceTree = "<group>"; };
 		7F4398E11ED2129E00613C92 /* JQuery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = JQuery.js; path = html/JQuery.js; sourceTree = "<group>"; };
 		7FC70FBB1ED424A1002D176C /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = main.js; path = html/main.js; sourceTree = "<group>"; };
 		7FC70FBD1ED428B0002D176C /* displayLove.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = displayLove.js; path = html/displayLove.js; sourceTree = "<group>"; };
@@ -86,6 +85,7 @@
 		7FC70FBF1ED428B0002D176C /* powerUp_Square.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = powerUp_Square.js; path = html/powerUp_Square.js; sourceTree = "<group>"; };
 		7FC70FC01ED428B0002D176C /* touchEvent.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = touchEvent.js; path = html/touchEvent.js; sourceTree = "<group>"; };
 		7FC70FC51ED481A5002D176C /* powerUp_Portector.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = powerUp_Portector.js; path = html/powerUp_Portector.js; sourceTree = "<group>"; };
+		7FC70FC71ED52FC2002D176C /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = html/index.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,8 +170,8 @@
 		7F3034251ECC50E400AFF021 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				7FC70FC71ED52FC2002D176C /* index.html */,
 				7F4398DF1ED2129E00613C92 /* fontello */,
-				7F4398E01ED2129E00613C92 /* index.html */,
 				7FC70FBB1ED424A1002D176C /* main.js */,
 				7FC70FBD1ED428B0002D176C /* displayLove.js */,
 				7FC70FBE1ED428B0002D176C /* plugin.js */,
@@ -314,7 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FC70FBC1ED424A1002D176C /* main.js in Resources */,
-				7F4398E31ED2129E00613C92 /* index.html in Resources */,
+				7FC70FC81ED52FC2002D176C /* index.html in Resources */,
 				7F4398DE1ED1EFC000613C92 /* OpenSans-SemiboldItalic.ttf in Resources */,
 				7F3034021ECC4F0000AFF021 /* LaunchScreen.storyboard in Resources */,
 				7F4398D91ED1EFB400613C92 /* OpenSans-Italic.ttf in Resources */,
