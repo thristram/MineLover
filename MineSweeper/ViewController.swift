@@ -58,16 +58,39 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var currentLevel = 2;
     var currentMap = "";
     var ifChangeLevel = false;
-    var setHeight = 8;
-    var setWidth = 14;
-    var setScale = 1.6;
+    var setWidth = 8;
+    var setHeight = 13;
+    var setScale = 1.65;
     var setScaleable = "no";
-    var setMaxScale = 1.6
-    var setMinScale = 1.6
-    var setMines = 15;
+    var setMaxScale = 1.0
+    var setMinScale = 1.0
+    var setMines = 20;
+    //var setMines = 5;
+    var marginLeft = 2
+    var marginTop = 2
+    var tdWidth = 31
+    var tdHeight = 31
+    var divWidth = 30
+    var divHeight = 30
+    var fontSize = "100%"
+    var iconFontSize = "150%"
+    
+    var PO_mode = "none";
+    var gameStarted = false;
+    var squareUsed = false;
+    var protectorUsed = false;
+    
+    var timerCounter = 0;
+    var timer = Timer()
+
+
     
     var ifReadLove = false;
     var jsContext : JSContext!
+    
+    
+    
+    
     
 
     var lv_1_Statistics:[String:String] = [
@@ -117,14 +140,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         "1_map":"{}", "2_map":"{}", "3_map":"{}", "4_map":"{}", "5_map":"{}", "6_map":"{}", "7_map":"{}", "8_map":"{}", "9_map":"{}", "10_map":"{}"
         
     ];
-    
+    var saveCoins = 0;
+    var saveGems = 0;
+
     
     
     @IBOutlet weak var mineWebView: UIWebView!
-    @IBOutlet weak var failView: UIView!
+    @IBOutlet weak var pauseView: UIView!
     @IBOutlet weak var menuView: UIView!
-    @IBOutlet weak var failTimeRemaining: UILabel!
-    @IBOutlet weak var failPercentage: UILabel!
+
     
     @IBOutlet weak var menuIcon: UIImageView!
     @IBOutlet weak var menuText1: UILabel!
@@ -141,32 +165,103 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var leaderboardView: UIView!
     @IBOutlet weak var versionLabel: UILabel!
     
+    @IBOutlet weak var powerUpButton: UIButton!
+    @IBOutlet weak var pauseButton: UIButton!
+    @IBOutlet weak var mineButton: UIButton!
+    @IBOutlet weak var mainViewMineRemaining: UILabel!
+    @IBOutlet weak var mainViewTimeLeft: UILabel!
+    
+    @IBOutlet weak var mainViewStatusBar: UIView!
+
+    @IBOutlet weak var coinLabel: UILabel!
+    @IBOutlet weak var powerUpMenu: UIView!
+    
+    @IBAction func powerUpPressed(_ sender: Any) {
+        self.stopTimer();
+        if(gameStarted){
+            let alert = UIAlertController(title: "OOPS!", message: "Comming Soon!", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
+                // perhaps use action.title here
+            })
+            self.present(alert, animated: true)
+            //showPowerUpMenu()
+        }   else{
+            let alert = UIAlertController(title: "OOPS!", message: "Power ups are avalible after game started", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
+                // perhaps use action.title here
+            })
+            self.present(alert, animated: true)
+        }
+        
+    }
+    @IBAction func pausePressed(_ sender: Any) {
+        self.stopTimer();
+        if(self.isGameWined){
+            showMenu(event: "win")
+        }   else if(self.isGameOvered){
+            showMenu(event: "gameover")
+        }   else{
+            showMenu(event: "pause")
+            
+        }
+    }
+    @IBAction func minePress(_ sender: Any) {
+    }
+    
+    
+    
     
     @IBAction func selectLevel(_ sender: Any) {
         switch((sender as AnyObject).selectedSegmentIndex){
             case 0:
                 currentLevel = 1;
                 setWidth = 8;
-                setHeight = 14;
+                setHeight = 13;
                 setScale = 1.6;
                 setScaleable = "yes";
                 setMaxScale = 1.0;
                 setMinScale = 1.0
-                setMines = 15;
+                setMines = 12;
+                //setMines = 5;
                 ifChangeLevel = true;
+                
+                marginTop = 2
+                marginLeft = 2
+                
+                tdWidth = 32
+                tdHeight = 32
+                divWidth = 30
+                divHeight = 30
+                iconFontSize = "150%"
+                fontSize = "100%"
+
+                
                 mineWebView.scrollView.isScrollEnabled = false
                 
                 break;
             case 1:
                 currentLevel = 2;
                 setWidth = 8;
-                setHeight = 14;
+                setHeight = 13;
                 setScale = 1.6;
                 setScaleable = "yes";
                 setMaxScale = 1.0;
                 setMinScale = 1.0
                 setMines = 20;
+                //setMines = 5;
                 ifChangeLevel = true;
+                
+                marginTop = 2
+                marginLeft = 2
+                
+                tdWidth = 32
+                tdHeight = 32
+                divWidth = 30
+                divHeight = 30
+                iconFontSize = "150%"
+                fontSize = "100%"
+
+                
                 mineWebView.scrollView.isScrollEnabled = false
                 
                 
@@ -174,26 +269,53 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             case 2:
                 currentLevel = 3;
                 setWidth = 10;
-                setHeight = 18;
+                setHeight = 17;
                 setScale = 1.28;
                 setScaleable = "yes";
                 setMaxScale = 2.0;
                 setMinScale = 1
                 setMines = 35;
+                //setMines = 5;
+
                 ifChangeLevel = true;
+                
+                marginTop = 2
+                marginLeft = 3
+
+    
+                tdWidth = 32
+                tdHeight = 31
+                divWidth = 30
+                divHeight = 30
+                iconFontSize = "150%"
+                fontSize = "100%"
+                
                 mineWebView.scrollView.isScrollEnabled = false;
                 break;
             
             case 3:
                 currentLevel = 4;
                 setWidth = 16;
-                setHeight = 28;
+                setHeight = 26;
                 setScale = 0.80;
                 setScaleable = "yes";
                 setMaxScale = 2.0;
                 setMinScale = 1
                 setMines = 90;
+                //setMines = 5;
                 ifChangeLevel = true;
+                
+                marginTop = 10
+                marginLeft = 4
+                
+                
+                tdWidth = 32
+                tdHeight = 32
+                divWidth = 30
+                divHeight = 30
+                iconFontSize = "150%"
+                fontSize = "100%"
+                
                 mineWebView.scrollView.isScrollEnabled = true;
             
             
@@ -204,47 +326,44 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     @IBAction func failButtonPressed(_ sender: Any) {
-        self.mineWebView.scalesPageToFit = true;
-        hideMenu();
-        self.isGameOvered = false;
-        self.isGameWined = false;
-        sweeped = 0;
-        sweepCorrected = 0;
-        sweepNotCorrected = 0;
-        checked = 0;
         
-        if(ifChangeLevel){
-            
-            mineWebView.stringByEvaluatingJavaScript(from: "resetGame( \(setWidth), \(setHeight), \(setMines), \(setScale), '\(setScaleable)', '\(setMaxScale)', '\(setMinScale)')")
-            
-        }   else    {
-            mineWebView.stringByEvaluatingJavaScript(from: "restartGame()")
-        }
+        hideMenu();
+        startNewGame();
+        self.pauseButton.setImage(UIImage(named: "icon_pause"), for: .normal)
         
         
     }
     @IBAction func resumeButtonPressed(_ sender: Any) {
         hideMenu();
+        if(self.isGameWined){
+            self.pauseButton.setImage(UIImage(named: "back_arrow"), for: .normal)
+        }   else if(self.isGameOvered){
+            self.pauseButton.setImage(UIImage(named: "back_arrow"), for: .normal)
+        }   else{
+            self.pauseButton.setImage(UIImage(named: "icon_pause"), for: .normal)
+            startTimer();
+        }
+        
     }
     @IBAction func switchToLeaderboard(_ sender: Any) {
         let _self = self;
-        tableView.reloadData();
+        self.tableView.reloadData();
         _self.leaderboardView.isHidden = false
         UIView.animate(withDuration: 0.5, animations: {
-            _self.failView.alpha = 0.0
+            _self.pauseView.alpha = 0.0
             _self.leaderboardView.alpha = 1.0
             
         }, completion: { (finished: Bool) in
-            _self.failView.isHidden = true
+            _self.pauseView.isHidden = true
         });
     }
     
     @IBAction func switchToControl(_ sender: Any) {
         let _self = self;
         
-        _self.failView.isHidden = false
+        _self.pauseView.isHidden = false
         UIView.animate(withDuration: 0.5, animations: {
-            _self.failView.alpha = 1.0
+            _self.pauseView.alpha = 1.0
             _self.leaderboardView.alpha = 0.0
             
         }, completion: { (finished: Bool) in
@@ -252,6 +371,102 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         });
 
     }
+    @IBAction func closePowerUpView(_ sender: Any) {
+        hidePowerUpMenu()
+        startTimer()
+    }
+    
+    
+    @IBAction func powerUp1Click(_ sender: Any) {
+        if(gameStarted){
+            
+            if(PO_mode == "none"){
+                
+                if(!squareUsed){
+                    PO_mode = "square"
+                    squareUsed = true;
+                    self.mineWebView.stringByEvaluatingJavaScript(from: "setPOSqaure()")
+                }
+                hidePowerUpMenu()
+                
+                
+                
+                
+            }
+        }
+
+    }
+    @IBAction func powerUp2Click(_ sender: Any) {
+        if(gameStarted){
+            
+            if(PO_mode == "none"){
+                
+                
+                if(!protectorUsed){
+                    PO_mode = "protector"
+                    protectorUsed = true;
+                    self.mineWebView.stringByEvaluatingJavaScript(from: "setPOProtector()")
+                }
+                hidePowerUpMenu()
+                
+                
+                
+                
+            }
+        }
+    }
+    @IBAction func powerUpStoreClick(_ sender: Any) {
+    }
+    
+    func hidePowerUpMenu(){
+        self.powerUpMenu.alpha = 0.0
+        self.mainViewStatusBar.alpha = 1.0
+        self.powerUpMenu.isHidden = true
+        
+        
+    }
+    func showPowerUpMenu(){
+        self.powerUpMenu.isHidden = false
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            self.powerUpMenu.alpha = 1.0
+            self.mainViewStatusBar.alpha = 0.0
+            
+        });
+        
+    }
+
+    func startNewGame(){
+        self.mineWebView.scalesPageToFit = true;
+        self.isGameOvered = false;
+        self.isGameWined = false;
+        sweeped = 0;
+        sweepCorrected = 0;
+        sweepNotCorrected = 0;
+        checked = 0;
+        
+        
+        
+        totalMines = setMines
+        if(ifChangeLevel){
+            constructGame()
+        }   else    {
+            resetGame()
+            mineWebView.stringByEvaluatingJavaScript(from: "restartGame()")
+        }
+        if(self.totalMines < 10){
+            self.mainViewMineRemaining.text = "00\(totalMines)"
+        }   else if(self.totalMines < 100){
+            self.mainViewMineRemaining.text = "0\(totalMines)"
+        }   else{
+            self.mainViewMineRemaining.text = "\(totalMines)"
+        }
+
+        resetTimer();
+        self.mainViewTimeLeft.text = "0:00";
+        //self.mainViewMineRemaining.text = totalMines;
+    }
+    
     
     //Subscribe/Listen for the events
     
@@ -289,6 +504,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
         
+        
+        
         //Mine View
         mineWebView.scrollView.isMultipleTouchEnabled = false;
         loadHTML()
@@ -296,7 +513,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         NotificationCenter.default.addObserver(self, selector: #selector(self.handelJSEvent(_:)), name: NSNotification.Name(rawValue: "javascriptEvent"), object: nil)
         jsContext = self.mineWebView.value(forKeyPath: "documentView.webView.mainFrame.javaScriptContext") as? JSContext
         jsContext?.setObject(JavaScriptMethod(), forKeyedSubscript: "callSwift" as NSCopying & NSObjectProtocol)
-        
+        let minesRemaining = self.setMines
+        if(minesRemaining < 10){
+            mainViewMineRemaining.text = "00\(minesRemaining)"
+        }   else if(minesRemaining < 100){
+            mainViewMineRemaining.text = "0\(minesRemaining)"
+        }   else{
+            mainViewMineRemaining.text = "\(minesRemaining)"
+        }
         
         
         //520 Special
@@ -319,7 +543,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }  
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -340,6 +566,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             print("Shaked");
+            self.stopTimer();
             if(self.isGameWined){
                 showMenu(event: "win")
             }   else if(self.isGameOvered){
@@ -372,7 +599,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
     }
+    func resetGame(){
     
+        self.PO_mode = "none";
+        self.gameStarted = false;
+        self.squareUsed = false;
+        self.protectorUsed = false;
+        
+        
+
+
+
+    }
     /*
      
      MENU
@@ -382,7 +620,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func showMenu(event: String){
         let _self = self;
-        self.mineWebView.stringByEvaluatingJavaScript(from: "pauseTimer()")
+        
+        
         /*
         let totalNumberOfBlocks = gameHeight * gameWidth;
         
@@ -423,11 +662,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             default:
                 break;
         }
-        //_self.failPercentage.text = "\(percentageCompleted)%"
-        _self.failPercentage.text = "\(totalMines - sweeped)"
+
+        coinLabel.text = "\(saveCoins)";
         menuView.isHidden = false
         UIView.animate(withDuration: 0.5, animations: {
             _self.menuView.alpha = 1.0
+            _self.mainViewStatusBar.alpha = 0.0
             
         });
         
@@ -435,8 +675,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     func hideMenu(){
         self.menuView.alpha = 0.0
+        self.mainViewStatusBar.alpha = 1.0
         self.menuView.isHidden = true
-        self.mineWebView.stringByEvaluatingJavaScript(from: "resumeTimer()")
+        
+        
     }
     
     /*
@@ -444,30 +686,50 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
      JS BRIDGE
      
      */
-    
+    func constructGame(){
+        resetGame()
+        let JSConstructGame = "resetGame( \(setWidth), \(setHeight), \(setMines), \(setScale), '\(setScaleable)', '\(setMaxScale)', '\(setMinScale)', '\(marginTop)', '\(marginLeft)', '\(tdWidth)', '\(tdHeight)', '\(divWidth)', '\(divHeight)', '\(fontSize)', '\(iconFontSize)')"
+        mineWebView.stringByEvaluatingJavaScript(from: JSConstructGame)
+        print (JSConstructGame)
+
+    }
     func handelJSReceivedData(method: String, value: String){
         let _self = self;
         switch (method){
+        case "gameInit":
+            print("webLoad Ready")
+            constructGame();
+            break;
         case "time":
-            failTimeRemaining.text = value
-            _self.timePassed = value
+
+    
             break;
         case "mines":
-            failPercentage.text = value
+            
             break;
         case "gameStart":
+            _self.gameStarted = true;
             startRecord();
+            startTimer();
             break;
         case "gameStop":
+            _self.gameStarted = false;
+
             break;
         case "gameover":
+            self.stopTimer();
             loseRecord()
+            
+            _self.resetGame()
             _self.isGameOvered = true;
             _self.checked = Int(value)!;
             showMenu(event: "gameover")
             break;
         case "win":
+            self.stopTimer();
             winRecord()
+            _self.resetGame()
+            self.tableView.reloadData();
             _self.isGameWined = true;
             showMenu(event: "win")
             break;
@@ -491,6 +753,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             break;
         case "sweeped":
             _self.sweeped = Int(value)!;
+            let minesRemaining = _self.totalMines - _self.sweeped
+            if(minesRemaining < 10){
+                mainViewMineRemaining.text = "00\(minesRemaining)"
+            }   else if(minesRemaining < 100){
+                mainViewMineRemaining.text = "0\(minesRemaining)"
+            }   else{
+                mainViewMineRemaining.text = "\(minesRemaining)"
+            }
+            
             break;
         case "currentMap":
             _self.currentMap = value;
@@ -501,7 +772,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             defaults.set("1", forKey: "ifReadLove")
             
             break;
-
+        case "stopProtector":
+            _self.PO_mode = "none"
+            break;
+        case "stopSquare":
+            _self.PO_mode = "none"
+            break;
         default:
             break;
             
@@ -529,6 +805,36 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
+    /*
+     
+     TIMER
+     
+     */
+    
+    func startTimer(){
+        timer.invalidate() // just in case this button is tapped multiple times
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+    }
+    func stopTimer(){
+        timer.invalidate() // just in case this button is tapped multiple times
+        
+    }
+    func resetTimer(){
+        timer.invalidate() // just in case this button is tapped multiple times
+        timerCounter = 0
+        
+    }
+    func timerAction() {
+        timerCounter += 1
+        let min = timerCounter / 60;
+        let sec = timerCounter % 60;
+        if(sec < 10){
+            self.mainViewTimeLeft.text = "\(min):0\(sec)"
+        }   else{
+            self.mainViewTimeLeft.text = "\(min):\(sec)"
+        }
+        
+    }
     
     /*
  
@@ -621,6 +927,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         UserDefaults.standard.set(lv_2_Statistics, forKey: "lv_2_Statistics")
         UserDefaults.standard.set(lv_3_Statistics, forKey: "lv_3_Statistics")
         UserDefaults.standard.set(lv_4_Statistics, forKey: "lv_4_Statistics")
+        UserDefaults.standard.set(saveCoins, forKey: "coin")
+        UserDefaults.standard.set(saveGems, forKey: "gem")
+
         UserDefaults.standard.synchronize()
         
     }
@@ -649,6 +958,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }   else {
             UserDefaults.standard.set(lv_4_Statistics, forKey: "lv_4_Statistics")
         }
+        
+        if let result = UserDefaults.standard.value(forKey: "coin"){
+            
+            saveCoins = result as! Int
+        }   else {
+            let tempCoin = Int(lv_1_Statistics["totalMineSweeped"]!)! + Int(lv_2_Statistics["totalMineSweeped"]!)! + Int(lv_3_Statistics["totalMineSweeped"]!)! + Int(lv_4_Statistics["totalMineSweeped"]!)!
+            saveCoins = tempCoin
+            UserDefaults.standard.set(tempCoin, forKey: "coin")
+        }
+        if let result = UserDefaults.standard.value(forKey: "gem"){
+            saveGems = result as! Int
+        }   else {
+            saveGems = 0
+            UserDefaults.standard.set(saveGems, forKey: "coin")
+        }
+
         print (lv_1_Statistics)
         print (lv_2_Statistics)
         print (lv_3_Statistics)
@@ -665,7 +990,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let expPercent = Int(currentStatistics["explorationPercentage"]!)!;
         let totalGameFinished = totalWin + totalLose;
         let totalNumberOfBlocks = gameHeight * gameWidth;
-        let cTime = min2Sec(time: self.timePassed)
+        let cTime = self.timerCounter
         let percentageCompleted = ((checked * 100) / (totalNumberOfBlocks - totalMines));
         
         let longestGame = Int(currentStatistics["longestGame"]!)!
@@ -695,21 +1020,36 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         var cPlace = 11;
         
         for i in (0...9).reversed(){
+            print("[SAVE] Checking record No. \(i+1)")
             let thisTimeRecord = Int(currentStatistics["\(i+1)_Record"]!)!;
             if(thisTimeRecord != 0){
+                print("[SAVE] Record No. \(i+1): \(thisTimeRecord), this time: \(cTime)")
                 if(thisTimeRecord < cTime){
+                    print("[SAVE] Save to No. \(i+2)")
                     cPlace = i + 1
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Record", value: cTime as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Date", value: getTimestamp() as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Map", value: currentMap as AnyObject)
                     break;
                 }   else if(i < 9){
+                    print("[SAVE] Old No. \(i+1) move to No. \(i+2)")
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Record", value: thisTimeRecord as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Date", value: currentStatistics["\(i+1)_Date"] as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Map", value: currentMap as AnyObject)
+                    
+                    if(i == 0){
+                        cPlace = i + 1
+                        print("[SAVE] Save to No. \(i+i)")
+                        updateSingleRecord(level: currentLevel, name: "\(i+1)_Record", value: cTime as AnyObject)
+                        updateSingleRecord(level: currentLevel, name: "\(i+1)_Date", value: getTimestamp() as AnyObject)
+                        updateSingleRecord(level: currentLevel, name: "\(i+1)_Map", value: currentMap as AnyObject)
+                        
+                    }
+
                 }
             }   else if(i == 0){
                 cPlace = i + 1
+                print("[SAVE] Save to No. \(i+i)")
                 updateSingleRecord(level: currentLevel, name: "\(i+1)_Record", value: cTime as AnyObject)
                 updateSingleRecord(level: currentLevel, name: "\(i+1)_Date", value: getTimestamp() as AnyObject)
                 updateSingleRecord(level: currentLevel, name: "\(i+1)_Map", value: currentMap as AnyObject)
@@ -734,7 +1074,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let expPercent = Int(currentStatistics["explorationPercentage"]!)!;
         let totalGameFinished = totalWin + totalLose;
         let totalNumberOfBlocks = gameHeight * gameWidth;
-        let cTime = min2Sec(time: self.timePassed)
+        let cTime = timerCounter
         let percentageCompleted = ((checked * 100) / (totalNumberOfBlocks - totalMines));
         
         let longestGame = Int(currentStatistics["longestGame"]!)!
@@ -748,6 +1088,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let newChecked = Int(currentStatistics["totalChecked"]!)! + Int(self.checked)
         let newMineSweeped = Int(currentStatistics["totalMineSweeped"]!)! + Int(self.sweepCorrected)
         let newMineSweepedWrong = Int(currentStatistics["totalMineSweepedWrong"]!)! + Int(self.sweepNotCorrected)
+        
+        //Add Coin
+        saveCoins = Int(self.sweepCorrected) + saveCoins;
 
         if(longestGame < cTime){
             updateSingleRecord(level: currentLevel, name: "longestGame", value: cTime as AnyObject)
@@ -990,6 +1333,7 @@ extension ViewController : UIWebViewDelegate {
     func webViewDidFinishLoad(_ webView: UIWebView) {
         jsContext = self.mineWebView.value(forKeyPath: "documentView.webView.mainFrame.javaScriptContext") as? JSContext
         jsContext?.setObject(JavaScriptMethod(), forKeyedSubscript: "callSwift" as NSCopying & NSObjectProtocol)
+        
     }
 }
 class leaderboardTableViewCell: UITableViewCell {
