@@ -25,7 +25,7 @@ function setPOProtector() {
     setTimeout(function () {
         if (connectSwift) {
             stopProtector()
-            callSwift.postContent("stopProtector", "1");
+            swiftBridge("stopProtector", "1");
         } else {
             stopProtector()
         }
@@ -55,6 +55,7 @@ function stopProtector() {
 }
 function protectBlock(i, j) {
     var cellName = i + "-" + j;
+    swiftConsole(cellName,"protected click");
     protectedClicked [cellName] = 1
     if (checkCoordIf(cellName, "protectorActive")) {
         animateBounceEffect(i, j)
@@ -158,11 +159,13 @@ function animateBounceEffect(i, j) {
 function finishProtector() {
 
     for (var key in protectedClicked) {
-        var coord = key.split("-")
+        swiftConsole(key,"protected perform");
+        var coord = key.split("-");
         if ((!checkCoordIf(key, "mine")) && (!checkCoordIf(key, "checked"))) {
             checkMine(coord[0], coord[1])
         }
     }
+    protectedClicked = {}
 }
 
 

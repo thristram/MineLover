@@ -92,7 +92,7 @@ function finishSquare(i,j){
             $(".squared").removeClass("squaredAlpha")
             $(".squared").animate({"opacity":"1"},1300);
             $(".squared:not(.checked)").find("span").hide();
-            callSwift.postContent("stopProtector", "1");
+            swiftBridge("stopProtector", "1");
 
         });
     },4200)

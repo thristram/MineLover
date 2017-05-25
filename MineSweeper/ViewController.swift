@@ -76,6 +76,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var iconFontSize = "150%"
     
     var PO_mode = "none";
+    var game_mode = "normal";
     var gameStarted = false;
     var squareUsed = false;
     var protectorUsed = false;
@@ -179,12 +180,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBAction func powerUpPressed(_ sender: Any) {
         self.stopTimer();
         if(gameStarted){
+            
             let alert = UIAlertController(title: "OOPS!", message: "Comming Soon!", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
                 // perhaps use action.title here
             })
             self.present(alert, animated: true)
-            //showPowerUpMenu()
+ /*
+            showPowerUpMenu()
+             */
         }   else{
             let alert = UIAlertController(title: "OOPS!", message: "Power ups are avalible after game started", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
@@ -206,6 +210,53 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     @IBAction func minePress(_ sender: Any) {
+        let _self = self;
+        if(self.game_mode == "sweep"){
+            game_mode = "normal";
+            _self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeNormal()");
+            UIView.animate(withDuration: 0.3, animations: {
+                _self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
+                
+            }, completion: { (finished: Bool) in
+                _self.mineButton.setImage(UIImage(named: "mine"), for: .normal)
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    _self.mineButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3);
+                    
+                }, completion: { (finished: Bool) in
+                    
+                    
+                    UIView.animate(withDuration: 0.15, animations: {
+                        _self.mineButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
+                        
+                    });
+                });
+            });
+
+        }   else{
+            game_mode = "sweep"
+            _self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeSweep()")
+            UIView.animate(withDuration: 0.3, animations: {
+                _self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
+                
+            }, completion: { (finished: Bool) in
+                _self.mineButton.setImage(UIImage(named: "heart"), for: .normal)
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    _self.mineButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3);
+                    
+                }, completion: { (finished: Bool) in
+                    
+                    
+                    UIView.animate(withDuration: 0.15, animations: {
+                        _self.mineButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
+                        
+                    });
+                });
+            });
+
+            
+        }
     }
     
     
@@ -387,6 +438,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     squareUsed = true;
                     self.mineWebView.stringByEvaluatingJavaScript(from: "setPOSqaure()")
                 }
+                startTimer();
                 hidePowerUpMenu()
                 
                 
@@ -407,6 +459,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     protectorUsed = true;
                     self.mineWebView.stringByEvaluatingJavaScript(from: "setPOProtector()")
                 }
+                startTimer();
                 hidePowerUpMenu()
                 
                 
@@ -454,13 +507,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             resetGame()
             mineWebView.stringByEvaluatingJavaScript(from: "restartGame()")
         }
-        if(self.totalMines < 10){
-            self.mainViewMineRemaining.text = "00\(totalMines)"
-        }   else if(self.totalMines < 100){
-            self.mainViewMineRemaining.text = "0\(totalMines)"
-        }   else{
-            self.mainViewMineRemaining.text = "\(totalMines)"
-        }
+        
+        
+        self.mainViewMineRemaining.text = formatMineDisplay(mineInput: self.totalMines)
+
 
         resetTimer();
         self.mainViewTimeLeft.text = "0:00";
@@ -513,14 +563,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         NotificationCenter.default.addObserver(self, selector: #selector(self.handelJSEvent(_:)), name: NSNotification.Name(rawValue: "javascriptEvent"), object: nil)
         jsContext = self.mineWebView.value(forKeyPath: "documentView.webView.mainFrame.javaScriptContext") as? JSContext
         jsContext?.setObject(JavaScriptMethod(), forKeyedSubscript: "callSwift" as NSCopying & NSObjectProtocol)
-        let minesRemaining = self.setMines
-        if(minesRemaining < 10){
-            mainViewMineRemaining.text = "00\(minesRemaining)"
-        }   else if(minesRemaining < 100){
-            mainViewMineRemaining.text = "0\(minesRemaining)"
-        }   else{
-            mainViewMineRemaining.text = "\(minesRemaining)"
-        }
+        
+        
+        self.mainViewMineRemaining.text = formatMineDisplay(mineInput: self.setMines)
         
         
         //520 Special
@@ -700,8 +745,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             print("webLoad Ready")
             constructGame();
             break;
-        case "time":
-
+        case "console":
+            print (value);
     
             break;
         case "mines":
@@ -754,14 +799,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         case "sweeped":
             _self.sweeped = Int(value)!;
             let minesRemaining = _self.totalMines - _self.sweeped
-            if(minesRemaining < 10){
-                mainViewMineRemaining.text = "00\(minesRemaining)"
-            }   else if(minesRemaining < 100){
-                mainViewMineRemaining.text = "0\(minesRemaining)"
-            }   else{
-                mainViewMineRemaining.text = "\(minesRemaining)"
-            }
-            
+            _self.mainViewMineRemaining.text = formatMineDisplay(mineInput: minesRemaining)
             break;
         case "currentMap":
             _self.currentMap = value;
@@ -792,9 +830,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if let method = notification.userInfo?["method"] as? String {
             
             if let value = notification.userInfo?["value"] as? String {
-                if(method != "time"){
-                    print(method)
-                    print(value)
+                if(method != "console"){
+                    print("[\(method)] \(value)")
                 }
                 
                 DispatchQueue.main.async {
@@ -841,7 +878,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
      PUBLIC METHOD
      
      */
-    
+    func formatMineDisplay(mineInput: Int) -> String{
+        var mi = mineInput;
+        var displayedMine = "";
+        var mineSign = "";
+        
+        if(mineInput < 0){
+            mineSign = "-";
+            mi = mineInput * (-1)
+        }
+        
+        if(mi < 10){
+            displayedMine = "\(mineSign)00\(mi)"
+        }   else if(mi < 100){
+            displayedMine = "\(mineSign)0\(mi)"
+        }   else{
+            displayedMine = "\(mineSign)\(mi)"
+        }
+        return displayedMine
+
+    }
     func getTimestamp() -> String{
         return "\(Int(NSDate().timeIntervalSince1970))";
     }

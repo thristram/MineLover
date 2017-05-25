@@ -1,6 +1,7 @@
 /**
  * Created by fangchenli on 5/23/17.
  */
+
 (function ($) {
     var IS_IOS = /iphone|ipad/i.test(navigator.userAgent);
     $.fn.nodoubletapzoom = function () {

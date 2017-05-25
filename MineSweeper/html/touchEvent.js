@@ -5,21 +5,11 @@
 
 
 function longTouchStart(i, j, e) {
-    console.log("Touch started")
+    //swiftConsole("Touch started")
     if (e.touches.length == 1) {
         timeOutEvent = setTimeout(function () {
-            console.log("Long Touch triggered")
-            switch (PO_Mode){
-                case "square":
-                    sqareBlock(i,j);
-                    break;
-                case "protect":
-                    protectBlock(i,j);
-                    break;
-                default:
-                    sweepMine(i, j);
-                    break;
-            }
+            //swiftConsole("Long Touch triggered")
+            reverseTouchEvent(i, j)
 
         }, 500);
     }
@@ -37,51 +27,59 @@ function longTouchStart(i, j, e) {
 }
 function longTouchMove(i, j) {
     clearTimeout(timeOutEvent);
-    console.log("Long Touch Moved")
+    //swiftConsole("Long Touch Moved")
     timeOutEvent = 0;
     return false;
 }
 function longTouchEnd(i, j,e) {
     clearTimeout(timeOutEvent);
     if (timeOutEvent != 0) {
-        console.log("Long Touch Filed, this is a short touch");
+        //swiftConsole("Long Touch Filed, this is a short touch");
 
         e.preventDefault();
-        switch (PO_Mode){
-            case "square":
-                sqareBlock(i,j);
-                break;
-            case "protect":
-                protectBlock(i,j);
-                break;
-            default:
-                checkMine(i, j);
-                break;
-        }
+        touchEvent(i, j);
 
     }
     return false;
 }
 function onClickEvent(i, j) {
     if (!ifAgentIsTouch) {
-        console.log("clicked");
-        switch (PO_Mode){
-            case "square":
-                checkMine(i, j);
-                break;
-            case "protect":
-                protectBlock(i,j);
-                break;
-            default:
-                checkMine(i, j);
-                break;
-        }
-
+        swiftConsole("clicked");
+        touchEvent(i, j)
     }
     return false
 }
 function onContextMenuEvent(i, j) {
-    console.log("Right clicked");
+    swiftConsole("Right clicked");
+    reverseTouchEvent(i, j)
+    return false;
+}
+
+function touchEvent(i, j){
+    var cellName = i + "-" + j;
+    switch (PO_Mode){
+        case "square":
+            checkMine(i, j);
+            break;
+        case "protect":
+            protectBlock(i,j);
+            break;
+        default:
+            if(gameMode == "sweep"){
+                if(checkCoordIf(cellName,"checked") && (!checkCoordIf(cellName,"sweeped")) && (!checkCoordIf(cellName,"unchecked"))){
+                    checkMine(i, j);
+                }   else    {
+                    sweepMine(i,j);
+                }
+
+            }   else    {
+                checkMine(i, j);
+            }
+            break;
+    }
+}
+function reverseTouchEvent(i, j){
+    var cellName = i + "-" + j;
     switch (PO_Mode){
         case "square":
             sqareBlock(i,j);
@@ -90,8 +88,11 @@ function onContextMenuEvent(i, j) {
             protectBlock(i,j);
             break;
         default:
-            sweepMine(i, j)
+            if(gameMode == "sweep"){
+                checkMine(i,j);
+            }   else    {
+                sweepMine(i, j);
+            }
             break;
     }
-    return false;
 }

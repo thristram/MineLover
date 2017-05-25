@@ -26,6 +26,7 @@ var timeOutEvent = 0;
 
 //POWERUPS
 var PO_Mode = "none";
+var gameMode = "normal"
 
 $("#map").nodoubletapzoom();
 
@@ -34,6 +35,28 @@ $("#map").nodoubletapzoom();
 
 
 //Public
+
+
+function swiftBridge(name, value){
+    try{
+        callSwift.postContent(name, value);
+    } catch(exception){
+
+    }
+}
+
+function swiftConsole(value, type){
+    if (type){
+        type = "[" + type.toUpperCase() + "]";
+    }   else    {
+        type = "";
+    }
+    if(connectSwift){
+
+        swiftBridge("console", "--- JS Bridge Console --- " + type + " " + value);
+    }
+    console.log(type + " " + value)
+}
 
 function checkCoordIf(coord, method) {
     var targetArray = [];
@@ -59,7 +82,7 @@ function checkCoordIf(coord, method) {
             break;
     }
     if (ifcheck) {
-        //console.log("checking " + method + ".....")
+        //swiftConsole("checking " + method + ".....")
         if (targetArray.indexOf(coord) > -1) {
             return true;
         } else {
@@ -117,11 +140,11 @@ function constructMines(index) {
             mines.push(mine);
             mapBlockCoords[mine] = -1;
             constructMines(index + 1);
-            //console.log(mine);
+            //swiftConsole(mine);
         }
     } else {
-        console.log("Mines Constructed");
-        console.log(mines);
+        swiftConsole("Mines Constructed");
+        swiftConsole(mines);
     }
 }
 
@@ -134,7 +157,7 @@ function constructSingleMine(maxWidth, maxHeight) {
 
 function constructAllBlockContents() {
     constructMines(0);
-    console.log("Constructing Blocks");
+    swiftConsole("Constructing Blocks");
     checkMinesArounds(1, 1, 1);
 
     for (var i = 0; i < height; i++) {
@@ -155,12 +178,12 @@ function constructAllBlockContents() {
         }
     }
     /*
-     console.log("Blank Blocks:");
-     console.log(blankBlockCoords)
-     console.log("Number Blocks:");
-     console.log(numberBlockCoords);
-     console.log("All Blocks:");
-     console.log(mapBlockCoords);
+     swiftConsole("Blank Blocks:");
+     swiftConsole(blankBlockCoords)
+     swiftConsole("Number Blocks:");
+     swiftConsole(numberBlockCoords);
+     swiftConsole("All Blocks:");
+     swiftConsole(mapBlockCoords);
      */
 
 
@@ -168,14 +191,14 @@ function constructAllBlockContents() {
 
 function checkMinesArounds(i, j, mode) {
     //Mode 1: Mine, Mode 2: Sweeped
-    //console.log("Checking i=" + i + ", j=" + j);
+    //swiftConsole("Checking i=" + i + ", j=" + j);
     var numberOfMines = 0;
     for (var a = -1; a < 2; a++) {
         for (var b = -1; b < 2; b++) {
             if ((!(a == 0 && b == 0)) && ((i + a) > -1) && ((j + b) > -1) && ((i + a) < height) && ((j + b) < width)) {
                 var cellName = (i + a) + "-" + (j + b);
                 if (mode == 1) {
-                    //console.log("Checking Surrding x=" + a + ", y=" + b);
+                    //swiftConsole("Checking Surrding x=" + a + ", y=" + b);
                     if (checkCoordIf(cellName, "mine")) {
                         numberOfMines++;
                     }
@@ -218,14 +241,14 @@ function mapBlocks() {
 function mineHelperChangeMap() {
     resetMapVariables();
     constructAllBlockContents()
-    console.log("Map Layout Changed");
+    swiftConsole("Map Layout Changed");
 
 }
 function gameStart(i, j) {
-    console.log("Game Start");
+    swiftConsole("Game Start");
     if (connectSwift) {
-        callSwift.postContent("gameStart", "0");
-        callSwift.postContent("currentMap", JSON.stringify(mapBlockCoords))
+        swiftBridge("gameStart", "0");
+        swiftBridge("currentMap", JSON.stringify(mapBlockCoords))
     }
     mapBlocks();
 }
@@ -233,7 +256,7 @@ function checkMine(i, j) {
     var cellName = i + "-" + j;
 
     if (!stopMove) {
-        console.log("Valid Click");
+        //swiftConsole("Valid Click");
         if (!(checkCoordIf(cellName, "sweeped"))) {
 
             if (mineHelper && clicks == 0 && (!(checkCoordIf(cellName, "blank")))) {
@@ -269,7 +292,7 @@ function checkMine(i, j) {
                 }
 
 
-                //console.log(clicks);
+                //swiftConsole(clicks);
             }
         }
     }
@@ -320,20 +343,46 @@ function sweepMine(i, j) {
     //If game is not over
     if (!stopMove) {
 
-        if (checkCoordIf(cellName, "unchecked")) {
-            if (checkCoordIf(cellName, "sweeped")) {
-                unsweepSlot(i, j)
-            } else {
-                sweepSlot(i, j);
-            }
-        } else {
-            if (checkCoordIf(cellName, "sweeped")) {
-                unsweepSlot(i, j)
-            }
+        switch(PO_Mode){
+            case "sweep":
+                if (checkCoordIf(cellName, "unchecked")) {
+                    if (checkCoordIf(cellName, "sweeped")) {
+                        unsweepSlot(i, j)
+                    } else {
+                        sweepSlot(i, j);
+                    }
+                } else {
+                    if (checkCoordIf(cellName, "sweeped")) {
+                        unsweepSlot(i, j)
+                    }   else if(!checkCoordIf(cellName, "mine")){
+                        checkMine(i,j)
+                    }
+                }
+                if (connectSwift) {
+                    swiftBridge("mines", totalMines - minesSweeped)
+                }
+                break;
+            case "correct":
+                break;
+            default:
+                if (checkCoordIf(cellName, "unchecked")) {
+                    if (checkCoordIf(cellName, "sweeped")) {
+                        unsweepSlot(i, j)
+                    } else {
+                        sweepSlot(i, j);
+                    }
+                } else {
+                    if (checkCoordIf(cellName, "sweeped")) {
+                        unsweepSlot(i, j)
+                    }
+                }
+                if (connectSwift) {
+                    swiftBridge("mines", totalMines - minesSweeped)
+                }
+
+                break;
         }
-        if (connectSwift) {
-            callSwift.postContent("mines", totalMines - minesSweeped)
-        }
+
 
 
     }
@@ -341,10 +390,10 @@ function sweepMine(i, j) {
 }
 function gameOver() {
     if (connectSwift) {
-        callSwift.postContent("gameStop", "0");
-        callSwift.postContent("sweepCorrected", sweepCorrected);
-        callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-        callSwift.postContent("gameover", checked);
+        swiftBridge("gameStop", "0");
+        swiftBridge("sweepCorrected", sweepCorrected);
+        swiftBridge("sweepNotCorrected", sweepNotCorrected);
+        swiftBridge("gameover", checked);
     }
 
     stopMove = true;
@@ -375,7 +424,7 @@ function showAllMines(ifLose) {
 
                 $(".cell-" + cellName).show();
             } else if (ifLose && checkCoordIf(cellName, "sweepWrong")) {
-                console.log("Wrong Marked");
+                swiftConsole("Wrong Marked");
                 $(".cell-" + cellName).html("<span><i class='" + wrongIcon + "'></i></span>");
                 $(".cell-" + cellName).show();
             }
@@ -398,10 +447,10 @@ function checkWin() {
 
 
             if (connectSwift) {
-                callSwift.postContent("mines", 0);
-                callSwift.postContent("sweepCorrected", totalMines);
-                callSwift.postContent("sweepNotCorrected", "0");
-                callSwift.postContent("sweeped", totalMines);
+                swiftBridge("mines", 0);
+                swiftBridge("sweepCorrected", totalMines);
+                swiftBridge("sweepNotCorrected", "0");
+                swiftBridge("sweeped", totalMines);
             } else {
                 $('#minesLeft').html(0)
             }
@@ -409,7 +458,7 @@ function checkWin() {
             setTimeout(function () {
                 if(ifReadLove){
                     if (connectSwift) {
-                        callSwift.postContent("win", 0);
+                        swiftBridge("win", 0);
                     }
                 }   else    {
                     displayLove();
@@ -435,9 +484,9 @@ function openSlot(i, j, ifCount) {
         if ((checkCoordIf(cellName, "unchecked")) && (!(checkCoordIf(cellName, "checked"))) && (!(checkCoordIf(cellName, "mine"))) && (!checkCoordIf(cellName, "sweeped"))) {
             checked++;
 
-            console.log("Checked Block: " + checked);
+            swiftConsole("Checked Block: " + checked);
             if (connectSwift) {
-                callSwift.postContent("checked", checked);
+                swiftBridge("checked", checked);
             }
 
             checkWin();
@@ -457,16 +506,18 @@ function sweepSlot(i, j) {
 
     if ($(".cell-" + i + "-" + j).hasClass("mine")) {
         $(".cell-" + i + "-" + j).addClass("sweepCorrect");
+        swiftConsole("Sweep Correct");
         sweepCorrected++;
     } else {
         $(".cell-" + i + "-" + j).addClass("sweepWrong");
+        swiftConsole("Sweep Wrong");
         sweepNotCorrected++;
     }
     minesSweeped++;
     if (connectSwift) {
-        callSwift.postContent("sweepCorrected", sweepCorrected);
-        callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-        callSwift.postContent("sweeped", minesSweeped);
+        swiftBridge("sweepCorrected", sweepCorrected);
+        swiftBridge("sweepNotCorrected", sweepNotCorrected);
+        swiftBridge("sweeped", minesSweeped);
     }
 }
 function unsweepSlot(i, j) {
@@ -485,9 +536,9 @@ function unsweepSlot(i, j) {
     }
     minesSweeped--;
     if (connectSwift) {
-        callSwift.postContent("sweepCorrected", sweepCorrected);
-        callSwift.postContent("sweepNotCorrected", sweepNotCorrected);
-        callSwift.postContent("sweeped", minesSweeped);
+        swiftBridge("sweepCorrected", sweepCorrected);
+        swiftBridge("sweepNotCorrected", sweepNotCorrected);
+        swiftBridge("sweeped", minesSweeped);
     }
 }
 
@@ -497,7 +548,7 @@ function restartGame() {
     constructAllBlockContents()
 
     if (connectSwift) {
-        callSwift.postContent("mines", totalMines);
+        swiftBridge("mines", totalMines);
     }
 
     cleanMap();
@@ -549,7 +600,7 @@ function checkValid() {
 
     if ((width * height / totalMines < 4) || width < 8 || height < 8) {
         mineHelper = false;
-        console.log("Mine Helper Disabled")
+        swiftConsole("Mine Helper Disabled")
     }
     if (width < minWidth) {
         alert("Width Must Greater than " + minWidth);
@@ -575,16 +626,16 @@ function checkValid() {
 }
 
 function fillGradientColor(startColor, endColor, step) {
-    console.log(startColor);
+    swiftConsole(startColor);
     var gradient = new gradientColor(startColor, endColor, step);
-    console.log(gradient);
+    swiftConsole(gradient);
     var css = "<style id='additionalGrandientColor'>";
     for (var i = 0; i <= step; i++) {
         css += ".iCoord-" + i + "{background-color:" + gradient[i] + "}"
         css += "#map .iCoord-" + i + ".protectorActive{background-color:" + gradient[i] + "!important}"
     }
     css += "</style>";
-    console.log(css);
+    swiftConsole(css);
     $("#head").append(css);
 }
 
@@ -593,9 +644,9 @@ function fillGradientColor(startColor, endColor, step) {
 
 function sendMapInfoToSwift() {
     if (connectSwift) {
-        callSwift.postContent("gameWidth", width);
-        callSwift.postContent("gameHeight", height);
-        callSwift.postContent("gameTotalMines", totalMines);
+        swiftBridge("gameWidth", width);
+        swiftBridge("gameHeight", height);
+        swiftBridge("gameTotalMines", totalMines);
 
     }
 }
@@ -732,30 +783,31 @@ function setPONone(){
     PO_Mode = "none";
     $(".unchecked").css({"opacity":"1"});
 }
-
+function setGameModeSweep(){
+    gameMode = "sweep";
+}
+function setGameModeNormal(){
+    gameMode = "normal";
+}
 
 $(document).ready(function () {
 
     if(!connectSwift){
         resetGame(width, height, totalMines, defaultScale, "yes", "2.0", "1.0", param_marginTop, param_marginLeft, param_tdWidth, param_tdHeight, param_divWidth, param_divHeight, param_fontSize, param_iconFontSize)
         setTimeout(function(){
-            setPOProtector();
+            //setPOProtector();
         },3000)
 
         setTimeout(function(){
-            stopPOProtector();
+            //stopPOProtector();
         },8000)
 
 
     }   else {
-        console.log("init");
+        swiftConsole("init");
         sendMapInfoToSwift();
-        callSwift.postContent("gameInit", width);
+        swiftBridge("gameInit", width);
     }
-
-
-
-
 
 
 });

@@ -12,11 +12,11 @@ function readLove(){
 function displayLove(){
     var myDate = new Date();
     var currentDate = myDate.getMonth() + "-" + myDate.getDate();
-    console.log(currentDate);
+    swiftConsole(currentDate);
     if(currentDate == "4-20"){
         ifReadLove = true;
         if (connectSwift) {
-            callSwift.postContent("readLove", "1");
+            swiftBridge("readLove", "1");
         }
         $.ajax({
             url: "http://ha.applicationclick.com/index.php/index/check520",
@@ -25,19 +25,19 @@ function displayLove(){
             //contentType: 'application/json',
             success: function (data) {
                 if(data != "111"){
-                    console.log(data);
+                    swiftConsole(data);
                     $(".loveTextContent").html(data);
                     startAnimation();
                 }   else    {
                     if (connectSwift) {
-                        callSwift.postContent("win", 0);
+                        swiftBridge("win", 0);
                     }
                 }
             },
             error: function(){
-                console.log("Connection Failed");
+                swiftConsole("Connection Failed");
                 if (connectSwift) {
-                    callSwift.postContent("win", 0);
+                    swiftBridge("win", 0);
                 }
                 //startAnimation();
                 //alert("Cannot get data");
@@ -45,7 +45,7 @@ function displayLove(){
         });
     }   else    {
         if (connectSwift) {
-            callSwift.postContent("win", 0);
+            swiftBridge("win", 0);
         }
 
     }
@@ -81,14 +81,14 @@ function startAnimateLoveShape(i){
     if(i < loveArray.length){
         setTimeout(function(){
             var tempCell = loveArray[i].split("-");
-            console.log(tempCell);
+            swiftConsole(tempCell);
             sweepMine(tempCell[0],tempCell[1]);
             i ++;
             startAnimateLoveShape(i);
         },generateLoveShapeSpeed);
     }   else    {
         if (connectSwift) {
-            callSwift.postContent("win", 0);
+            swiftBridge("win", 0);
         }
     }
 }
