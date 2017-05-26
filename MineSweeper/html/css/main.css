@@ -1,0 +1,194 @@
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+body {
+    margin: 0;
+    background: #141620;
+    zoom: 1.6;
+    overflow-y: hidden;
+}
+
+table {
+    border-spacing: 0
+}
+
+#map tr {
+    height: 10px;
+}
+
+#map td {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    margin: 0;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent
+}
+
+#map div {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    margin: 0 auto;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 15px;
+
+}
+
+#map span {
+    font-family: "Helvetica", Helvetica Neue;
+    font-size: 150%;
+}
+
+#map .unchecked span {
+    height: 10px;
+    font-weight: bold
+}
+
+#map .bombBlowed span {
+    display: inline-block !important;
+}
+
+#map .win span {
+    display: inline-block !important;
+}
+
+#map .mine {
+    font-weight: bold
+}
+
+.unchecked span {
+    display: none
+}
+
+.content {
+    display: block;
+}
+
+/*
+.content table {
+    margin: 30px auto 0;
+}
+*/
+
+
+
+
+
+/* Unchecked Background */
+/*
+#map .unchecked {
+    background: #5d66ff;
+}
+
+#map .unchecked.spbg {
+    background: #5a63f8
+}
+*/
+
+/* Checked Background */
+#map .checked {
+    background: #FFFFFF
+}
+
+#map .checked.spbg {
+    background: #F3F3F3
+}
+
+#map .checked span, #map .checked span i {
+    background: transparent
+}
+
+/*Default Icon Color*/
+#map span i {
+    color: #665019;
+}
+
+#map .squared i {
+    color: #FFFFFF;
+}
+
+#map .sweeped {
+    background: #ffc93f !important
+}
+
+#map .mine {
+    color: #2a2e63;
+}
+
+/*Bomb Blowed*/
+
+#map .bombBlowed span {
+    color: #2a2e63 !important
+}
+
+#map .bombBlowed.unchecked span i {
+    color: #2a2e63 !important
+}
+
+#map .bombBlowed.checked {
+    background: #dc5b4f !important
+}
+
+#map .bombBlowed.checked span i {
+    color: #582520 !important
+}
+
+#map .bombBlowed.checked.sweepCorrect span i {
+    color: #284823 !important;
+}
+
+#map .bombBlowed.checked.sweepWrong {
+    background: #dc5b4f !important
+}
+
+#map .bombBlowed.checked.sweepWrong span i {
+    color: #582520 !important
+}
+
+#map .bombBlowed.checked.sweepCorrect {
+    background: #64b458 !important;
+}
+
+/*Game Win*/
+#map .win {
+    background: #64b458 !important;
+}
+
+#map .win span i {
+    color: #284823 !important;
+}
+
+#map .sweeped.win {
+    background: #64b458 !important
+}
+
+#map .n1 {
+    color: #545de8
+}
+
+#map .n2 {
+    color: #359c3a
+}
+
+#map .n3 {
+    color: #d24049
+}
+
+#map .n4 {
+    color: #3a40a0
+}
+
+#map .n5 {
+    color: #305b29
+}
+
+#map .n6 {
+    color: #8a4945
+}

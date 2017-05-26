@@ -1,0 +1,39 @@
+#map .squaredFull {
+    background-color: rgb(241, 193, 43);
+}
+
+#map .squared.squaredAlpha {
+    background-color: rgba(241, 193, 43, 0.2);
+}
+#map .squared.checked {
+    background-color: rgba(241, 193, 43, 0.2);
+}
+#map .protectorActive span{
+    display:none;
+}
+
+
+
+#map .squaredFull {
+
+    background-color: rgb(247, 92, 3);
+    /*
+    animation-name: squareFillChange;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+    */
+    border-radius: 10px;
+}
+#map .squared.squaredAlpha {
+    background-color: rgba(247, 92, 3, 0.2);
+}
+#map .squared.checked {
+    background-color: rgba(247, 92, 3, 0.2);
+}
+
+/* Standard syntax */
+@keyframes squareFillChange {
+    0%   {background-color: #9C89B8;}
+    50%  {background-color: #E8B4BC;}
+    100%  {background-color: #9C89B8;}
+}

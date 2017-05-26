@@ -1,0 +1,21 @@
+#loveText {
+    display: none;
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden
+}
+
+#loveText .loveTextContent {
+    margin-left: 20px;
+    margin-right: 20px; /*margin-top:-750px*/;
+    margin-top: 450px;
+    text-align: center
+}
+
+#loveText .loveTextContent span {
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 30px
+}

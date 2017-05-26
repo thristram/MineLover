@@ -9,39 +9,29 @@
 import UIKit
 import JavaScriptCore
 
-@objc protocol JavaScriptMethodProtocol: JSExport {
-    var value: String {get set}
-    func postContent(_ value: String, _ number: String)
-    func postContent(_ value: String, number: String)
-}
 
-class JavaScriptMethod : NSObject, JavaScriptMethodProtocol {
-
-    
-    var value: String {
-        get { return ""}
-        set {          }
-    }
-    
-    func postContent(_ value: String, _ number: String) {
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "javascriptEvent"), object: nil, userInfo: ["method": value,"value":number])
-    }
-    
-    func postContent(_ value: String, number: String) {
-        //Method Name: postContentNumber
-    }
-}
 
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     
+    ////////////////////////////////
+    ////////STORAGE VARIABLES///////
+    ////////////////////////////////
     
+    //iCloud
     var iCloudKeyStore: NSUbiquitousKeyValueStore? = NSUbiquitousKeyValueStore()
-    var defaultKeyStore: UserDefaults? = UserDefaults.standard
     let iCloudTextKey = "iCloudText"
+    
+    
+    //Local
+    var defaultKeyStore: UserDefaults? = UserDefaults.standard
     let DefaultsTextKey = "DefaultsText"
+    
+    
+    ////////////////////////////////
+    //////////GAME VARIABLES////////
+    ////////////////////////////////
     
     var totalMines = 0;
     var gameWidth = 0;
@@ -80,6 +70,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var gameStarted = false;
     var squareUsed = false;
     var protectorUsed = false;
+    var enablePowerUps = true;
     
     var timerCounter = 0;
     var timer = Timer()
@@ -90,8 +81,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var jsContext : JSContext!
     
     
-    
-    
+    var powerUp1Range: [String] = ["[LOCKED]", "1x3", "2x3", "3x3", "5x3", "5x5", "Full"]
+    var powerUp2Range: [String] = ["[LOCKED]", "5x5", "8x13", "10x17", "12x20", "Unlimited", "Full"]
+    var powerUp2TimeLimit: [String] = ["1s", "2s", "3s", "4s", "5s", "6s", "Full"]
+
     
 
     var lv_1_Statistics:[String:String] = [
@@ -143,58 +136,294 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     ];
     var saveCoins = 0;
     var saveGems = 0;
+    var powerUp1:[String:Int] = ["remaining" : 0, "level": 0]
+    var powerUp2:[String:Int] = ["remaining" : 0, "level": 0, "time": 0]
+    var powerUp3:[String:Int] = ["remaining" : 0, "level": 0]
+    
+
+    
+    var dailyCheckIn:[String:Int] = [
+        "Gem": 2, "lastClaimGem": 0,
+        "Coin": 2000, "lastClaimCoin": 0
+    ]
+    
+    
+    
+    var priceList: [String:Int] = [
+        "Passes_XRay" : 1000, "Passes_XRay_type": 1,
+        "Passes_Sweeper" : 1500, "Passes_Sweeper_type": 1,
+        "Passes_Protector" : 1000, "Passes_Protector_type": 1,
+        
+        "Ability_XRay_lv_1" : 2, "Ability_XRay_lv_1_type": 2,
+        "Ability_XRay_lv_2" : 3, "Ability_XRay_lv_2_type": 2,
+        "Ability_XRay_lv_3" : 5, "Ability_XRay_lv_3_type": 2,
+        "Ability_XRay_lv_4" : 8, "Ability_XRay_lv_4_type": 2,
+        "Ability_XRay_lv_5" : 10, "Ability_XRay_lv_5_type": 2,
+        
+        "Ability_Sweeper_lv_1" : 2, "Ability_Sweeper_lv_1_type": 2,
+        "Ability_Sweeper_lv_2" : 3, "Ability_Sweeper_lv_2_type": 2,
+        "Ability_Sweeper_lv_3" : 5, "Ability_Sweeper_lv_3_type": 2,
+        "Ability_Sweeper_lv_4" : 8, "Ability_Sweeper_lv_4_type": 2,
+        "Ability_Sweeper_lv_5" : 10, "Ability_Sweeper_lv_5_type": 2,
+        
+        "Ability_Sweeper_time_1" : 2, "Ability_Sweeper_time_1_type": 2,
+        "Ability_Sweeper_time_2" : 3, "Ability_Sweeper_time_2_type": 2,
+        "Ability_Sweeper_time_3" : 4, "Ability_Sweeper_time_3_type": 2,
+        "Ability_Sweeper_time_4" : 5, "Ability_Sweeper_time_4_type": 2,
+        "Ability_Sweeper_time_5" : 6, "Ability_Sweeper_time_5_type": 2,
+        
+        "Ability_protector_lv_1" : 2, "Ability_protector_lv_1_type": 2,
+        "Ability_protector_lv_2" : 3, "Ability_protector_lv_2_type": 2,
+        "Ability_protector_lv_3" : 5, "Ability_protector_lv_3_type": 2,
+        "Ability_protector_lv_4" : 8, "Ability_protector_lv_4_type": 2,
+        "Ability_protector_lv_5" : 10, "Ability_protector_lv_5_type": 2,
+        
+        "currency_1_price" : 1, "currency_1_price_type": 2, "currency_1_product": 2000, "currency_1_product_type": 1,
+        "currency_2_price" : 2, "currency_2_price_type": 2, "currency_2_product": 4500, "currency_2_product_type": 1,
+        "currency_3_price" : 5, "currency_3_price_type": 2, "currency_3_product": 15000, "currency_3_product_type": 1,
+        
+        
+        
+        ]
 
     
     
-    @IBOutlet weak var mineWebView: UIWebView!
-    @IBOutlet weak var pauseView: UIView!
-    @IBOutlet weak var menuView: UIView!
-
+    ////////////////////////////////
+    /////MAIN GAME VIEW ELEMENTS////
+    ////////////////////////////////
     
-    @IBOutlet weak var menuIcon: UIImageView!
-    @IBOutlet weak var menuText1: UILabel!
-    @IBOutlet weak var menuText2: UILabel!
-    @IBOutlet weak var tryAgainButton: UIButton!
-    @IBOutlet weak var levelSegmentControl: UISegmentedControl!
     
-    @IBOutlet weak var resumeButton: UIButton!
-    
-    @IBOutlet weak var tableView: UITableView!
-
-   
-    
-    @IBOutlet weak var leaderboardView: UIView!
-    @IBOutlet weak var versionLabel: UILabel!
-    
-    @IBOutlet weak var powerUpButton: UIButton!
-    @IBOutlet weak var pauseButton: UIButton!
-    @IBOutlet weak var mineButton: UIButton!
+    //STATUS BAR
+    @IBOutlet weak var mainViewStatusBar: UIView!
     @IBOutlet weak var mainViewMineRemaining: UILabel!
     @IBOutlet weak var mainViewTimeLeft: UILabel!
     
-    @IBOutlet weak var mainViewStatusBar: UIView!
-
+    //STATUS BAR BUTTONS
+    @IBOutlet weak var powerUpButton: UIButton!
+    @IBOutlet weak var pauseButton: UIButton!
+    @IBOutlet weak var mineButton: UIButton!
+    
+    //MAIN WEBVIEW
+    @IBOutlet weak var mineWebView: UIWebView!
+    
+    
+    
+    ////////////////////////////////
+    //////////MENU ELEMENTS/////////
+    ////////////////////////////////
+    
+    
+    @IBOutlet weak var pauseView: UIView!
+    @IBOutlet weak var menuView: UIView!
+    
+    //COIN & GEMS
+    @IBOutlet weak var gemLabel: UILabel!
     @IBOutlet weak var coinLabel: UILabel!
+    
+    //MENU BUTTONS
+    @IBOutlet weak var tryAgainButton: UIButton!
+    @IBOutlet weak var resumeButton: UIButton!
+    
+    //OTHERS
+    @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var levelSegmentControl: UISegmentedControl!
+    @IBOutlet weak var menuIcon: UIImageView!
+    @IBOutlet weak var menuText1: UILabel!
+    @IBOutlet weak var menuText2: UILabel!
+    
+    
+    
+    
+    ////////////////////////////////
+    //////LEADERBOARD ELEMENTS//////
+    ////////////////////////////////
+    
+    @IBOutlet weak var leaderboardView: UIView!
+    @IBOutlet weak var tableView: UITableView!
+    
+    
+    ////////////////////////////////
+    ////////POWERUP ELEMENTS////////
+    ////////////////////////////////
+    
     @IBOutlet weak var powerUpMenu: UIView!
+    
+    //POWERUP 1
+    @IBOutlet weak var powerUp1View: UIView!
+    @IBOutlet weak var powerUp1Image: UIImageView!
+    @IBOutlet weak var powerUp1Title: UILabel!
+    @IBOutlet weak var powerUp1Description: UILabel!
+    
+    @IBOutlet weak var powerUp1ProgressBar: UIView!
+    @IBOutlet weak var powerUp1ProgressBar_1: UIView!
+    @IBOutlet weak var powerUp1ProgressBar_2: UIView!
+    @IBOutlet weak var powerUp1ProgressBar_3: UIView!
+    @IBOutlet weak var powerUp1ProgressBar_4: UIView!
+    @IBOutlet weak var powerUp1ProgressBar_5: UIView!
+    
+    @IBOutlet weak var powerUp1Lock: UIImageView!
+    @IBOutlet weak var powerUp1Status: UILabel!
+    
+    
+    //POWERUP 2
+    @IBOutlet weak var powerUp2View: UIView!
+    @IBOutlet weak var powerUp2Title: UILabel!
+    @IBOutlet weak var powerUp2Description: UILabel!
+    @IBOutlet weak var powerUp2Image: UIImageView!
+
+    @IBOutlet weak var powerUp2ProgressBar: UIView!
+    @IBOutlet weak var powerUp2ProgressBar_1: UIView!
+    @IBOutlet weak var powerUp2ProgressBar_2: UIView!
+    @IBOutlet weak var powerUp2ProgressBar_3: UIView!
+    @IBOutlet weak var powerUp2ProgressBar_4: UIView!
+    @IBOutlet weak var powerUp2ProgressBar_5: UIView!
+
+    @IBOutlet weak var powerUp2Lock: UIImageView!
+    @IBOutlet weak var powerUp2Status: UILabel!
+    
+    
+    ////////////////////////////////
+    ////////GEMVIEW ELEMENTS////////
+    ////////////////////////////////
+    
+    @IBOutlet weak var gemView: UIView!
+    @IBOutlet weak var gemImage: UIImageView!
+    @IBOutlet weak var gemTitle: UILabel!
+    @IBOutlet weak var gemDescription: UILabel!
+    @IBOutlet weak var coinGemViewButton: UIButton!
+    @IBOutlet weak var gemGemViewButton: UIButton!
+    @IBOutlet weak var coinGemViewLabel: UILabel!
+    @IBOutlet weak var gemGemViewLabel: UILabel!
+    @IBOutlet weak var resumeGemViewButton: UIButton!
+
+    
+    ////////////////////////////////
+    /////////STORE ELEMENTS/////////
+    ////////////////////////////////
+    
+    @IBOutlet weak var coinStoreView: EFCountingLabel!
+    @IBOutlet weak var gemStoreView: EFCountingLabel!
+    @IBOutlet weak var storeSegmentControl: UISegmentedControl!
+    @IBOutlet weak var storeView: UIView!
+    @IBOutlet weak var passesTableView: UITableView!
+    @IBOutlet weak var abilitiesTableView: UITableView!
+    @IBOutlet weak var currencyTableView: UITableView!
+    @IBOutlet weak var dealsTableView: UITableView!
+    
+    //Segement Control Elements
+    @IBOutlet weak var storeSegmentBarContainer: UIView!
+    @IBOutlet weak var storeSegmentBar1: UIView!
+    @IBOutlet weak var storeSegmentBar2: UIView!
+    @IBOutlet weak var storeSegmentBar3: UIView!
+    @IBOutlet weak var storeSegmentBar4: UIView!
+    
+    
+    
+    
+    @IBAction func storeSelection(_ sender: Any) {
+        switch((sender as AnyObject).selectedSegmentIndex){
+        case 0:
+            switchToStoreDeals()
+            break;
+        case 1:
+            switchToStoreCurrency()
+            break;
+        case 2:
+            switchToStoreAbility()
+            break;
+        case 3:
+            switchToStorePasses()
+            break;
+        default:
+            break;
+            
+        }
+    }
+    
+    func switchToStoreDeals(){
+        self.dealsTableView.isHidden = false;
+        self.currencyTableView.isHidden = true;
+        self.abilitiesTableView.isHidden = true;
+        self.passesTableView.isHidden = true;
+        
+        self.storeSegmentBar1.isHidden = false;
+        self.storeSegmentBar2.isHidden = true;
+        self.storeSegmentBar3.isHidden = true;
+        self.storeSegmentBar4.isHidden = true;
+
+    }
+    func switchToStoreCurrency(){
+        self.dealsTableView.isHidden = true;
+        self.currencyTableView.isHidden = false;
+        self.abilitiesTableView.isHidden = true;
+        self.passesTableView.isHidden = true;
+        
+        self.storeSegmentBar1.isHidden = true;
+        self.storeSegmentBar2.isHidden = false;
+        self.storeSegmentBar3.isHidden = true;
+        self.storeSegmentBar4.isHidden = true;
+
+    }
+    func switchToStoreAbility(){
+        self.dealsTableView.isHidden = true;
+        self.currencyTableView.isHidden = true;
+        self.abilitiesTableView.isHidden = false;
+        self.passesTableView.isHidden = true;
+        
+        self.storeSegmentBar1.isHidden = true;
+        self.storeSegmentBar2.isHidden = true;
+        self.storeSegmentBar3.isHidden = false;
+        self.storeSegmentBar4.isHidden = true;
+    }
+    
+    func switchToStorePasses(){
+        self.dealsTableView.isHidden = true;
+        self.currencyTableView.isHidden = true;
+        self.abilitiesTableView.isHidden = true;
+        self.passesTableView.isHidden = false;
+        
+        self.storeSegmentBar1.isHidden = true;
+        self.storeSegmentBar2.isHidden = true;
+        self.storeSegmentBar3.isHidden = true;
+        self.storeSegmentBar4.isHidden = false;
+    }
+    @IBAction func storePauseViewPressed(_ sender: Any) {
+        showStoreView()
+    }
+    @IBAction func closeStorePressed(_ sender: Any) {
+        hideStoreView();
+    }
+    
+    @IBAction func resumeGemViewPressed(_ sender: Any) {
+        hideGemView()
+    }
+    @IBAction func coinGemViewPressed(_ sender: Any) {
+    }
+    @IBAction func gemGemViewPressed(_ sender: Any) {
+    }
+
+    
+    @IBAction func coinButtonPressed(_ sender: Any) {
+    }
+    @IBAction func gemButtonPressed(_ sender: Any) {
+    }
+    
+    
     
     @IBAction func powerUpPressed(_ sender: Any) {
         self.stopTimer();
         if(gameStarted){
             
-            let alert = UIAlertController(title: "OOPS!", message: "Comming Soon!", preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
-                // perhaps use action.title here
-            })
-            self.present(alert, animated: true)
- /*
-            showPowerUpMenu()
-             */
+            if(enablePowerUps){
+                showPowerUpMenu()
+            }   else   {
+                self.notifyUser("CAUTION", message: "Comming Soon!")
+
+            }
+
         }   else{
-            let alert = UIAlertController(title: "OOPS!", message: "Power ups are avalible after game started", preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { action in
-                // perhaps use action.title here
-            })
-            self.present(alert, animated: true)
+            self.notifyUser("CAUTION", message: "Power ups are avalible after game started")
+
         }
         
     }
@@ -430,45 +659,72 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     @IBAction func powerUp1Click(_ sender: Any) {
         if(gameStarted){
-            
-            if(PO_mode == "none"){
-                
-                if(!squareUsed){
-                    PO_mode = "square"
-                    squareUsed = true;
-                    self.mineWebView.stringByEvaluatingJavaScript(from: "setPOSqaure()")
+            if((powerUp1["level"]!) > 0){
+                if(powerUp1["remaining"]! > 0){
+                    if(PO_mode == "none"){
+                    
+                    
+                        if(!squareUsed){
+                            powerUp1["remaining"]! -= 1
+                            saveRecord()
+                            self.disablePowerUp1();
+                        
+                            /*POWERUP1 PROGRESS*/
+                        
+                            PO_mode = "square"
+                            squareUsed = true;
+                            let powerUpLevel = powerUp1["level"]!
+                            self.mineWebView.stringByEvaluatingJavaScript(from: "setPOSqaure(\(powerUpLevel), \(powerUpLevel))")
+                        }
+                        startTimer();
+                        hidePowerUpMenu()
+                    }
+                }   else    {
+                    print("X-Ray pass is \(String(describing: powerUp1["remaining"])) which is < 0")
+                    self.switchToStorePasses()
+                    showStoreView();
                 }
-                startTimer();
-                hidePowerUpMenu()
-                
-                
-                
+            }   else{
+                self.switchToStoreAbility()
+                showStoreView();
                 
             }
         }
-
     }
     @IBAction func powerUp2Click(_ sender: Any) {
         if(gameStarted){
-            
-            if(PO_mode == "none"){
+            if((powerUp2["level"]!) > 0){
+                if(powerUp2["remaining"]! > 0){
+                    if(PO_mode == "none"){
+                    
+                        if(!protectorUsed){
+                            powerUp2["remaining"]! -= 1
+                            saveRecord()
+                            self.disablePowerUp2();
+                            /*POWERUP2 PROGRESS*/
+                            PO_mode = "protector"
+                            protectorUsed = true;
+                            let powerUpLevel = powerUp2["level"]!
+                            let powerUpTime = powerUp2["time"]!
+                            self.mineWebView.stringByEvaluatingJavaScript(from: "setPOProtector(\(powerUpLevel), \(powerUpTime))")
+                        }
+                        startTimer();
+                        hidePowerUpMenu()
                 
-                
-                if(!protectorUsed){
-                    PO_mode = "protector"
-                    protectorUsed = true;
-                    self.mineWebView.stringByEvaluatingJavaScript(from: "setPOProtector()")
+                    }
+                }   else    {
+                    print("Protector Pass is \(String(describing: powerUp1["remaining"])) which is < 0")
+                    self.switchToStorePasses()
+                    showStoreView();
                 }
-                startTimer();
-                hidePowerUpMenu()
-                
-                
-                
-                
+            }   else{
+                self.switchToStoreAbility()
+                showStoreView();
             }
         }
     }
     @IBAction func powerUpStoreClick(_ sender: Any) {
+        showStoreView();
     }
     
     func hidePowerUpMenu(){
@@ -479,6 +735,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
     }
     func showPowerUpMenu(){
+        updatePowerUpText()
         self.powerUpMenu.isHidden = false
         
         UIView.animate(withDuration: 0.5, animations: {
@@ -487,6 +744,121 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
         });
         
+    }
+    
+    
+    func updatePowerUpText(){
+        
+        var powerUp1BarElements: [UIView] = [self.powerUp1ProgressBar_1, self.powerUp1ProgressBar_2, self.powerUp1ProgressBar_3, self.powerUp1ProgressBar_4, self.powerUp1ProgressBar_5]
+        var powerUp2BarElements: [UIView] = [self.powerUp2ProgressBar_1, self.powerUp2ProgressBar_2, self.powerUp2ProgressBar_3, self.powerUp2ProgressBar_4, self.powerUp2ProgressBar_5]
+        
+        self.powerUp1Description.text = "Detect any mines\nwithin \(self.powerUp1Range[self.powerUp1["level"]!]) range"
+        self.powerUp2Description.text = "click anywhere inside a\nin \(self.powerUp2Range[self.powerUp2["level"]!]) block within \(self.powerUp2TimeLimit[powerUp2["time"]!])"
+        if((self.powerUp2["level"]!) == 5){
+            self.powerUp2Description.text = "click anywhere\nwithin \(self.powerUp2TimeLimit[self.powerUp2["time"]!])"
+        }
+        
+        
+        if((self.powerUp1["level"]!) < 1){
+            self.powerUp1Description.text = "Detect hidden mines.\nUnlock Power Up in Store"
+            self.powerUp1Lock.isHidden = false;
+            disablePowerUp1()
+            
+        }   else    {
+            self.powerUp1Lock.isHidden = true
+            if(powerUp1["remaining"]! < 1){
+                self.powerUp1Status.isHidden = false
+                self.powerUp1Status.text = "NO PASSES LEFT"
+                self.disablePowerUp1();
+            }   else if(squareUsed)   {
+                self.powerUp1Status.isHidden = false
+                self.powerUp1Status.text = "POWER UP USED"
+                self.disablePowerUp1();
+            }   else{
+                self.powerUp1Status.isHidden = true;
+                self.enablePowerUp1();
+            }
+            
+        }
+        
+        
+        
+        if((self.powerUp2["level"]!) < 1){
+            self.powerUp2Description.text = "Crazy click\nUnlock Power Up in Store"
+            self.powerUp2Lock.isHidden = false;
+            disablePowerUp2()
+        }   else{
+            
+            self.powerUp2Lock.isHidden = true
+            if(powerUp2["remaining"]! < 1){
+                self.powerUp2Status.isHidden = false
+                self.powerUp2Status.text = "NO PASSES LEFT"
+                self.disablePowerUp2();
+            }   else if(protectorUsed)   {
+                self.powerUp2Status.isHidden = false
+                self.powerUp2Status.text = "POWER UP USED"
+                self.disablePowerUp2();
+            }   else{
+                self.powerUp2Status.isHidden = true;
+                self.enablePowerUp2();
+            }
+        }
+        
+        
+        
+        for i in (1...5){
+            if(i <= (powerUp1["remaining"]!)){
+                powerUp1BarElements[i-1].isHidden = false;
+            }   else{
+                powerUp1BarElements[i-1].isHidden = true;
+            }
+            if(i <= (powerUp2["remaining"]!)){
+                powerUp2BarElements[i-1].isHidden = false;
+            }   else{
+                powerUp2BarElements[i-1].isHidden = true;
+            }
+            
+        }
+
+        
+        
+    }
+    
+    func disablePowerUp1(){
+        //self.powerUp1View.alpha = 0.5;
+        self.powerUp1Image.alpha = 0.5
+        self.powerUp1Title.alpha = 0.5
+        self.powerUp1Description.alpha = 0.5
+        self.powerUp1ProgressBar.alpha = 0.5
+        self.powerUp1Status.alpha = 0.5
+    }
+    
+    func enablePowerUp1(){
+        //self.powerUp1View.alpha = 1.0;
+        self.powerUp1Image.alpha = 1.0
+        self.powerUp1Title.alpha = 1.0
+        self.powerUp1Description.alpha = 1.0
+        self.powerUp1ProgressBar.alpha = 1.0
+        self.powerUp1Status.alpha = 1.0
+    }
+    
+    func disablePowerUp2(){
+        //self.powerUp2View.alpha = 0.5;
+        self.powerUp2Image.alpha = 0.5
+        self.powerUp2Title.alpha = 0.5
+        self.powerUp2Description.alpha = 0.5
+        self.powerUp2ProgressBar.alpha = 0.5
+        self.powerUp2Status.alpha = 0.5
+    
+    }
+    
+    func enablePowerUp2(){
+        //self.powerUp2View.alpha = 1.0;
+        self.powerUp2Image.alpha = 1.0
+        self.powerUp2Title.alpha = 1.0
+        self.powerUp2Description.alpha = 1.0
+        self.powerUp2ProgressBar.alpha = 1.0
+        self.powerUp2Status.alpha = 1.0
     }
 
     func startNewGame(){
@@ -533,7 +905,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
+        
+        passesTableView.delegate = self
+        passesTableView.dataSource = self
+        
+        
+        currencyTableView.delegate = self
+        currencyTableView.dataSource = self
 
+        dealsTableView.delegate = self
+        dealsTableView.dataSource = self
+        
+        abilitiesTableView.delegate = self
+        abilitiesTableView.dataSource = self
+        
+        dealsTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        passesTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        currencyTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        abilitiesTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
         
         
         //MENU
@@ -543,12 +932,33 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         resumeButton.layer.borderColor = UIColor.white.cgColor
         levelSegmentControl.selectedSegmentIndex = 1;
         
+        //GEM View
+        resumeGemViewButton.layer.borderColor = UIColor.white.cgColor
+        gemView.alpha = 0.0;
+        gemView.isHidden = true;
+        self.gemGemViewLabel.text = "\(self.saveGems)";
+        
+        
+        //STORE View
+        
+        
+        
+        let attr = NSDictionary(object: UIFont(name: "OpenSans", size: 15.0)!, forKey: NSFontAttributeName as NSCopying)
+        self.storeSegmentControl.setTitleTextAttributes(attr as? [AnyHashable : Any], for: .normal)
+        self.storeSegmentControl.setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.white], for: .normal)
+        self.storeSegmentControl.tintColor = UIColor.clear
+        
         
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                 self.versionLabel.text = "MineLover v\(version) Build \(build)"
             }
         }
+        self.coinStoreView.format = "%d"
+        self.gemStoreView.format = "%d"
+        
+        self.coinStoreView.text = "\(self.saveCoins)";
+        self.gemStoreView.text = "\(self.saveGems)";
         
         
         
@@ -558,6 +968,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         //Mine View
         mineWebView.scrollView.isMultipleTouchEnabled = false;
+        
+        
         loadHTML()
         //JS Bridge
         NotificationCenter.default.addObserver(self, selector: #selector(self.handelJSEvent(_:)), name: NSNotification.Name(rawValue: "javascriptEvent"), object: nil)
@@ -709,6 +1121,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
 
         coinLabel.text = "\(saveCoins)";
+        gemLabel.text = "\(saveGems)";
         menuView.isHidden = false
         UIView.animate(withDuration: 0.5, animations: {
             _self.menuView.alpha = 1.0
@@ -724,6 +1137,125 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.menuView.isHidden = true
         
         
+    }
+    func showStoreView(){
+        self.storeView.isHidden = false
+        self.coinStoreView.text = "\(saveCoins)";
+        self.gemStoreView.text = "\(saveGems)";
+        self.dealsTableView.reloadData();
+        self.passesTableView.reloadData();
+        self.abilitiesTableView.reloadData();
+        self.currencyTableView.reloadData();
+        self.stopTimer();
+        UIView.animate(withDuration: 0.5, animations: {
+            self.storeView.alpha = 1.0
+            self.mainViewStatusBar.alpha = 0.0
+        });
+    }
+    func hideStoreView(){
+        updatePowerUpText()
+        UIView.animate(withDuration: 0.5, animations: {
+            self.storeView.alpha = 0.0
+            self.mainViewStatusBar.alpha = 1.0
+        }, completion: { (finished: Bool) in
+            self.storeView.isHidden = true
+            self.startTimer();
+            self.coinLabel.text = "\(self.saveCoins)";
+            self.gemLabel.text = "\(self.saveGems)";
+        
+        });
+    }
+    
+    func showProtectCountDownView(){
+        self.gemView.isHidden = false;
+        self.coinGemViewLabel.text = "\(self.saveCoins)";
+        self.gemImage.image = UIImage(named: "number_3")
+        self.gemTitle.text = "READY?"
+        self.gemDescription.text = "You may click anywhere\nmarked in blue!"
+        self.resumeGemViewButton.setTitle("START CLICK", for: .normal)
+        self.resumeGemViewButton.isHidden = true;
+        UIView.animate(withDuration: 0.5, animations: {
+            self.gemView.alpha = 1.0
+            self.mainViewStatusBar.alpha = 0.0
+        }, completion: { (finished: Bool) in
+            let when = DispatchTime.now();
+            DispatchQueue.main.asyncAfter(deadline: when + 1) {
+                self.gemImage.image = UIImage(named: "number_2")
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 2) {
+                self.gemImage.image = UIImage(named: "number_1")
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 3) {
+                self.hideGemView()
+                
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 3.5) {
+                self.executeJS(jsCode: "startPOProtector()")
+            }
+            
+        });
+        
+    }
+    func showGemView(){
+        let _self = self;
+        self.gemView.isHidden = false;
+        self.coinGemViewLabel.text = "\(self.saveCoins)";
+        self.gemImage.image = UIImage(named: "gem")
+        self.gemTitle.text = "You got a GEM!"
+        self.gemDescription.text = "You may use the GEM to purchase Power-Ups\nor Upgrade Power-Ups"
+        self.resumeGemViewButton.setTitle("RESUMME", for: .normal)
+        self.resumeGemViewButton.isHidden = false;
+        stopTimer();
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            _self.gemView.alpha = 1.0
+            _self.mainViewStatusBar.alpha = 0.0
+        }, completion: { (finished: Bool) in
+            
+            
+            
+            //
+            UIView.animate(withDuration: 0.3, animations: {
+                _self.gemGemViewLabel.transform = CGAffineTransform(scaleX: 3.0, y: 3.0);
+                
+            }, completion: { (finished: Bool) in
+                _self.gemGemViewLabel.text = "\(_self.saveGems)";
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    _self.gemGemViewLabel.transform = CGAffineTransform(scaleX: 0.2, y: 0.2);
+                    
+                }, completion: { (finished: Bool) in
+                    
+                    UIView.animate(withDuration: 0.15, animations: {
+                       _self.gemGemViewLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
+                        
+                    }, completion: { (finished: Bool) in
+                        _self.hideGemView()
+                        /*
+                        let when = DispatchTime.now();
+                        DispatchQueue.main.asyncAfter(deadline: when + 1) {
+                            
+ 
+                        }
+                        */
+
+                    });
+                });
+            });
+
+            
+            
+        });
+        
+    }
+    func hideGemView(){
+        UIView.animate(withDuration: 0.5, animations: {
+            self.gemView.alpha = 0.0
+            self.mainViewStatusBar.alpha = 1.0
+        }, completion: { (finished: Bool) in
+            self.gemView.isHidden = true
+            self.startTimer();
+        });
     }
     
     /*
@@ -816,6 +1348,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         case "stopSquare":
             _self.PO_mode = "none"
             break;
+        case "gemDetected":
+            _self.saveGems = _self.saveGems + Int(value)!;
+            saveRecord();
+            showGemView();
+            break;
+        case "protectorReady":
+            self.showProtectCountDownView()
+            break;
         default:
             break;
             
@@ -872,7 +1412,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
     }
-    
+
     /*
  
      PUBLIC METHOD
@@ -979,12 +1519,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func saveRecord(){
+        print("RECORD SAVED");
+        print("Coins: \(saveCoins), Gems: \(saveGems)");
         UserDefaults.standard.set(lv_1_Statistics, forKey: "lv_1_Statistics")
         UserDefaults.standard.set(lv_2_Statistics, forKey: "lv_2_Statistics")
         UserDefaults.standard.set(lv_3_Statistics, forKey: "lv_3_Statistics")
         UserDefaults.standard.set(lv_4_Statistics, forKey: "lv_4_Statistics")
         UserDefaults.standard.set(saveCoins, forKey: "coin")
         UserDefaults.standard.set(saveGems, forKey: "gem")
+        UserDefaults.standard.set(powerUp1, forKey: "powerUp1")
+        UserDefaults.standard.set(powerUp2, forKey: "powerUp2")
+        UserDefaults.standard.set(powerUp3, forKey: "powerUp3")
+        UserDefaults.standard.set(dailyCheckIn, forKey: "dailyCheckIn")
 
         UserDefaults.standard.synchronize()
         
@@ -1025,10 +1571,37 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         if let result = UserDefaults.standard.value(forKey: "gem"){
             saveGems = result as! Int
+
         }   else {
             saveGems = 0
-            UserDefaults.standard.set(saveGems, forKey: "coin")
+            UserDefaults.standard.set(saveGems, forKey: "gem")
         }
+        
+        if let result = UserDefaults.standard.value(forKey: "powerUp1"){
+            powerUp1 = result as! [String : Int];
+        }   else {
+            UserDefaults.standard.set(powerUp1, forKey: "powerUp1")
+        }
+        
+        if let result = UserDefaults.standard.value(forKey: "powerUp2"){
+            powerUp2 = result as! [String : Int];
+        }   else {
+            UserDefaults.standard.set(powerUp2, forKey: "powerUp2")
+        }
+
+        if let result = UserDefaults.standard.value(forKey: "powerUp3"){
+            powerUp3 = result as! [String : Int];
+        }   else {
+            UserDefaults.standard.set(powerUp3, forKey: "powerUp3")
+        }
+        if let result = UserDefaults.standard.value(forKey: "dailyCheckIn"){
+            dailyCheckIn = result as! [String : Int];
+        }   else {
+            UserDefaults.standard.set(dailyCheckIn, forKey: "dailyCheckIn")
+        }
+
+        
+
 
         print (lv_1_Statistics)
         print (lv_2_Statistics)
@@ -1236,152 +1809,803 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        
+        if tableView == self.tableView {
+            return 4
+        }   else if tableView == self.dealsTableView {
+            return 1
+        }   else if tableView == self.currencyTableView {
+            return 1
+        }   else if tableView == self.abilitiesTableView {
+            return 1
+        }   else if tableView == self.passesTableView {
+            return 1
+        }   else   {
+            return 1
+        }
+        
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch (indexPath.row){
-        case 0:
-            return 60.0;
-        case 6:
-            return 180.0;
-        default:
-            return 50.0
+        if tableView == self.tableView {
+            return 7
+        }   else if tableView == self.dealsTableView {
+            return 2
+        }   else if tableView == self.currencyTableView {
+            return 3
+        }   else if tableView == self.abilitiesTableView {
+            return 3
+        }   else if tableView == self.passesTableView {
+            return 2
+        }   else   {
+            return 3
         }
 
     }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        if tableView == self.tableView {
+            switch (indexPath.row){
+            case 0:
+                return 60.0;
+            case 6:
+                return 180.0;
+            default:
+                return 50.0
+            }
+        }   else if tableView == self.dealsTableView {
+            return 120.0
+        }   else if tableView == self.currencyTableView {
+            return 120.0
+        }   else if tableView == self.abilitiesTableView {
+            return 120.0
+        }   else if tableView == self.passesTableView {
+            return 120.0
+        }   else   {
+            return 120.0
+        }
+        
+
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        switch (indexPath.row){
-        case 0:
-            let identfier = "lbTitleCell"
-            let cell:leaderboardTitleableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardTitleableViewCell
-            cell.selectionStyle = .none
-
-            switch (indexPath.section){
+        if (tableView == self.tableView) {
+            switch (indexPath.row){
             case 0:
-                cell.titleLabel.text = "Easy Mode"
-                break;
-            case 1:
-                cell.titleLabel.text = "Medium Mode"
-                break;
-            case 2:
-                cell.titleLabel.text = "Expert Mode"
-                break;
-            case 3:
-                cell.titleLabel.text = "Crazy Mode"
-                break;
+                let identfier = "lbTitleCell"
+                let cell:leaderboardTitleableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardTitleableViewCell
+                cell.selectionStyle = .none
+                
+                switch (indexPath.section){
+                case 0:
+                    cell.titleLabel.text = "Easy Mode"
+                    break;
+                case 1:
+                    cell.titleLabel.text = "Medium Mode"
+                    break;
+                case 2:
+                    cell.titleLabel.text = "Expert Mode"
+                    break;
+                case 3:
+                    cell.titleLabel.text = "Crazy Mode"
+                    break;
+                default:
+                    break;
+                }
+                return cell
+            case 6:
+                let identfier = "lbContentCell"
+                let cell:leaderboardContentableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardContentableViewCell
+                cell.selectionStyle = .none
+                
+                let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
+                
+                print("\n\n//////////////////////////")
+                print("        STATISTICS \(indexPath.section + 1)      ")
+                print("//////////////////////////\n")
+                print("1st Record: \(currentStatistics["1_Date"]!) - \(currentStatistics["1_Record"]!)s")
+                print("2nd Record: \(currentStatistics["2_Date"]!) - \(currentStatistics["2_Record"]!)s")
+                print("3rd Record: \(currentStatistics["3_Date"]!) - \(currentStatistics["3_Record"]!)s")
+                print("4th Record: \(currentStatistics["4_Date"]!) - \(currentStatistics["4_Record"]!)s")
+                print("5th Record: \(currentStatistics["5_Date"]!) - \(currentStatistics["5_Record"]!)s")
+                
+                print("Average Time: \(currentStatistics["averageTime"]!)")
+                print("Average Win Time: \(currentStatistics["averageTimeWin"]!)")
+                print("Average Lose Time: \(currentStatistics["averageTimeLose"]!)")
+                print("Average Exploration Percentage: \(currentStatistics["explorationPercentage"]!)")
+                print("Total Wins: \(currentStatistics["totalWin"]!)")
+                print("Total Loses: \(currentStatistics["totalLose"]!)")
+                print("Total Games: \(currentStatistics["totalGame"]!)")
+                print("Longest Game: \(currentStatistics["longestGame"]!)s")
+                print("Longest Win Game: \(currentStatistics["longestWin"]!)s")
+                print("Longest Lose Game: \(currentStatistics["longestLose"]!)s")
+                print("Shortest Lose Game: \(currentStatistics["shortestLose"]!)s")
+                print("Total Checked Block: \(currentStatistics["totalChecked"]!)")
+                print("Total Mine Sweeped: \(currentStatistics["totalMineSweeped"]!)")
+                print("Total Mine Sweeped Wrong: \(currentStatistics["totalMineSweepedWrong"]!)")
+                
+                cell.lbContent.text = "Average Time:\nExploration Percentage:\nTotal Wins:\nTotal Loses:\nTotal Games:\nTotal Mine Sweeped:";
+                cell.lbContentValue.text = "\(sec2Min(time: currentStatistics["averageTime"]!))\n\(currentStatistics["explorationPercentage"]!)%\n\(currentStatistics["totalWin"]!)\n\(currentStatistics["totalLose"]!)\n\(currentStatistics["totalGame"]!)\n\(currentStatistics["totalMineSweeped"]!)"
+                return cell
+                
             default:
-                break;
+                let identfier = "cell"
+                let cell:leaderboardTableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardTableViewCell
+                
+                switch (indexPath.row){
+                case 0:
+                    
+                    cell.cellBG.backgroundColor = UIColor.clear
+                    break;
+                case 1:
+                    //let themeColor = UIColor(red: 227/255, green: 110/255, blue: 91/255, alpha: 1.0)
+                    let themeColor = UIColor(red: 180/255, green: 56/255, blue: 59/255, alpha: 1.0)
+                    cell.cellBG.backgroundColor = themeColor
+                    cell.numberLabel.textColor = themeColor
+                    break;
+                case 2:
+                    //let themeColor = UIColor(red: 197/255, green: 91/255, blue: 81/255, alpha: 1.0)
+                    let themeColor = UIColor(red: 149/255, green: 52/255, blue: 65/255, alpha: 1.0)
+                    cell.cellBG.backgroundColor = themeColor
+                    cell.numberLabel.textColor = themeColor
+                    break;
+                case 3:
+                    //let themeColor = UIColor(red: 190/255, green: 85/255, blue: 78/255, alpha: 1.0)
+                    let themeColor = UIColor(red: 149/255, green: 58/255, blue: 86/255, alpha: 1.0)
+                    cell.cellBG.backgroundColor = themeColor
+                    cell.numberLabel.textColor = themeColor
+                    break;
+                case 4:
+                    //let themeColor = UIColor(red: 186/255, green: 82/255, blue: 78/255, alpha: 1.0)
+                    let themeColor = UIColor(red: 133/255, green: 58/255, blue: 99/255, alpha: 1.0)
+                    cell.cellBG.backgroundColor = themeColor
+                    cell.numberLabel.textColor = themeColor
+                    break;
+                case 5:
+                    //let themeColor = UIColor(red: 155/255, green: 66/255, blue: 66/255, alpha: 1.0)
+                    let themeColor = UIColor(red: 123/255, green: 62/255, blue: 116/255, alpha: 1.0)
+                    cell.cellBG.backgroundColor = themeColor
+                    cell.numberLabel.textColor = themeColor
+                    break;
+                case 6:
+                    cell.cellBG.backgroundColor = UIColor.clear
+                    break;
+                default:
+                    cell.cellBG.backgroundColor = UIColor.clear
+                    break;
+                }
+                cell.selectionStyle = .none
+                cell.numberLabel.text = "\(indexPath.row)"
+                
+                let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
+                
+                if let currentRecordDate = currentStatistics["\(indexPath.row)_Date"] {
+                    print("Loading \(indexPath.section + 1)-\(indexPath.row)")
+                    if(currentRecordDate != "0"){
+                        cell.dateLabel.text = self.timestamp2Date(timestamp: currentRecordDate)
+                        cell.recordLabel.text = "\(String(describing: sec2Min(time: currentStatistics["\(indexPath.row)_Record"]!)))"
+                    }   else{
+                        cell.dateLabel.text = "N/A"
+                        cell.recordLabel.text = "N/A"
+                    }
+                }
+                
+                
+                
+                return cell
             }
-            return cell
-        case 6:
-            let identfier = "lbContentCell"
-            let cell:leaderboardContentableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardContentableViewCell
-            cell.selectionStyle = .none
+
+        }   else if tableView == self.dealsTableView {
             
-            let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
-
-            print("\n\n//////////////////////////")
-            print("        STATISTICS \(indexPath.section + 1)      ")
-            print("//////////////////////////\n")
-            print("1st Record: \(currentStatistics["1_Date"]!) - \(currentStatistics["1_Record"]!)s")
-            print("2nd Record: \(currentStatistics["2_Date"]!) - \(currentStatistics["2_Record"]!)s")
-            print("3rd Record: \(currentStatistics["3_Date"]!) - \(currentStatistics["3_Record"]!)s")
-            print("4th Record: \(currentStatistics["4_Date"]!) - \(currentStatistics["4_Record"]!)s")
-            print("5th Record: \(currentStatistics["5_Date"]!) - \(currentStatistics["5_Record"]!)s")
             
-            print("Average Time: \(currentStatistics["averageTime"]!)")
-            print("Average Win Time: \(currentStatistics["averageTimeWin"]!)")
-            print("Average Lose Time: \(currentStatistics["averageTimeLose"]!)")
-            print("Average Exploration Percentage: \(currentStatistics["explorationPercentage"]!)")
-            print("Total Wins: \(currentStatistics["totalWin"]!)")
-            print("Total Loses: \(currentStatistics["totalLose"]!)")
-            print("Total Games: \(currentStatistics["totalGame"]!)")
-            print("Longest Game: \(currentStatistics["longestGame"]!)s")
-            print("Longest Win Game: \(currentStatistics["longestWin"]!)s")
-            print("Longest Lose Game: \(currentStatistics["longestLose"]!)s")
-            print("Shortest Lose Game: \(currentStatistics["shortestLose"]!)s")
-            print("Total Checked Block: \(currentStatistics["totalChecked"]!)")
-            print("Total Mine Sweeped: \(currentStatistics["totalMineSweeped"]!)")
-            print("Total Mine Sweeped Wrong: \(currentStatistics["totalMineSweepedWrong"]!)")
-
-            cell.lbContent.text = "Average Time:\nExploration Percentage:\nTotal Wins:\nTotal Loses:\nTotal Games:\nTotal Mine Sweeped:";
-            cell.lbContentValue.text = "\(sec2Min(time: currentStatistics["averageTime"]!))\n\(currentStatistics["explorationPercentage"]!)%\n\(currentStatistics["totalWin"]!)\n\(currentStatistics["totalLose"]!)\n\(currentStatistics["totalGame"]!)\n\(currentStatistics["totalMineSweeped"]!)"
-            return cell
-
-        default:
-            let identfier = "cell"
-            let cell:leaderboardTableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardTableViewCell
+            let identfier = "storeTbCell"
+            let cell:storeElementTableViewCell = self.dealsTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
+            cell.storeElementTitleConstraintsTop.constant = 35.0
+            cell.storeElementBarContainer.isHidden = true;
+            cell.storeElementButton.tag = indexPath.row
+            cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromDealsTableView(sender:)), for: UIControlEvents.touchUpInside)
             
             switch (indexPath.row){
             case 0:
-                
-                cell.cellBG.backgroundColor = UIColor.clear
+                cell.storeElementImage.image = UIImage(named: "gift_coin")
+                cell.storeElementTitle.text = "Gift Coin By TT"
+                cell.storeElementDescription.text = "Free coins from some loves you"
+                cell.storeElementButton.setTitle("FREE", for: .normal)
+                cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
                 break;
             case 1:
-                //let themeColor = UIColor(red: 227/255, green: 110/255, blue: 91/255, alpha: 1.0)
-                let themeColor = UIColor(red: 180/255, green: 56/255, blue: 59/255, alpha: 1.0)
-                cell.cellBG.backgroundColor = themeColor
-                cell.numberLabel.textColor = themeColor
-                break;
-            case 2:
-                //let themeColor = UIColor(red: 197/255, green: 91/255, blue: 81/255, alpha: 1.0)
-                let themeColor = UIColor(red: 149/255, green: 52/255, blue: 65/255, alpha: 1.0)
-                cell.cellBG.backgroundColor = themeColor
-                cell.numberLabel.textColor = themeColor
-                break;
-            case 3:
-                //let themeColor = UIColor(red: 190/255, green: 85/255, blue: 78/255, alpha: 1.0)
-                let themeColor = UIColor(red: 149/255, green: 58/255, blue: 86/255, alpha: 1.0)
-                cell.cellBG.backgroundColor = themeColor
-                cell.numberLabel.textColor = themeColor
-                break;
-            case 4:
-                //let themeColor = UIColor(red: 186/255, green: 82/255, blue: 78/255, alpha: 1.0)
-                let themeColor = UIColor(red: 133/255, green: 58/255, blue: 99/255, alpha: 1.0)
-                cell.cellBG.backgroundColor = themeColor
-                cell.numberLabel.textColor = themeColor
-                break;
-            case 5:
-                //let themeColor = UIColor(red: 155/255, green: 66/255, blue: 66/255, alpha: 1.0)
-                let themeColor = UIColor(red: 123/255, green: 62/255, blue: 116/255, alpha: 1.0)
-                cell.cellBG.backgroundColor = themeColor
-                cell.numberLabel.textColor = themeColor
-                break;
-            case 6:
-                cell.cellBG.backgroundColor = UIColor.clear
+                cell.storeElementImage.image = UIImage(named: "gift_gem")
+                cell.storeElementTitle.text = "Gift Gem By TT"
+                cell.storeElementDescription.text = "Free gem from some loves you"
+                cell.storeElementButton.setTitle("FREE", for: .normal)
+                cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
                 break;
             default:
-                cell.cellBG.backgroundColor = UIColor.clear
                 break;
             }
-            cell.selectionStyle = .none
-            cell.numberLabel.text = "\(indexPath.row)"
+            let buttonRow = indexPath.row
+            var giftName = ""
             
-            let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
+            if(buttonRow == 0){
+                giftName = "Coin"
+            }   else if(buttonRow == 1){
+                giftName = "Gem"
+            }
+            let timeIntival = Int(getTimestamp())! - self.dailyCheckIn["lastClaim\(giftName)"]!
+            
+            if(timeIntival < 86400){
+                cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
+            }
 
-            if let currentRecordDate = currentStatistics["\(indexPath.row)_Date"] {
-                print("Loading \(indexPath.section + 1)-\(indexPath.row)")
-                if(currentRecordDate != "0"){
-                    cell.dateLabel.text = self.timestamp2Date(timestamp: currentRecordDate)
-                    cell.recordLabel.text = "\(String(describing: sec2Min(time: currentStatistics["\(indexPath.row)_Record"]!)))"
-                }   else{
-                    cell.dateLabel.text = "N/A"
-                    cell.recordLabel.text = "N/A"
+            
+            return cell
+            
+            
+        }   else if tableView == self.currencyTableView {
+            
+            
+            let identfier = "storeTbCell"
+            let cell:storeElementTableViewCell = self.currencyTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
+            cell.storeElementTitleConstraintsTop.constant = 35.0
+            cell.storeElementBarContainer.isHidden = true;
+            cell.storeElementButton.tag = indexPath.row
+            cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromCurrencyTableView(sender:)), for: UIControlEvents.touchUpInside)
+            
+            switch (indexPath.row){
+            case 3:
+                break;
+            default:
+                if(indexPath.row < 3){
+                    cell.storeElementTitle.text = "\(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) Coins"
+                    
+                    switch (self.priceList["currency_\(indexPath.row + 1)_price_type"]!){
+                    case 1:
+                        cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
+                        break;
+                    case 2:
+                        cell.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
+                        break;
+                    default:
+                        break;
+                    }
+                    cell.storeElementImage.image = UIImage(named: "moneyBag_\(indexPath.row)")
+                    cell.storeElementButton.setTitle("\(self.priceList["currency_\(indexPath.row + 1)_price"]!)", for: .normal)
+                    cell.storeElementDescription.text = "Use \(self.priceList["currency_\(indexPath.row + 1)_price"]!) gem to exchange \(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) coins"
+
                 }
+                break;
+            }
+            return cell
+            
+            
+        }   else if tableView == self.abilitiesTableView {
+            
+            
+            let identfier = "storeTbCell"
+            let cell:storeElementTableViewCell = self.abilitiesTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
+            
+            cell.storeElementButton.tag = indexPath.row
+            cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromAblititiesTableView(sender:)), for: UIControlEvents.touchUpInside)
+            
+            
+            var remaining = 0
+            var name = ""
+            
+            switch (indexPath.row){
+            case 0:
+                if((self.powerUp1["level"]!) == 0){
+                    cell.storeElementTitle.text = "Unlock Mines X-Ray"
+                }   else    {
+                    cell.storeElementTitle.text = "Mines X-Ray \(self.powerUp1Range[(self.powerUp1["level"]! + 1)])"
+                }
+                
+                cell.storeElementDescription.text = "Expand Mines X-Ray Range"
+                
+                cell.storeElementImage.image = UIImage(named: "xray_lv");
+                remaining =  powerUp1["level"]!
+                name = "Ability_XRay_lv_";
+                //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp1["level"]!))");
+                break;
+            case 1:
+                if((self.powerUp1["level"]!) == 0){
+                    cell.storeElementTitle.text = "Unlock Crazy Sweeper"
+                }   else    {
+                    cell.storeElementTitle.text = "Crazy Sweeper \(self.powerUp2Range[(self.powerUp2["level"]! + 1)])"
+                }
+
+                
+                cell.storeElementDescription.text = "Expand Crazy Click Range"
+                cell.storeElementImage.image = UIImage(named: "crazy_lv");
+                remaining =  powerUp2["level"]!
+                name = "Ability_Sweeper_lv_";
+                //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp2["level"]!))");
+                break;
+            case 2:
+                cell.storeElementTitle.text = "Mine Protector Time \(self.powerUp2TimeLimit[(self.powerUp2["time"]! + 1)])"
+                cell.storeElementDescription.text = "Expand Crazy Click Time"
+                cell.storeElementImage.image = UIImage(named: "crazy_time");
+                remaining =  powerUp2["time"]!
+                name = "Ability_Sweeper_time_";
+                //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp2["time"]!))");
+                break;
+                
+            case 3:
+                if((self.powerUp1["level"]!) == 0){
+                    cell.storeElementTitle.text = "Unlock Mine Protector"
+                }   else    {
+                    cell.storeElementTitle.text = "Mine Protector\(self.powerUp2Range[(self.powerUp2["level"]! + 1)]) Upgrade"
+                }
+                
+                cell.storeElementDescription.text = "Expand Mine Protector Usage"
+                cell.storeElementImage.image = UIImage(named: "mine");
+                remaining =  powerUp3["level"]!
+                name = "Ability_Protector_lv_";
+                //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp3["level"]!))");
+                break;
+
+            default:
+                break;
+            }
+            if(remaining >= 5){
+                cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
+                cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+            }   else{
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, -80.0, 0, 0)
+                switch (self.priceList["\(name)\(remaining + 1)_type"]!){
+                case 1:
+                    cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
+                    break;
+                case 2:
+                    cell.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
+                    break;
+                default:
+                    break;
+                }
+                cell.storeElementButton.setTitle("\(self.priceList["\(name)\(remaining + 1)"]!)", for: .normal)
+
+            }
+            
+            switch(remaining){
+            case 1:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = true;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+                
+            case 2:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 3:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 4:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = false;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 5:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = false;
+                cell.storeElementProgress_5.isHidden = false;
+                break;
+            default:
+                cell.storeElementProgress_1.isHidden = true;
+                cell.storeElementProgress_2.isHidden = true;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+                
+            }
+
+
+            
+            return cell
+            
+            
+        }   else if tableView == self.passesTableView {
+            
+            
+            let identfier = "storeTbCell"
+            let cell:storeElementTableViewCell = self.passesTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
+            
+            cell.storeElementButton.tag = indexPath.row
+            cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromPassesTableView(sender:)), for: UIControlEvents.touchUpInside)
+            
+            var remaining = 0
+            var name = ""
+            
+            switch (indexPath.row){
+            case 0:
+                cell.storeElementTitle.text = "Mines X-Ray"
+                cell.storeElementImage.image = UIImage(named: "xray_pass");
+                cell.storeElementDescription.text = "Wanna see what's underground?"
+                remaining =  powerUp1["remaining"]!
+                name = "Passes_XRay";
+                
+                break;
+            case 1:
+                cell.storeElementTitle.text = "Crazy Sweeper"
+                cell.storeElementImage.image = UIImage(named: "crazy_pass");
+                cell.storeElementDescription.text = "Go CRAZY and click EVERYWHERE!"
+                remaining =  powerUp2["remaining"]!
+                name = "Passes_Sweeper";
+                break;
+            case 2:
+                cell.storeElementTitle.text = "Mine Protector"
+                cell.storeElementImage.image = UIImage(named: "mine");
+                cell.storeElementDescription.text = "Never have to worry about SWEEP WRONG!"
+                remaining =  powerUp3["remaining"]!
+                name = "Passes_Protector";
+                break;
+            default:
+                break;
             }
             
             
+            if(remaining == 5){
+                cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
+                cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+            }   else{
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, -80.0, 0, 0)
+                switch (self.priceList["\(name)_type"]!){
+                case 1:
+                    cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
+                    break;
+                case 2:
+                    cell.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
+                    break;
+                default:
+                    break;
+                }
+                cell.storeElementButton.setTitle("\(self.priceList["\(name)"]!)", for: .normal)
+                
+            }
+
+            switch(remaining){
+            case 1:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = true;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+                
+            case 2:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 3:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 4:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = false;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+            case 5:
+                cell.storeElementProgress_1.isHidden = false;
+                cell.storeElementProgress_2.isHidden = false;
+                cell.storeElementProgress_3.isHidden = false;
+                cell.storeElementProgress_4.isHidden = false;
+                cell.storeElementProgress_5.isHidden = false;
+                break;
+            default:
+                cell.storeElementProgress_1.isHidden = true;
+                cell.storeElementProgress_2.isHidden = true;
+                cell.storeElementProgress_3.isHidden = true;
+                cell.storeElementProgress_4.isHidden = true;
+                cell.storeElementProgress_5.isHidden = true;
+                break;
+                
+            }
+
             return cell
+            
+            
+        }   else   {
+            
+            
+            let identfier = "storeTbCell"
+            let cell:storeElementTableViewCell = self.abilitiesTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
+            return cell
+            
+            
         }
 
         
+    }
+    
+    func buttonClickedFromPassesTableView(sender:UIButton) {
+        
+        let buttonRow = sender.tag
+        print("\(buttonRow) Button Clicked")
         
         
+        switch (buttonRow){
+        case 0:
+            if((powerUp1["remaining"])! < 5){
+                let priceName = "Passes_XRay"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+            
+                if(deductFromMoney(price: price, type: priceType)){
+                    let oldValue = self.powerUp1["remaining"]!
+                    self.powerUp1["remaining"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+
+            }   else{
+                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }
+            
+            break;
+        case 1:
+            if((powerUp2["remaining"])! < 5){
+                let priceName = "Passes_Sweeper"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    let oldValue = self.powerUp2["remaining"]!
+                    self.powerUp2["remaining"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }
+            break;
+        case 2:
+            if((powerUp3["remaining"])! < 5){
+                let priceName = "Passes_Protector"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    let oldValue = self.powerUp3["remaining"]!
+                    self.powerUp3["remaining"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }
+            break;
+        default:
+            break;
+        }
         
+        passesTableView.reloadData()
+
+    }
+    
+    func buttonClickedFromAblititiesTableView(sender:UIButton) {
+        
+        let buttonRow = sender.tag
+        print("\(buttonRow) Button Clicked")
+
+        switch (buttonRow){
+        case 0:
+            if((powerUp1["level"])! < 5){
+                let oldValue = self.powerUp1["level"]!
+                let priceName = "Ability_XRay_lv_\(oldValue + 1)"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    self.powerUp1["level"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
+            }
+            
+            break;
+        case 1:
+            
+            if((powerUp2["level"])! < 5){
+                let oldValue = self.powerUp2["level"]!
+                let priceName = "Ability_Sweeper_lv_\(oldValue + 1)"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    self.powerUp2["level"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
+            }
+
+            break;
+        case 2:
+            if((powerUp2["time"])! < 5){
+                let oldValue = self.powerUp2["time"]!
+                let priceName = "Ability_Sweeper_time_\(oldValue + 1)"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    self.powerUp2["time"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
+            }
+
+            break;
+        case 3:
+            if((powerUp3["level"])! < 5){
+                let oldValue = self.powerUp3["level"]!
+                let priceName = "Ability_protector_lv_\(oldValue + 1)"
+                let price = self.priceList["\(priceName)"]!
+                let priceType = self.priceList["\(priceName)_type"]!
+                
+                if(deductFromMoney(price: price, type: priceType)){
+                    self.powerUp3["level"] = oldValue + 1;
+                    saveRecord()
+                }   else    {
+                    notifyUser("CAUTION", message: "Insufficient Fund")
+                }
+                
+            }   else{
+                notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
+            }
+            break;
+
+        default:
+            break;
+        }
+        
+        
+        abilitiesTableView.reloadData()
+    }
+    func buttonClickedFromCurrencyTableView(sender:UIButton) {
+        
+        let buttonRow = sender.tag
+        print("\(buttonRow) Button Clicked")
+        
+        
+        if(buttonRow < 3){
+            let price = self.priceList["currency_\(buttonRow + 1)_price"]!
+            let priceType = self.priceList["currency_\(buttonRow + 1)_price_type"]!
+            let addPrice = (-1) * (self.priceList["currency_\(buttonRow + 1)_product"]!)
+            let addPriceType = self.priceList["currency_\(buttonRow + 1)_product_type"]!
+            if(deductFromMoney(price: price, type: priceType)){
+                print("Adding Coins \(addPrice)");
+                _ = deductFromMoney(price: addPrice, type: addPriceType)
+                saveRecord()
+            }   else    {
+                notifyUser("CAUTION", message: "Insufficient Fund")
+            }
+        }
+        currencyTableView.reloadData()
+        
+    }
+    
+    func buttonClickedFromDealsTableView(sender:UIButton) {
+        
+        let buttonRow = sender.tag
+        print("\(buttonRow) Button Clicked")
+        var giftName = ""
+        
+        if(buttonRow < 2){
+            if(buttonRow == 0){
+                giftName = "Coin"
+            }   else if(buttonRow == 1){
+                giftName = "Gem"
+            }
+            let timeIntival = Int(getTimestamp())! - self.dailyCheckIn["lastClaim\(giftName)"]!
+            
+            if(timeIntival > 86400){
+                _ = deductFromMoney(price: ((-1) * self.dailyCheckIn["\(giftName)"]!), type: (buttonRow + 1))
+                self.dailyCheckIn["lastClaim\(giftName)"] = Int(getTimestamp())!
+                saveRecord();
+            }   else{
+                notifyUser("CAUTION", message: "Get more \(giftName) tomorrow!")
+            }
+            
+        }
+        dealsTableView.reloadData()
+        
+    }
+
+
+    
+    func deductFromMoney(price: Int, type: Int) -> Bool{
+        switch(type){
+        case 1:
+            let newBlance = self.saveCoins - price
+            if(newBlance >= 0){
+                let oldValue = self.saveCoins;
+                saveCoins = saveCoins - price
+                self.coinStoreView.countFrom(CGFloat(oldValue), to: CGFloat(saveCoins), withDuration: 1.0)
+                
+            }   else{
+                return false;
+            }
+            
+            break;
+        case 2:
+            let newBlance = self.saveGems - price
+            if(newBlance >= 0){
+                
+                let oldValue = self.saveGems;
+                saveGems = saveGems - price
+                self.gemStoreView.countFrom(CGFloat(oldValue), to: CGFloat(saveGems), withDuration: 1.0)
+                
+            }   else{
+                return false;
+            }
+            break;
+        default:
+            return true;
+            
+        }
+        return true
+    }
+
+    func progressDesplay(cell:storeElementTableViewCell, progress: Int) -> storeElementTableViewCell{
+                return cell
+
+    }
+    
+    func notifyUser(_ title: String, message: String) -> Void{
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: UIAlertControllerStyle.alert)
+        
+        let cancelAction = UIAlertAction(title: "OK",
+                                         style: .cancel, handler: nil)
+        
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true)
+    }
+    func executeJS(jsCode: String){
+        mineWebView.stringByEvaluatingJavaScript(from: jsCode)
     }
     
 }
