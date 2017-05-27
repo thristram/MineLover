@@ -74,7 +74,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     var timerCounter = 0;
     var timer = Timer()
-
+    
+    var timerProtectorCounter = 0;
+    var timerProtector = Timer()
+    var timerProtectorFlag = false
+    var totalProtectorTime = 500;
 
     
     var ifReadLove = false;
@@ -84,7 +88,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var powerUp1Range: [String] = ["[LOCKED]", "1x3", "2x3", "3x3", "5x3", "5x5", "Full"]
     var powerUp2Range: [String] = ["[LOCKED]", "5x5", "8x13", "10x17", "12x20", "Unlimited", "Full"]
     var powerUp2TimeLimit: [String] = ["1s", "2s", "3s", "4s", "5s", "6s", "Full"]
-
+    var powerUp2TimeLimitInt: [Int] = [1,2,3,4,5,6]
     
 
     var lv_1_Statistics:[String:String] = [
@@ -397,17 +401,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBAction func resumeGemViewPressed(_ sender: Any) {
         hideGemView()
     }
-    @IBAction func coinGemViewPressed(_ sender: Any) {
-    }
-    @IBAction func gemGemViewPressed(_ sender: Any) {
-    }
-
-    
-    @IBAction func coinButtonPressed(_ sender: Any) {
-    }
-    @IBAction func gemButtonPressed(_ sender: Any) {
-    }
-    
     
     
     @IBAction func powerUpPressed(_ sender: Any) {
@@ -440,54 +433,41 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     @IBAction func minePress(_ sender: Any) {
         let _self = self;
-        if(self.game_mode == "sweep"){
+        if(self.PO_mode == "protector"){
+            self.topMineChageAnimation(to: "crazy");
+        }   else if(self.game_mode == "sweep"){
             game_mode = "normal";
             _self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeNormal()");
-            UIView.animate(withDuration: 0.3, animations: {
-                _self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
-                
-            }, completion: { (finished: Bool) in
-                _self.mineButton.setImage(UIImage(named: "mine"), for: .normal)
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    _self.mineButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3);
-                    
-                }, completion: { (finished: Bool) in
-                    
-                    
-                    UIView.animate(withDuration: 0.15, animations: {
-                        _self.mineButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
-                        
-                    });
-                });
-            });
+            self.topMineChageAnimation(to: "mine")
 
         }   else{
             game_mode = "sweep"
-            _self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeSweep()")
-            UIView.animate(withDuration: 0.3, animations: {
-                _self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
-                
-            }, completion: { (finished: Bool) in
-                _self.mineButton.setImage(UIImage(named: "heart"), for: .normal)
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    _self.mineButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3);
-                    
-                }, completion: { (finished: Bool) in
-                    
-                    
-                    UIView.animate(withDuration: 0.15, animations: {
-                        _self.mineButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
-                        
-                    });
-                });
-            });
+            self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeSweep()")
+            self.topMineChageAnimation(to: "heart")
 
             
         }
     }
-    
+    func topMineChageAnimation(to: String){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
+            
+        }, completion: { (finished: Bool) in
+            self.mineButton.setImage(UIImage(named: to), for: .normal)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.mineButton.transform = CGAffineTransform(scaleX: 1.3, y: 1.3);
+                
+            }, completion: { (finished: Bool) in
+                
+                
+                UIView.animate(withDuration: 0.15, animations: {
+                    self.mineButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
+                    
+                });
+            });
+        });
+    }
     
     
     
@@ -621,7 +601,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             self.pauseButton.setImage(UIImage(named: "back_arrow"), for: .normal)
         }   else{
             self.pauseButton.setImage(UIImage(named: "icon_pause"), for: .normal)
-            startTimer();
+            checkStartTimer()
         }
         
     }
@@ -653,7 +633,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     @IBAction func closePowerUpView(_ sender: Any) {
         hidePowerUpMenu()
-        startTimer()
+        
     }
     
     
@@ -676,15 +656,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                             let powerUpLevel = powerUp1["level"]!
                             self.mineWebView.stringByEvaluatingJavaScript(from: "setPOSqaure(\(powerUpLevel), \(powerUpLevel))")
                         }
-                        startTimer();
                         hidePowerUpMenu()
                     }
                 }   else    {
                     print("X-Ray pass is \(String(describing: powerUp1["remaining"])) which is < 0")
+                    self.storeSegmentControl.selectedSegmentIndex = 3
                     self.switchToStorePasses()
                     showStoreView();
                 }
             }   else{
+                self.storeSegmentControl.selectedSegmentIndex = 2
                 self.switchToStoreAbility()
                 showStoreView();
                 
@@ -708,16 +689,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                             let powerUpTime = powerUp2["time"]!
                             self.mineWebView.stringByEvaluatingJavaScript(from: "setPOProtector(\(powerUpLevel), \(powerUpTime))")
                         }
-                        startTimer();
+                        
                         hidePowerUpMenu()
                 
                     }
                 }   else    {
                     print("Protector Pass is \(String(describing: powerUp1["remaining"])) which is < 0")
                     self.switchToStorePasses()
+                    self.storeSegmentControl.selectedSegmentIndex = 3
                     showStoreView();
                 }
             }   else{
+                self.storeSegmentControl.selectedSegmentIndex = 2
                 self.switchToStoreAbility()
                 showStoreView();
             }
@@ -731,11 +714,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.powerUpMenu.alpha = 0.0
         self.mainViewStatusBar.alpha = 1.0
         self.powerUpMenu.isHidden = true
-        
+        checkStartTimer()
         
     }
     func showPowerUpMenu(){
         updatePowerUpText()
+        stopTimer();
         self.powerUpMenu.isHidden = false
         
         UIView.animate(withDuration: 0.5, animations: {
@@ -1156,10 +1140,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         updatePowerUpText()
         UIView.animate(withDuration: 0.5, animations: {
             self.storeView.alpha = 0.0
-            self.mainViewStatusBar.alpha = 1.0
+            if(self.powerUpMenu.isHidden && self.menuView.isHidden){
+                self.mainViewStatusBar.alpha = 1.0
+            }
+            
         }, completion: { (finished: Bool) in
             self.storeView.isHidden = true
-            self.startTimer();
+            self.checkStartTimer()
             self.coinLabel.text = "\(self.saveCoins)";
             self.gemLabel.text = "\(self.saveGems)";
         
@@ -1167,6 +1154,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func showProtectCountDownView(){
+        self.stopTimer()
         self.gemView.isHidden = false;
         self.coinGemViewLabel.text = "\(self.saveCoins)";
         self.gemImage.image = UIImage(named: "number_3")
@@ -1191,6 +1179,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
             DispatchQueue.main.asyncAfter(deadline: when + 3.5) {
                 self.executeJS(jsCode: "startPOProtector()")
+                self.topMineChageAnimation(to: "crazy")
+                self.startProtectorTimer(timeInput: (self.powerUp2TimeLimitInt[self.powerUp2["time"]!] * 100))
             }
             
         });
@@ -1205,7 +1195,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.gemDescription.text = "You may use the GEM to purchase Power-Ups\nor Upgrade Power-Ups"
         self.resumeGemViewButton.setTitle("RESUMME", for: .normal)
         self.resumeGemViewButton.isHidden = false;
-        stopTimer();
+        self.stopTimer();
         
         UIView.animate(withDuration: 0.5, animations: {
             _self.gemView.alpha = 1.0
@@ -1254,7 +1244,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             self.mainViewStatusBar.alpha = 1.0
         }, completion: { (finished: Bool) in
             self.gemView.isHidden = true
-            self.startTimer();
+            self.checkStartTimer()
         });
     }
     
@@ -1343,10 +1333,27 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
             break;
         case "stopProtector":
-            _self.PO_mode = "none"
+            self.PO_mode = "none"
+            if(self.game_mode == "sweep"){
+                self.topMineChageAnimation(to: "heart")
+            }   else{
+                self.topMineChageAnimation(to: "mine")
+            }
+            
             break;
         case "stopSquare":
-            _self.PO_mode = "none"
+            self.PO_mode = "none"
+            break;
+        case "stopSquareSelection":
+            if(self.game_mode == "sweep"){
+                self.topMineChageAnimation(to: "heart")
+            }   else{
+                self.topMineChageAnimation(to: "mine")
+            }
+
+            break;
+        case "startSquare":
+            self.topMineChageAnimation(to: "xray")
             break;
         case "gemDetected":
             _self.saveGems = _self.saveGems + Int(value)!;
@@ -1355,6 +1362,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             break;
         case "protectorReady":
             self.showProtectCountDownView()
+            
             break;
         default:
             break;
@@ -1381,6 +1389,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
     }
+    func stopPOProtector(){
+        self.executeJS(jsCode: "stopPOProtector()")
+    }
     
     /*
      
@@ -1388,6 +1399,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
      
      */
     
+    func startProtectorTimer(timeInput: Int){
+        totalProtectorTime = timeInput
+        timerProtector.invalidate()
+        timerProtectorCounter = totalProtectorTime
+        timerProtectorFlag = true;
+        timerProtector = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(timerProtectorAction), userInfo: nil, repeats: true)
+    }
+    func stopProtectorTimer(){
+        timerProtector.invalidate() // just in case this button is tapped multiple times
+        timerProtectorCounter = 0
+        timerProtectorFlag = false
+        timerProtectorCounter = totalProtectorTime
+    }
+    func checkStartTimer(){
+        if((!(self.isGameWined || self.isGameOvered))){
+            if(self.storeView.isHidden && self.powerUpMenu.isHidden && self.menuView.isHidden && self.gemView.isHidden){
+                startTimer();
+            }
+        }
+    }
     func startTimer(){
         timer.invalidate() // just in case this button is tapped multiple times
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
@@ -1401,14 +1432,37 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         timerCounter = 0
         
     }
+    func timerProtectorAction(){
+        if(timerProtectorCounter == 0){
+            stopProtectorTimer()
+            stopPOProtector()
+        }   else    {
+            timerProtectorCounter -= 1
+            
+            let min = timerProtectorCounter / 100;
+            let sec = timerProtectorCounter % 100;
+            if(timerProtectorFlag){
+                if(sec < 10){
+                    self.mainViewTimeLeft.text = "\(min):0\(sec)"
+                }   else{
+                    self.mainViewTimeLeft.text = "\(min):\(sec)"
+                }
+            }
+        }
+        
+    }
     func timerAction() {
         timerCounter += 1
+        
         let min = timerCounter / 60;
         let sec = timerCounter % 60;
-        if(sec < 10){
-            self.mainViewTimeLeft.text = "\(min):0\(sec)"
-        }   else{
-            self.mainViewTimeLeft.text = "\(min):\(sec)"
+        if(!timerProtectorFlag){
+            if(sec < 10){
+                self.mainViewTimeLeft.text = "\(min):0\(sec)"
+            }   else{
+                self.mainViewTimeLeft.text = "\(min):\(sec)"
+            }
+
         }
         
     }

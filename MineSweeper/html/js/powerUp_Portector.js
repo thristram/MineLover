@@ -37,17 +37,22 @@ function readyPOProtector(){
 }
 
 function startPOProtector(){
+    /*
     
     var currentLevelAssigment = levelAssigment[POProtectorTime];
     setTimeout(function () {
-        if (connectSwift) {
-            stopProtector()
-            swiftBridge("stopProtector", "1");
-        } else {
-            stopProtector()
-        }
+        stopPOProtector()
 
     }, currentLevelAssigment["time"]);
+     */
+}
+function stopPOProtector(){
+    if (connectSwift) {
+        stopProtector()
+        swiftBridge("stopProtector", "1");
+    } else {
+        stopProtector()
+    }
 }
 function checkLevel(){
     var currentLevelAssigment = levelAssigment[POProtectorLevel];

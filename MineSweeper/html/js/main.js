@@ -665,7 +665,7 @@ function fillGradientColor(startColor, endColor, step, protectorStartColor, prot
     var css = "<style id='additionalGrandientColor'>";
     for (var i = 0; i <= step; i++) {
         css += ".iCoord-" + i + "{background-color:" + gradient[i] + "}"
-        css += "#map .iCoord-" + i + ".protectorActive, #map .iCoord-" + i + ".protectorSelection {background-color:" + gradientProtector[i] + "!important}"
+        css += "#map .iCoord-" + i + ".protectorActive, #map .iCoord-" + i + ".protectorSelection {background:" + gradientProtector[i] + "!important;border-radius:15px}"
     }
     css += "</style>";
     swiftConsole(css);

@@ -16,6 +16,7 @@ var POSquareLevel = 1;
 function setPOSqaure(level){
     PO_Mode = "square";
     POSquareLevel = level
+    swiftBridge("startSquare","1")
     setClassSelectionAnimation("unchecked","square")
 }
 
@@ -49,6 +50,7 @@ function setClassSelectionAnimation(className, type){
 
 function squareBlock(i,j,level){
     setPONone();
+    swiftBridge("stopSquareSelection","1")
     var limit = 3;
     switch(level){
         case 1: limit = 3; break;
