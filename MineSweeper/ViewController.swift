@@ -749,9 +749,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         var powerUp3BarElements: [UIView] = [self.powerUp3ProgressBar_1, self.powerUp3ProgressBar_2, self.powerUp3ProgressBar_3, self.powerUp3ProgressBar_4, self.powerUp3ProgressBar_5]
         
         self.powerUp1Description.text = "Detect any mines\nwithin \(self.powerUp1Range[self.powerUp1["level"]!]) range"
-        self.powerUp2Description.text = "click anywhere inside a\nin \(self.powerUp2Range[self.powerUp2["level"]!]) block within \(self.powerUp2TimeLimit[powerUp2["time"]!])"
+        self.powerUp2Description.text = "Click anywhere inside a\nin \(self.powerUp2Range[self.powerUp2["level"]!]) block within \(self.powerUp2TimeLimit[powerUp2["time"]!])"
         if((self.powerUp2["level"]!) == 5){
-            self.powerUp2Description.text = "click anywhere\nwithin \(self.powerUp2TimeLimit[self.powerUp2["time"]!])"
+            self.powerUp2Description.text = "Click anywhere\nwithin \(self.powerUp2TimeLimit[self.powerUp2["time"]!])"
         }
         if((self.powerUp3["level"]!) == 1){
             self.powerUp3Description.text = "Correct your fist \nwrong sweeps"
@@ -2358,13 +2358,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 break;
                 
             case 3:
-                if((self.powerUp1["level"]!) == 0){
-                    cell.storeElementTitle.text = "Unlock Mine Protector"
+                if((self.powerUp3["level"]!) == 0){
+                    cell.storeElementTitle.text = "Unlock Miss-Sweep Proof"
                 }   else    {
                     cell.storeElementTitle.text = "Miss-Sweep Proof \(self.powerUp3Range[(self.powerUp3["level"]! + 1)])"
                 }
                 
-                cell.storeElementDescription.text = "Expand Mine Protector Usage"
+                cell.storeElementDescription.text = "Increase Miss-Sweep Limit"
                 cell.storeElementImage.image = UIImage(named: "corrector_lv");
                 remaining =  powerUp3["level"]!
                 name = "Ability_Corrector_lv_";
@@ -2475,7 +2475,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 name = "Passes_Sweeper";
                 break;
             case 2:
-                cell.storeElementTitle.text = "Miss-Sweep Corrector"
+                cell.storeElementTitle.text = "Miss-Sweep Proof"
                 cell.storeElementImage.image = UIImage(named: "corrector_pass");
                 cell.storeElementDescription.text = "Never SWEEP WRONG!"
                 remaining =  powerUp3["remaining"]!
