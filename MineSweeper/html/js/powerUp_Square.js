@@ -49,8 +49,9 @@ function setClassSelectionAnimation(className, type){
 
 
 function squareBlock(i,j,level){
-    setPONone();
     swiftBridge("stopSquareSelection","1")
+    setPONone();
+    
     var limit = 3;
     switch(level){
         case 1: limit = 3; break;
@@ -129,7 +130,7 @@ function finishSquare(i,j){
             $(".squared").removeClass("squaredAlpha")
             $(".squared").animate({"opacity":"1"},1300);
             $(".squared:not(.checked)").find("span").hide();
-            swiftBridge("stopProtector", "1");
+            swiftBridge("stopSquare", "1");
 
         });
     },4200)

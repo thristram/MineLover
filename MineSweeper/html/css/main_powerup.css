@@ -31,6 +31,10 @@
     background-color: rgba(247, 92, 3, 0.2);
 }
 
+#map .corrector.correctorActive {
+    background-color: #FFFFFF
+}
+
 /* Standard syntax */
 @keyframes squareFillChange {
     0%   {background-color: #9C89B8;}

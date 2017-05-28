@@ -48,34 +48,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var currentLevel = 2;
     var currentMap = "";
     var ifChangeLevel = false;
-    var setWidth = 8;
-    var setHeight = 13;
-    var setScale = 1.65;
-    var setScaleable = "no";
-    var setMaxScale = 1.0
-    var setMinScale = 1.0
-    var setMines = 20;
-    //var setMines = 5;
-    var marginLeft = 2
-    var marginTop = 2
-    var tdWidth = 31
-    var tdHeight = 31
-    var divWidth = 30
-    var divHeight = 30
-    var fontSize = "100%"
-    var iconFontSize = "150%"
     
     var PO_mode = "none";
     var game_mode = "normal";
     var gameStarted = false;
     var squareUsed = false;
     var protectorUsed = false;
+    var correctorUsed = false
     var enablePowerUps = true;
     
     var timerCounter = 0;
     var timer = Timer()
     
     var timerProtectorCounter = 0;
+    var remainingCorrector = 0
     var timerProtector = Timer()
     var timerProtectorFlag = false
     var totalProtectorTime = 500;
@@ -87,9 +73,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     var powerUp1Range: [String] = ["[LOCKED]", "1x3", "2x3", "3x3", "5x3", "5x5", "Full"]
     var powerUp2Range: [String] = ["[LOCKED]", "5x5", "8x13", "10x17", "12x20", "Unlimited", "Full"]
+    var powerUp3Range: [String] = ["[LOCKED]", "1", "2", "3", "4", "5", "Full"]
+    var powerUp3Number: [Int] = [0, 1,2,3,4,5]
     var powerUp2TimeLimit: [String] = ["1s", "2s", "3s", "4s", "5s", "6s", "Full"]
     var powerUp2TimeLimitInt: [Int] = [1,2,3,4,5,6]
     
+    var mapConfigs : [[String: String]] = [
+        
+        ["width" : "8", "height" : "13", "setMines" : "12", "setScale" : "1.6", "setScaleable": "yes", "setMaxScale" : "1.0", "setMinScale" : "1.0", "marginTop" : "2", "marginLeft": "2", "tdWidth" : "32", "tdHeight" : "32", "divWidth": "30", "divHeight": "30", "iconFontSize": "150%", "fontSize": "100%" ],
+        
+        ["width" : "8", "height" : "13", "setMines" : "20", "setScale" : "1.6", "setScaleable": "yes", "setMaxScale" : "1.0", "setMinScale" : "1.0", "marginTop" : "2", "marginLeft": "2", "tdWidth" : "32", "tdHeight" : "32", "divWidth": "30", "divHeight": "30", "iconFontSize": "150%", "fontSize": "100%" ],
+        
+        ["width" : "10", "height" : "17", "setMines" : "35", "setScale" : "1.28", "setScaleable": "yes", "setMaxScale" : "2.0", "setMinScale" : "1.0", "marginTop" : "2", "marginLeft": "3", "tdWidth" : "32", "tdHeight" : "31", "divWidth": "30", "divHeight": "30", "iconFontSize": "150%", "fontSize": "100%" ],
+        
+        ["width" : "16", "height" : "26", "setMines" : "90", "setScale" : "0.8", "setScaleable": "yes", "setMaxScale" : "2.0", "setMinScale" : "1.0", "marginTop" : "10", "marginLeft": "4", "tdWidth" : "32", "tdHeight" : "32", "divWidth": "30", "divHeight": "30", "iconFontSize": "150%", "fontSize": "100%" ],
+        
+        ]
+
 
     var lv_1_Statistics:[String:String] = [
         
@@ -147,8 +147,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     
     var dailyCheckIn:[String:Int] = [
-        "Gem": 2, "lastClaimGem": 0,
-        "Coin": 2000, "lastClaimCoin": 0
+        "Gem": 2, "lastClaimGem": 0, "timeIntivalGem": 86400,
+        "Coin": 2000, "lastClaimCoin": 0, "timeIntivalCoin": 86400,
+        "GemPack": 50, "lastClaimGemPack": 0, "timeIntivalGemPack": 604800
     ]
     
     
@@ -156,7 +157,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var priceList: [String:Int] = [
         "Passes_XRay" : 1000, "Passes_XRay_type": 1,
         "Passes_Sweeper" : 1500, "Passes_Sweeper_type": 1,
-        "Passes_Protector" : 1000, "Passes_Protector_type": 1,
+        "Passes_Corrector" : 1000, "Passes_Corrector_type": 1,
+        
         
         "Ability_XRay_lv_1" : 2, "Ability_XRay_lv_1_type": 2,
         "Ability_XRay_lv_2" : 3, "Ability_XRay_lv_2_type": 2,
@@ -176,20 +178,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         "Ability_Sweeper_time_4" : 5, "Ability_Sweeper_time_4_type": 2,
         "Ability_Sweeper_time_5" : 6, "Ability_Sweeper_time_5_type": 2,
         
-        "Ability_protector_lv_1" : 2, "Ability_protector_lv_1_type": 2,
-        "Ability_protector_lv_2" : 3, "Ability_protector_lv_2_type": 2,
-        "Ability_protector_lv_3" : 5, "Ability_protector_lv_3_type": 2,
-        "Ability_protector_lv_4" : 8, "Ability_protector_lv_4_type": 2,
-        "Ability_protector_lv_5" : 10, "Ability_protector_lv_5_type": 2,
+        "Ability_Corrector_lv_1" : 2, "Ability_Corrector_lv_1_type": 2,
+        "Ability_Corrector_lv_2" : 3, "Ability_Corrector_lv_2_type": 2,
+        "Ability_Corrector_lv_3" : 5, "Ability_Corrector_lv_3_type": 2,
+        "Ability_Corrector_lv_4" : 8, "Ability_Corrector_lv_4_type": 2,
+        "Ability_Corrector_lv_5" : 10, "Ability_Corrector_lv_5_type": 2,
         
         "currency_1_price" : 1, "currency_1_price_type": 2, "currency_1_product": 2000, "currency_1_product_type": 1,
         "currency_2_price" : 2, "currency_2_price_type": 2, "currency_2_product": 4500, "currency_2_product_type": 1,
         "currency_3_price" : 5, "currency_3_price_type": 2, "currency_3_product": 15000, "currency_3_product_type": 1,
         
-        
-        
-        ]
-
+    ]
+    
     
     
     ////////////////////////////////
@@ -286,6 +286,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var powerUp2Status: UILabel!
     
     
+    //POWERUP 3
+    @IBOutlet weak var powerUp3View: UIView!
+    @IBOutlet weak var powerUp3Title: UILabel!
+    @IBOutlet weak var powerUp3Description: UILabel!
+    @IBOutlet weak var powerUp3Image: UIImageView!
+    
+    @IBOutlet weak var powerUp3ProgressBar: UIView!
+    @IBOutlet weak var powerUp3ProgressBar_1: UIView!
+    @IBOutlet weak var powerUp3ProgressBar_2: UIView!
+    @IBOutlet weak var powerUp3ProgressBar_3: UIView!
+    @IBOutlet weak var powerUp3ProgressBar_4: UIView!
+    @IBOutlet weak var powerUp3ProgressBar_5: UIView!
+    
+    @IBOutlet weak var powerUp3Lock: UIImageView!
+    @IBOutlet weak var powerUp3Status: UILabel!
+    
     ////////////////////////////////
     ////////GEMVIEW ELEMENTS////////
     ////////////////////////////////
@@ -322,6 +338,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var storeSegmentBar4: UIView!
     
     
+    
+    ////////////////////////////////
+    //////////SCREENSIZE UI/////////
+    ////////////////////////////////
+    var storePriceButtonTitleOffset = -80.0
     
     
     @IBAction func storeSelection(_ sender: Any) {
@@ -433,22 +454,59 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     @IBAction func minePress(_ sender: Any) {
         let _self = self;
+        
         if(self.PO_mode == "protector"){
-            self.topMineChageAnimation(to: "crazy");
+            
+            self.topMineChangeAnimation(to: "crazy");
+            
+        }   else if(PO_mode == "corrector"){
+            
+            if(self.game_mode == "sweep"){
+                
+                game_mode = "normal";
+                self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeNormal()");
+                
+                if(self.remainingCorrector > 0){
+                    
+                    self.topMineChangeAnimation(to: "corrector_\(self.remainingCorrector)");
+                    
+                }   else    {
+                    
+                    self.topMineChangeAnimation(to: "mine")
+                    
+                }
+                
+            }   else    {
+                
+                game_mode = "sweep";
+                self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeSweep()");
+                
+                if(self.remainingCorrector > 0){
+                    
+                    self.topMineChangeAnimation(to: "heartCorrector_\(self.remainingCorrector)")
+                    
+                }   else    {
+                    
+                    self.topMineChangeAnimation(to: "heart")
+                    
+                }
+                
+            }
+            
         }   else if(self.game_mode == "sweep"){
             game_mode = "normal";
             _self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeNormal()");
-            self.topMineChageAnimation(to: "mine")
+            self.topMineChangeAnimation(to: "mine")
 
         }   else{
             game_mode = "sweep"
             self.mineWebView.stringByEvaluatingJavaScript(from: "setGameModeSweep()")
-            self.topMineChageAnimation(to: "heart")
+            self.topMineChangeAnimation(to: "heart")
 
             
         }
     }
-    func topMineChageAnimation(to: String){
+    func topMineChangeAnimation(to: String){
         UIView.animate(withDuration: 0.3, animations: {
             self.mineButton.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
             
@@ -470,112 +528,27 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     
-    
     @IBAction func selectLevel(_ sender: Any) {
+        ifChangeLevel = true
         switch((sender as AnyObject).selectedSegmentIndex){
             case 0:
                 currentLevel = 1;
-                setWidth = 8;
-                setHeight = 13;
-                setScale = 1.6;
-                setScaleable = "yes";
-                setMaxScale = 1.0;
-                setMinScale = 1.0
-                setMines = 12;
-                //setMines = 5;
-                ifChangeLevel = true;
-                
-                marginTop = 2
-                marginLeft = 2
-                
-                tdWidth = 32
-                tdHeight = 32
-                divWidth = 30
-                divHeight = 30
-                iconFontSize = "150%"
-                fontSize = "100%"
-
-                
                 mineWebView.scrollView.isScrollEnabled = false
                 
                 break;
             case 1:
                 currentLevel = 2;
-                setWidth = 8;
-                setHeight = 13;
-                setScale = 1.6;
-                setScaleable = "yes";
-                setMaxScale = 1.0;
-                setMinScale = 1.0
-                setMines = 20;
-                //setMines = 5;
-                ifChangeLevel = true;
-                
-                marginTop = 2
-                marginLeft = 2
-                
-                tdWidth = 32
-                tdHeight = 32
-                divWidth = 30
-                divHeight = 30
-                iconFontSize = "150%"
-                fontSize = "100%"
-
-                
                 mineWebView.scrollView.isScrollEnabled = false
                 
                 
                 break;
             case 2:
                 currentLevel = 3;
-                setWidth = 10;
-                setHeight = 17;
-                setScale = 1.28;
-                setScaleable = "yes";
-                setMaxScale = 2.0;
-                setMinScale = 1
-                setMines = 35;
-                //setMines = 5;
-
-                ifChangeLevel = true;
-                
-                marginTop = 2
-                marginLeft = 3
-
-    
-                tdWidth = 32
-                tdHeight = 31
-                divWidth = 30
-                divHeight = 30
-                iconFontSize = "150%"
-                fontSize = "100%"
-                
                 mineWebView.scrollView.isScrollEnabled = false;
                 break;
             
             case 3:
                 currentLevel = 4;
-                setWidth = 16;
-                setHeight = 26;
-                setScale = 0.80;
-                setScaleable = "yes";
-                setMaxScale = 2.0;
-                setMinScale = 1
-                setMines = 90;
-                //setMines = 5;
-                ifChangeLevel = true;
-                
-                marginTop = 10
-                marginLeft = 4
-                
-                
-                tdWidth = 32
-                tdHeight = 32
-                divWidth = 30
-                divHeight = 30
-                iconFontSize = "150%"
-                fontSize = "100%"
-                
                 mineWebView.scrollView.isScrollEnabled = true;
             
             
@@ -590,7 +563,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         hideMenu();
         startNewGame();
         self.pauseButton.setImage(UIImage(named: "icon_pause"), for: .normal)
-        
+        if(self.game_mode == "sweep"){
+            self.topMineChangeAnimation(to: "heart")
+        }   else{
+            self.topMineChangeAnimation(to: "mine")
+        }
         
     }
     @IBAction func resumeButtonPressed(_ sender: Any) {
@@ -706,6 +683,40 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
     }
+    @IBAction func powerUp3Click(_ sender: Any) {
+        if(gameStarted){
+            if((powerUp3["level"]!) > 0){
+                if(powerUp3["remaining"]! > 0){
+                    if(PO_mode == "none"){
+                        
+                        if(!correctorUsed){
+                            powerUp3["remaining"]! -= 1
+                            saveRecord()
+                            self.disablePowerUp3();
+                            /*POWERUP2 PROGRESS*/
+                            PO_mode = "corrector"
+                            correctorUsed = true;
+                            let powerUpLevel = powerUp3["level"]!
+                            self.mineWebView.stringByEvaluatingJavaScript(from: "setPOCorrector(\(powerUpLevel))")
+                        }
+                        
+                        hidePowerUpMenu()
+                        
+                    }
+                }   else    {
+                    print("Protector Pass is \(String(describing: powerUp3["remaining"])) which is < 0")
+                    self.switchToStorePasses()
+                    self.storeSegmentControl.selectedSegmentIndex = 3
+                    showStoreView();
+                }
+            }   else{
+                self.storeSegmentControl.selectedSegmentIndex = 2
+                self.switchToStoreAbility()
+                showStoreView();
+            }
+        }
+    }
+
     @IBAction func powerUpStoreClick(_ sender: Any) {
         showStoreView();
     }
@@ -735,11 +746,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         var powerUp1BarElements: [UIView] = [self.powerUp1ProgressBar_1, self.powerUp1ProgressBar_2, self.powerUp1ProgressBar_3, self.powerUp1ProgressBar_4, self.powerUp1ProgressBar_5]
         var powerUp2BarElements: [UIView] = [self.powerUp2ProgressBar_1, self.powerUp2ProgressBar_2, self.powerUp2ProgressBar_3, self.powerUp2ProgressBar_4, self.powerUp2ProgressBar_5]
+        var powerUp3BarElements: [UIView] = [self.powerUp3ProgressBar_1, self.powerUp3ProgressBar_2, self.powerUp3ProgressBar_3, self.powerUp3ProgressBar_4, self.powerUp3ProgressBar_5]
         
         self.powerUp1Description.text = "Detect any mines\nwithin \(self.powerUp1Range[self.powerUp1["level"]!]) range"
         self.powerUp2Description.text = "click anywhere inside a\nin \(self.powerUp2Range[self.powerUp2["level"]!]) block within \(self.powerUp2TimeLimit[powerUp2["time"]!])"
         if((self.powerUp2["level"]!) == 5){
             self.powerUp2Description.text = "click anywhere\nwithin \(self.powerUp2TimeLimit[self.powerUp2["time"]!])"
+        }
+        if((self.powerUp3["level"]!) == 1){
+            self.powerUp3Description.text = "Correct your fist \nwrong sweeps"
+        }   else{
+            self.powerUp3Description.text = "Correct your fist \(self.powerUp3Range[self.powerUp3["level"]!])\nwrong sweeps"
         }
         
         
@@ -788,6 +805,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
         
+        if((self.powerUp3["level"]!) < 1){
+            self.powerUp3Description.text = "Sweep Corrector\nUnlock Power Up in Store"
+            self.powerUp3Lock.isHidden = false;
+            self.powerUp3Status.isHidden = true
+            disablePowerUp3()
+        }   else{
+            
+            self.powerUp3Lock.isHidden = true
+            if(powerUp3["remaining"]! < 1){
+                self.powerUp3Status.isHidden = false
+                self.powerUp3Status.text = "NO PASSES LEFT"
+                self.disablePowerUp3();
+            }   else if(correctorUsed)   {
+                self.powerUp3Status.isHidden = false
+                self.powerUp3Status.text = "POWER UP USED"
+                self.disablePowerUp3();
+            }   else{
+                self.powerUp3Status.isHidden = true;
+                self.enablePowerUp3();
+            }
+        }
+
+        
         
         
         for i in (1...5){
@@ -800,6 +840,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 powerUp2BarElements[i-1].isHidden = false;
             }   else{
                 powerUp2BarElements[i-1].isHidden = true;
+            }
+            if(i <= (powerUp3["remaining"]!)){
+                powerUp3BarElements[i-1].isHidden = false;
+            }   else{
+                powerUp3BarElements[i-1].isHidden = true;
             }
             
         }
@@ -844,6 +889,21 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.powerUp2ProgressBar.alpha = 1.0
         self.powerUp2Status.alpha = 1.0
     }
+    func disablePowerUp3(){
+        self.powerUp3Image.alpha = 0.5
+        self.powerUp3Title.alpha = 0.5
+        self.powerUp3Description.alpha = 0.5
+        self.powerUp3ProgressBar.alpha = 0.5
+        self.powerUp3Status.alpha = 0.5
+    }
+    func enablePowerUp3(){
+        //self.powerUp2View.alpha = 1.0;
+        self.powerUp3Image.alpha = 1.0
+        self.powerUp3Title.alpha = 1.0
+        self.powerUp3Description.alpha = 1.0
+        self.powerUp3ProgressBar.alpha = 1.0
+        self.powerUp3Status.alpha = 1.0
+    }
 
     func startNewGame(){
         self.mineWebView.scalesPageToFit = true;
@@ -853,10 +913,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         sweepCorrected = 0;
         sweepNotCorrected = 0;
         checked = 0;
+        correctorUsed = false;
+        self.remainingCorrector = Int(self.powerUp3Number[powerUp3["level"]!])
         
         
         
-        totalMines = setMines
+        self.totalMines = Int(self.mapConfigs[currentLevel - 1]["setMines"]!)!
+        self.mineWebView.stringByEvaluatingJavaScript(from: "stopCorrector()");
         if(ifChangeLevel){
             constructGame()
         }   else    {
@@ -878,8 +941,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.updateConstraints();
         
         //RECORD
         getRecord()
@@ -946,7 +1012,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
         
-        
+        self.remainingCorrector = Int(self.powerUp3Number[powerUp3["level"]!])
         
         
         
@@ -961,7 +1027,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         jsContext?.setObject(JavaScriptMethod(), forKeyedSubscript: "callSwift" as NSCopying & NSObjectProtocol)
         
         
-        self.mainViewMineRemaining.text = formatMineDisplay(mineInput: self.setMines)
+        self.mainViewMineRemaining.text = formatMineDisplay(mineInput: Int(self.mapConfigs[currentLevel - 1]["setMines"]!)!)
         
         
         //520 Special
@@ -980,7 +1046,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
     }
-        override func didReceiveMemoryWarning() {
+    override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -1046,7 +1112,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.gameStarted = false;
         self.squareUsed = false;
         self.protectorUsed = false;
-        
+        self.correctorUsed = false
         
 
 
@@ -1179,7 +1245,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
             DispatchQueue.main.asyncAfter(deadline: when + 3.5) {
                 self.executeJS(jsCode: "startPOProtector()")
-                self.topMineChageAnimation(to: "crazy")
+                self.topMineChangeAnimation(to: "crazy")
                 self.startProtectorTimer(timeInput: (self.powerUp2TimeLimitInt[self.powerUp2["time"]!] * 100))
             }
             
@@ -1255,7 +1321,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
      */
     func constructGame(){
         resetGame()
-        let JSConstructGame = "resetGame( \(setWidth), \(setHeight), \(setMines), \(setScale), '\(setScaleable)', '\(setMaxScale)', '\(setMinScale)', '\(marginTop)', '\(marginLeft)', '\(tdWidth)', '\(tdHeight)', '\(divWidth)', '\(divHeight)', '\(fontSize)', '\(iconFontSize)')"
+        let JSConstructGame = "resetGame( '" +
+            self.mapConfigs[currentLevel - 1]["width"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["height"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["setMines"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["setScale"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["setScaleable"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["setMaxScale"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["setMinScale"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["marginTop"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["marginLeft"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["tdWidth"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["tdHeight"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["divWidth"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["divHeight"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["fontSize"]! + "', '" +
+            self.mapConfigs[currentLevel - 1]["iconFontSize"]! + "')"
         mineWebView.stringByEvaluatingJavaScript(from: JSConstructGame)
         print (JSConstructGame)
 
@@ -1335,9 +1416,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         case "stopProtector":
             self.PO_mode = "none"
             if(self.game_mode == "sweep"){
-                self.topMineChageAnimation(to: "heart")
+                self.topMineChangeAnimation(to: "heart")
             }   else{
-                self.topMineChageAnimation(to: "mine")
+                self.topMineChangeAnimation(to: "mine")
             }
             
             break;
@@ -1346,14 +1427,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             break;
         case "stopSquareSelection":
             if(self.game_mode == "sweep"){
-                self.topMineChageAnimation(to: "heart")
+                self.topMineChangeAnimation(to: "heart")
             }   else{
-                self.topMineChageAnimation(to: "mine")
+                self.topMineChangeAnimation(to: "mine")
             }
 
             break;
         case "startSquare":
-            self.topMineChageAnimation(to: "xray")
+            self.topMineChangeAnimation(to: "xray")
             break;
         case "gemDetected":
             _self.saveGems = _self.saveGems + Int(value)!;
@@ -1362,6 +1443,28 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             break;
         case "protectorReady":
             self.showProtectCountDownView()
+            break;
+        case "correctStart":
+            self.remainingCorrector = Int(self.powerUp3Number[self.powerUp3["level"]!])
+            self.topMineChangeAnimation(to: "corrector_\(self.powerUp3Number[powerUp3["level"]!])")
+            break;
+        case "correctActivated":
+            self.remainingCorrector = Int(value)!
+            
+            if(self.remainingCorrector > 0){
+                if(self.game_mode == "sweep"){
+                    self.topMineChangeAnimation(to: "heartCorrector_\(self.remainingCorrector)")
+                }   else{
+                    self.topMineChangeAnimation(to: "corrector_\(self.remainingCorrector)");
+                }
+                
+            }   else{
+                if(self.game_mode == "sweep"){
+                    self.topMineChangeAnimation(to: "heart")
+                }   else{
+                    self.topMineChangeAnimation(to: "mine")
+                }
+            }
             
             break;
         default:
@@ -1536,6 +1639,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
     }
     
+    func screenSize()->String{
+        let screenSize = UIScreen.main.bounds
+        let screenHeight = screenSize.height
+        
+        switch screenHeight{
+        case 480:
+            return "4"
+        case 568:
+            return "5"
+        case 667:
+            return "7"
+        case 736:
+            return "7+"
+        default:
+            return ""
+        }
+    }
+
     
     /*
  
@@ -1592,25 +1713,33 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func getRecord() {
         
         if let result = UserDefaults.standard.value(forKey: "lv_1_Statistics"){
-            lv_1_Statistics = result as! [String : String];
+            for (key,value) in result as! [String:String] {
+                lv_1_Statistics[key] = value
+            }
         }   else {
             UserDefaults.standard.set(lv_1_Statistics, forKey: "lv_1_Statistics")
         }
         
         if let result = UserDefaults.standard.value(forKey: "lv_2_Statistics"){
-            lv_2_Statistics = result as! [String : String];
+            for (key,value) in result as! [String:String] {
+                lv_2_Statistics[key] = value
+            }
         }   else {
             UserDefaults.standard.set(lv_2_Statistics, forKey: "lv_2_Statistics")
         }
         
         if let result = UserDefaults.standard.value(forKey: "lv_3_Statistics"){
-            lv_3_Statistics = result as! [String : String];
+            for (key,value) in result as! [String:String] {
+                lv_3_Statistics[key] = value
+            }
         }   else {
             UserDefaults.standard.set(lv_3_Statistics, forKey: "lv_3_Statistics")
         }
         
         if let result = UserDefaults.standard.value(forKey: "lv_4_Statistics"){
-            lv_4_Statistics = result as! [String : String];
+            for (key,value) in result as! [String:String] {
+                lv_4_Statistics[key] = value
+            }
         }   else {
             UserDefaults.standard.set(lv_4_Statistics, forKey: "lv_4_Statistics")
         }
@@ -1632,24 +1761,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         if let result = UserDefaults.standard.value(forKey: "powerUp1"){
-            powerUp1 = result as! [String : Int];
+            for (key,value) in result as! [String:Int] {
+                powerUp1[key] = value
+            }
         }   else {
             UserDefaults.standard.set(powerUp1, forKey: "powerUp1")
         }
         
         if let result = UserDefaults.standard.value(forKey: "powerUp2"){
-            powerUp2 = result as! [String : Int];
+            for (key,value) in result as! [String:Int] {
+                powerUp2[key] = value
+            }
         }   else {
             UserDefaults.standard.set(powerUp2, forKey: "powerUp2")
         }
 
         if let result = UserDefaults.standard.value(forKey: "powerUp3"){
-            powerUp3 = result as! [String : Int];
+            for (key,value) in result as! [String:Int] {
+                powerUp3[key] = value
+            }
         }   else {
             UserDefaults.standard.set(powerUp3, forKey: "powerUp3")
         }
         if let result = UserDefaults.standard.value(forKey: "dailyCheckIn"){
-            dailyCheckIn = result as! [String : Int];
+            for (key,value) in result as! [String:Int] {
+                dailyCheckIn[key] = value
+            }
         }   else {
             UserDefaults.standard.set(dailyCheckIn, forKey: "dailyCheckIn")
         }
@@ -1664,6 +1801,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
     }
+    
     func winRecord(){
         var currentStatistics = getCurrentStatistics(level: currentLevel)
         let totalWin = Int(currentStatistics["totalWin"]!)!;
@@ -1883,13 +2021,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if tableView == self.tableView {
             return 7
         }   else if tableView == self.dealsTableView {
-            return 2
+            return 3
         }   else if tableView == self.currencyTableView {
             return 3
         }   else if tableView == self.abilitiesTableView {
-            return 3
+            return 4
         }   else if tableView == self.passesTableView {
-            return 2
+            return 3
         }   else   {
             return 3
         }
@@ -2076,20 +2214,31 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
                 cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
                 break;
+            case 2:
+                cell.storeElementImage.image = UIImage(named: "gift_gem")
+                cell.storeElementTitle.text = "Gift Gem Pack By TT"
+                cell.storeElementDescription.text = "Free gem from some loves you"
+                cell.storeElementButton.setTitle("FREE", for: .normal)
+                cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+                break;
             default:
                 break;
             }
             let buttonRow = indexPath.row
             var giftName = ""
+        
             
             if(buttonRow == 0){
                 giftName = "Coin"
             }   else if(buttonRow == 1){
                 giftName = "Gem"
+            }   else if(buttonRow == 2){
+                giftName = "GemPack"
             }
             let timeIntival = Int(getTimestamp())! - self.dailyCheckIn["lastClaim\(giftName)"]!
             
-            if(timeIntival < 86400){
+            if(timeIntival < self.dailyCheckIn["timeIntival\(giftName)"]!){
                 cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
             }
 
@@ -2106,7 +2255,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             cell.storeElementBarContainer.isHidden = true;
             cell.storeElementButton.tag = indexPath.row
             cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromCurrencyTableView(sender:)), for: UIControlEvents.touchUpInside)
-            
+            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(self.storePriceButtonTitleOffset), 0, 0)
             switch (indexPath.row){
             case 3:
                 break;
@@ -2126,7 +2275,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     }
                     cell.storeElementImage.image = UIImage(named: "moneyBag_\(indexPath.row)")
                     cell.storeElementButton.setTitle("\(self.priceList["currency_\(indexPath.row + 1)_price"]!)", for: .normal)
-                    cell.storeElementDescription.text = "Use \(self.priceList["currency_\(indexPath.row + 1)_price"]!) gem to exchange \(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) coins"
+                    cell.storeElementDescription.text = "Buy \(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) coins with \(self.priceList["currency_\(indexPath.row + 1)_price"]!) gems"
 
                 }
                 break;
@@ -2189,13 +2338,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 if((self.powerUp1["level"]!) == 0){
                     cell.storeElementTitle.text = "Unlock Mine Protector"
                 }   else    {
-                    cell.storeElementTitle.text = "Mine Protector\(self.powerUp2Range[(self.powerUp2["level"]! + 1)]) Upgrade"
+                    cell.storeElementTitle.text = "Miss-Sweep Proof \(self.powerUp3Range[(self.powerUp3["level"]! + 1)])"
                 }
                 
                 cell.storeElementDescription.text = "Expand Mine Protector Usage"
-                cell.storeElementImage.image = UIImage(named: "mine");
+                cell.storeElementImage.image = UIImage(named: "corrector_lv");
                 remaining =  powerUp3["level"]!
-                name = "Ability_Protector_lv_";
+                name = "Ability_Corrector_lv_";
                 //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp3["level"]!))");
                 break;
 
@@ -2207,7 +2356,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
                 cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
             }   else{
-                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, -80.0, 0, 0)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(self.storePriceButtonTitleOffset), 0, 0)
                 switch (self.priceList["\(name)\(remaining + 1)_type"]!){
                 case 1:
                     cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
@@ -2303,11 +2452,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 name = "Passes_Sweeper";
                 break;
             case 2:
-                cell.storeElementTitle.text = "Mine Protector"
-                cell.storeElementImage.image = UIImage(named: "mine");
-                cell.storeElementDescription.text = "Never have to worry about SWEEP WRONG!"
+                cell.storeElementTitle.text = "Miss-Sweep Corrector"
+                cell.storeElementImage.image = UIImage(named: "corrector_pass");
+                cell.storeElementDescription.text = "Never SWEEP WRONG!"
                 remaining =  powerUp3["remaining"]!
-                name = "Passes_Protector";
+                name = "Passes_Corrector";
                 break;
             default:
                 break;
@@ -2319,7 +2468,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
                 cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
             }   else{
-                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, -80.0, 0, 0)
+                cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(self.storePriceButtonTitleOffset), 0, 0)
+
                 switch (self.priceList["\(name)_type"]!){
                 case 1:
                     cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
@@ -2443,7 +2593,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             break;
         case 2:
             if((powerUp3["remaining"])! < 5){
-                let priceName = "Passes_Protector"
+                let priceName = "Passes_Corrector"
                 let price = self.priceList["\(priceName)"]!
                 let priceType = self.priceList["\(priceName)_type"]!
                 
@@ -2534,7 +2684,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         case 3:
             if((powerUp3["level"])! < 5){
                 let oldValue = self.powerUp3["level"]!
-                let priceName = "Ability_protector_lv_\(oldValue + 1)"
+                let priceName = "Ability_Corrector_lv_\(oldValue + 1)"
                 let price = self.priceList["\(priceName)"]!
                 let priceType = self.priceList["\(priceName)_type"]!
                 
@@ -2585,21 +2735,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let buttonRow = sender.tag
         print("\(buttonRow) Button Clicked")
         var giftName = ""
-        
-        if(buttonRow < 2){
+        var timeIntivalString = "tomorrow"
+        var giftType = 2
+        if(buttonRow < 3){
             if(buttonRow == 0){
                 giftName = "Coin"
+                giftType = 1
             }   else if(buttonRow == 1){
                 giftName = "Gem"
+            }   else if(buttonRow == 2){
+                giftName = "GemPack"
+                timeIntivalString = "next week"
             }
             let timeIntival = Int(getTimestamp())! - self.dailyCheckIn["lastClaim\(giftName)"]!
             
-            if(timeIntival > 86400){
-                _ = deductFromMoney(price: ((-1) * self.dailyCheckIn["\(giftName)"]!), type: (buttonRow + 1))
+            if(timeIntival > self.dailyCheckIn["timeIntival\(giftName)"]!){
+                _ = deductFromMoney(price: ((-1) * self.dailyCheckIn["\(giftName)"]!), type: (giftType))
                 self.dailyCheckIn["lastClaim\(giftName)"] = Int(getTimestamp())!
                 saveRecord();
             }   else{
-                notifyUser("CAUTION", message: "Get more \(giftName) tomorrow!")
+                notifyUser("CAUTION", message: "Get more \(giftName) \(timeIntivalString)!")
             }
             
         }
@@ -2660,6 +2815,42 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     func executeJS(jsCode: String){
         mineWebView.stringByEvaluatingJavaScript(from: jsCode)
+    }
+    
+    func updateConstraints(){
+        switch(screenSize()){
+        case "5":
+            self.storePriceButtonTitleOffset = -127.0
+            break;
+        case "7":
+            self.storePriceButtonTitleOffset = -127.0
+            self.mapConfigs[0]["setScale"] = "1.46"
+            self.mapConfigs[0]["marginTop"] = "0"
+            self.mapConfigs[0]["marginLeft"] = "1.5"
+            
+            
+            self.mapConfigs[1]["setScale"] = "1.46"
+            self.mapConfigs[1]["marginTop"] = "0"
+            self.mapConfigs[1]["marginLeft"] = "1.5"
+            
+            
+            self.mapConfigs[2]["setScale"] = "1.15"
+            self.mapConfigs[2]["marginTop"] = "1"
+            self.mapConfigs[2]["marginLeft"] = "4"
+            
+            
+            self.mapConfigs[3]["setScale"] = "0.73"
+            self.mapConfigs[3]["marginTop"] = "0"
+            self.mapConfigs[3]["marginLeft"] = "2"
+            break;
+        case "+":
+            self.storePriceButtonTitleOffset = -80.0
+            break;
+        default:
+            self.storePriceButtonTitleOffset = -80.0
+            break;
+        }
+
     }
     
 }

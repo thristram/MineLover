@@ -26,6 +26,9 @@ class storeElementTableViewCell: UITableViewCell {
     @IBOutlet weak var storeElementProgress_4: UIView!
     @IBOutlet weak var storeElementProgress_5: UIView!
     
+    @IBOutlet weak var storeElementBarContainerConstraintsWidth: NSLayoutConstraint!
+    @IBOutlet weak var storeElementBarContainerConstraintsHeight: NSLayoutConstraint!
+    
     @IBOutlet weak var storeElementTitleConstraintsTop: NSLayoutConstraint!
     
     @IBAction func storeElementButtonPressed(_ sender: Any) {
@@ -35,6 +38,7 @@ class storeElementTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        updateCellConstraints()
         storeElementButton.layer.borderColor = UIColor.white.cgColor
         
         
@@ -47,5 +51,48 @@ class storeElementTableViewCell: UITableViewCell {
         
         // Configure the view for the selected state
     }
+    func screenCellSize()->String{
+        let screenSize = UIScreen.main.bounds
+        let screenHeight = screenSize.height
+        
+        switch screenHeight{
+        case 480:
+            return "4"
+        case 568:
+            return "5"
+        case 667:
+            return "7"
+        case 736:
+            return "7+"
+        default:
+            return ""
+        }
+    }
+
+    func updateCellConstraints(){
+        switch(screenCellSize()){
+        case "5":
+            
+            break;
+        case "7":
+            let barHeight = 7
+            storeElementProgress_1.layer.cornerRadius = CGFloat(barHeight/2)
+            storeElementProgress_2.layer.cornerRadius = CGFloat(barHeight/2)
+            storeElementProgress_3.layer.cornerRadius = CGFloat(barHeight/2)
+            storeElementProgress_4.layer.cornerRadius = CGFloat(barHeight/2)
+            storeElementProgress_5.layer.cornerRadius = CGFloat(barHeight/2)
+            storeElementBarContainerConstraintsHeight.constant = CGFloat(barHeight)
+            storeElementBarContainerConstraintsWidth.constant = 170
+            break;
+        case "+":
+            
+            break;
+        default:
+            
+            break;
+        }
+        
+    }
+
     
     }

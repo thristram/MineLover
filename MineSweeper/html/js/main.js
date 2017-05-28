@@ -387,44 +387,19 @@ function sweepMine(i, j) {
     //If game is not over
     if (!stopMove) {
 
-        switch(PO_Mode){
-            case "sweep":
-                if (checkCoordIf(cellName, "unchecked")) {
-                    if (checkCoordIf(cellName, "sweeped")) {
-                        unsweepSlot(i, j)
-                    } else {
-                        sweepSlot(i, j);
-                    }
-                } else {
-                    if (checkCoordIf(cellName, "sweeped")) {
-                        unsweepSlot(i, j)
-                    }   else if(!checkCoordIf(cellName, "mine")){
-                        checkMine(i,j)
-                    }
-                }
-                if (connectSwift) {
-                    swiftBridge("mines", totalMines - minesSweeped)
-                }
-                break;
-            case "correct":
-                break;
-            default:
-                if (checkCoordIf(cellName, "unchecked")) {
-                    if (checkCoordIf(cellName, "sweeped")) {
-                        unsweepSlot(i, j)
-                    } else {
-                        sweepSlot(i, j);
-                    }
-                } else {
-                    if (checkCoordIf(cellName, "sweeped")) {
-                        unsweepSlot(i, j)
-                    }
-                }
-                if (connectSwift) {
-                    swiftBridge("mines", totalMines - minesSweeped)
-                }
-
-                break;
+        if (checkCoordIf(cellName, "unchecked")) {
+            if (checkCoordIf(cellName, "sweeped")) {
+                unsweepSlot(i, j)
+            } else {
+                sweepSlot(i, j);
+            }
+        } else {
+            if (checkCoordIf(cellName, "sweeped")) {
+                unsweepSlot(i, j)
+            }
+        }
+        if (connectSwift) {
+            swiftBridge("mines", totalMines - minesSweeped)
         }
 
 
@@ -552,10 +527,17 @@ function sweepSlot(i, j) {
         $(".cell-" + i + "-" + j).addClass("sweepCorrect");
         swiftConsole("Sweep Correct");
         sweepCorrected++;
+        minesSweeped++;
     } else {
         $(".cell-" + i + "-" + j).addClass("sweepWrong");
-        swiftConsole("Sweep Wrong");
-        sweepNotCorrected++;
+        if(PO_Mode = "correct"){
+            correctSlot(i,j)
+
+        }   else{
+            swiftConsole("Sweep Wrong");
+            sweepNotCorrected++;
+            minesSweeped++;
+        }
     }
     minesSweeped++;
     if (connectSwift) {
@@ -587,7 +569,7 @@ function unsweepSlot(i, j) {
 }
 
 function restartGame() {
-
+    PO_Mode = "none"
     resetAllVariables();
     constructAllBlockContents()
 
@@ -610,7 +592,7 @@ function cleanMap() {
     $(".cell").html("<span></span>");
 
 
-    var workingClasses = ["checked", "mine", "sweeped", "sweepCorrect", "sweepWrong", "bombBlowed", "squared", "squaredFull","squaredAlpha", "gem", "gemActive", "protectorActive", "protector", "protectorClicking", "win", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "gem_n1", "gem_n2", "gem_n3", "gem_n4", "gem_n5", "gem_n6", "gem_n7", "gem_n8"]
+    var workingClasses = ["checked", "mine", "sweeped", "sweepCorrect", "sweepWrong", "bombBlowed", "squared", "squaredFull","squaredAlpha", "gem", "gemActive", "protectorActive", "protector", "protectorClicking", "win", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "gem_n1", "gem_n2", "gem_n3", "gem_n4", "gem_n5", "gem_n6", "gem_n7", "gem_n8", "corrector", "correctorActive"]
     for (var i = 0; i < workingClasses.length; i ++){
         $(".cell").removeClass(workingClasses[i]);
     }
