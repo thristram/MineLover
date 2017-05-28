@@ -494,7 +494,7 @@ you want within 5s</string>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FOV-PA-B17">
                                                 <rect key="frame" x="0.0" y="298.5" width="187.5" height="298.5"/>
                                                 <subviews>
-                                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mine" translatesAutoresizingMaskIntoConstraints="NO" id="H6R-3x-7xF">
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="corrector" translatesAutoresizingMaskIntoConstraints="NO" id="H6R-3x-7xF">
                                                         <rect key="frame" x="60.5" y="60" width="65" height="65"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="65" id="Lnk-M2-oOd"/>
@@ -1472,6 +1472,7 @@ upgrade power ups</string>
         <image name="back" width="155" height="155"/>
         <image name="close" width="150" height="150"/>
         <image name="coin" width="150" height="150"/>
+        <image name="corrector" width="150" height="150"/>
         <image name="crazy" width="150" height="150"/>
         <image name="gem" width="151" height="151"/>
         <image name="icon_pause" width="143" height="143"/>

@@ -539,7 +539,7 @@ function sweepSlot(i, j) {
             minesSweeped++;
         }
     }
-    minesSweeped++;
+
     if (connectSwift) {
         swiftBridge("sweepCorrected", sweepCorrected);
         swiftBridge("sweepNotCorrected", sweepNotCorrected);

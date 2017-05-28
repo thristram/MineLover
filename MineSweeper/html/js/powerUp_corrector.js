@@ -47,7 +47,7 @@ function animateWrongSlot(i,j){
         $(".cell-" + i + "-" + j).removeClass("sweeped");
         $(".cell-" + i + "-" + j).html("<span>" +  $(".cell-" + i + "-" + j).attr("mValue") + "</span>");
         $(".cell-" + i + "-" + j).removeClass("sweepWrong");
-    }, 1000)
+    }, 1200)
     
     
     

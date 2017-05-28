@@ -766,16 +766,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             disablePowerUp1()
             
         }   else    {
-            self.powerUp1Lock.isHidden = true
+
             if(powerUp1["remaining"]! < 1){
                 self.powerUp1Status.isHidden = false
                 self.powerUp1Status.text = "NO PASSES LEFT"
+                self.disablePowerUp1();
+            }   else if(self.PO_mode == "square"){
+                self.powerUp1Status.isHidden = false
+                self.powerUp1Status.text = "POWER UP IN-USE"
                 self.disablePowerUp1();
             }   else if(squareUsed)   {
                 self.powerUp1Status.isHidden = false
                 self.powerUp1Status.text = "POWER UP USED"
                 self.disablePowerUp1();
-            }   else{
+            }   else if(self.PO_mode != "none"){
+                self.powerUp1Status.isHidden = false
+                self.powerUp1Status.text = "OTHER POWER UP IN-USE"
+                self.disablePowerUp1();
+            }   else   {
                 self.powerUp1Status.isHidden = true;
                 self.enablePowerUp1();
             }
@@ -790,16 +798,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             disablePowerUp2()
         }   else{
             
-            self.powerUp2Lock.isHidden = true
             if(powerUp2["remaining"]! < 1){
                 self.powerUp2Status.isHidden = false
                 self.powerUp2Status.text = "NO PASSES LEFT"
+                self.disablePowerUp2();
+            }   else if(self.PO_mode == "protector"){
+                self.powerUp2Status.isHidden = false
+                self.powerUp2Status.text = "POWER UP IN-USE"
                 self.disablePowerUp2();
             }   else if(protectorUsed)   {
                 self.powerUp2Status.isHidden = false
                 self.powerUp2Status.text = "POWER UP USED"
                 self.disablePowerUp2();
-            }   else{
+            }   else if(self.PO_mode != "none"){
+                self.powerUp2Status.isHidden = false
+                self.powerUp2Status.text = "OTHER POWER UP IN-USE"
+                self.disablePowerUp2();
+            }   else   {
                 self.powerUp2Status.isHidden = true;
                 self.enablePowerUp2();
             }
@@ -817,11 +832,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 self.powerUp3Status.isHidden = false
                 self.powerUp3Status.text = "NO PASSES LEFT"
                 self.disablePowerUp3();
+            }   else if(self.PO_mode == "corrector"){
+                self.powerUp3Status.isHidden = false
+                self.powerUp3Status.text = "POWER UP IN-USE"
+                self.disablePowerUp1();
             }   else if(correctorUsed)   {
                 self.powerUp3Status.isHidden = false
                 self.powerUp3Status.text = "POWER UP USED"
                 self.disablePowerUp3();
-            }   else{
+            }   else if(self.PO_mode != "none"){
+                self.powerUp3Status.isHidden = false
+                self.powerUp3Status.text = "OTHER POWER UP IN-USE"
+                self.disablePowerUp3();
+            }   else   {
                 self.powerUp3Status.isHidden = true;
                 self.enablePowerUp3();
             }
@@ -1259,7 +1282,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.gemImage.image = UIImage(named: "gem")
         self.gemTitle.text = "You got a GEM!"
         self.gemDescription.text = "You may use the GEM to purchase Power-Ups\nor Upgrade Power-Ups"
-        self.resumeGemViewButton.setTitle("RESUMME", for: .normal)
+        self.resumeGemViewButton.setTitle("RESUME", for: .normal)
         self.resumeGemViewButton.isHidden = false;
         self.stopTimer();
         
