@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head id="head">
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1,  user-scalable=no, maximum-scale=1.6, minimum-scale= 1"
+          id="viewPoint">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="./fontello/css/fontello.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/theme.css">
+    <link rel="stylesheet" href="./css/love.css">
+    <link rel="stylesheet" href="./css/main_powerup.css">
+    <title>MineSweep</title>
+
+
+    <style id="customizedCSS">
+
+
+    </style>
+</head>
+<body>
+<div class="content">
+
+
+    <table border="0" cellspacing="0" cellpadding="0" >
+        <tbody id="map">
+
+
+        </tbody>
+
+    </table>
+
+    <div id="loveText">
+        <div class="loveTextContent">
+            <span>
+                今天是我们在一起第233天，时间真是不知不觉的就过去了呢。跟宝宝在一起的每一天我都很开心~<br>你知道吗？其实我是一个特别慢热的人，很不像射手座，很难很快喜欢上一个人。不过第一次见到你的时候，我就感觉，咦不对劲，我好想喜欢这个宝宝诶~恩恩一眼就看上宝宝啦！然后我们就一起度过了这么美好的一年。<br/>其实这一年对我来说是非常困难的一年。背负了很多很多的责任和压力。本来可以留在纽约过安安稳稳的日子，但我还是义无反顾的回了国。可能是因为宝宝在北京，磁场太强大~让我一定要回来的！<br/>不过说实话，这一年真的是我长大后过的最辛苦的一年，谢谢有你在，谢谢有你能一直陪着我，支持我。可能是因为工作事太多，可能是因为不在一个地方，我们可能没有那么多得时间能一直在一起，不过我们在一起的每一天，我都非常的开心！以后的路还很长，可能还会遇到这样那样的问题，可能还会有时不在一起，不过没关系~只要我特别爱宝宝，宝宝也特别爱我就好！总有一天我们可以每天都在一起，走遍世界每一个角落。<br/><br/>我相信，总会有这么一天的！<br/>我爱你！<br/><br/>2017年5月20日<br/>李方辰
+            </span>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript" src="./js/JQuery.js" ></script>
+<script type="text/javascript" src="./js/plugin.js"></script>
+<script type="text/javascript">
+
+    //UI Elements
+    var flagIcon = "demo-icon icon-heart";
+    var mineIcon = "demo-icon icon-noun_628505_cc";
+    var wrongIcon = "demo-icon icon-cancel";
+
+
+    //Map Parameter
+    var width = 8;
+    var height = 5;
+    var totalMines = 20;
+    var defaultScale = 1.6
+    var param_marginTop = 2,
+        param_marginLeft = 2,
+        param_tdWidth = 31,
+        param_tdHeight = 31,
+        param_divWidth = 30,
+        param_divHeight = 30,
+        param_fontSize = "100%",
+        param_iconFontSize = "150%";
+
+
+    //iOS Linking
+    var connectSwift = false;
+    var ifAgentIsTouch = false;
+
+    //Gem System
+    var gemProbability = 0.8
+    var gemContentLimit = 1
+
+
+
+</script>
+<script type="text/javascript" src="./js/main.js"></script>
+<script type="text/javascript" src="./js/touchEvent.js"></script>
+
+<script type="text/javascript" src="./js/displayLove.js"></script>
+<script type="text/javascript" src="./js/powerUp_Square.js"></script>
+<script type="text/javascript" src="./js/powerUp_Portector.js"></script>
+</body>
+</html>

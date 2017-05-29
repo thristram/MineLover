@@ -11,13 +11,13 @@ import UIKit
 class storeElementTableViewCell: UITableViewCell {
     
     @IBOutlet weak var storeView: UIView!
+    @IBOutlet weak var storeElementView: UIView!
     @IBOutlet weak var storeElementImage: UIImageView!
     @IBOutlet weak var storeElementTitle: UILabel!
     @IBOutlet weak var storeElementDescription: UILabel!
     @IBOutlet weak var storeElementButton: UIButton!
-    @IBOutlet weak var storeElementPriceView: UIView!
-    @IBOutlet weak var storeElementPriceImage: UIImageView!
-    @IBOutlet weak var storeElementPriceLabel: UILabel!
+    @IBOutlet weak var storeElementLock: UIImageView!
+
 
     @IBOutlet weak var storeElementBarContainer: UIView!
     @IBOutlet weak var storeElementProgress_1: UIView!

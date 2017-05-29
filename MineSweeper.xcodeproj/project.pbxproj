@@ -33,6 +33,8 @@
 		7F909A891ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F909A7F1ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf */; };
 		7F909A8D1ED8A2DA00978FD0 /* EFCountingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F909A8C1ED8A2DA00978FD0 /* EFCountingLabel.swift */; };
 		7F909A8F1ED96D4D00978FD0 /* PublicMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F909A8E1ED96D4D00978FD0 /* PublicMethods.swift */; };
+		7FC22AD91EDC192D0062A084 /* GCHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC22AD81EDC192D0062A084 /* GCHelper.swift */; };
+		7FC22ADC1EDC193B0062A084 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC22ADB1EDC193B0062A084 /* GameKit.framework */; };
 		7FC70FC81ED52FC2002D176C /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FC71ED52FC2002D176C /* index.html */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +89,8 @@
 		7F909A7F1ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-SemiboldItalic.ttf"; path = "font/OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		7F909A8C1ED8A2DA00978FD0 /* EFCountingLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EFCountingLabel.swift; path = Library/EFCountingLabel/EFCountingLabel.swift; sourceTree = "<group>"; };
 		7F909A8E1ED96D4D00978FD0 /* PublicMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicMethods.swift; sourceTree = "<group>"; };
+		7FC22AD81EDC192D0062A084 /* GCHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GCHelper.swift; path = Library/GCHelper/GCHelper.swift; sourceTree = "<group>"; };
+		7FC22ADB1EDC193B0062A084 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		7FC70FC71ED52FC2002D176C /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = html/index.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FC22ADC1EDC193B0062A084 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +127,7 @@
 				7F30340B1ECC4F0000AFF021 /* MineSweeperTests */,
 				7F3034161ECC4F0000AFF021 /* MineSweeperUITests */,
 				7F3033F51ECC4F0000AFF021 /* Products */,
+				7FC22ADA1EDC193B0062A084 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -214,6 +220,7 @@
 		7F909A8A1ED8A2BB00978FD0 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7FC22AD71EDC18FD0062A084 /* GCHelper */,
 				7F909A8B1ED8A2C800978FD0 /* EFCountingLabel */,
 			);
 			name = Libraries;
@@ -225,6 +232,22 @@
 				7F909A8C1ED8A2DA00978FD0 /* EFCountingLabel.swift */,
 			);
 			name = EFCountingLabel;
+			sourceTree = "<group>";
+		};
+		7FC22AD71EDC18FD0062A084 /* GCHelper */ = {
+			isa = PBXGroup;
+			children = (
+				7FC22AD81EDC192D0062A084 /* GCHelper.swift */,
+			);
+			name = GCHelper;
+			sourceTree = "<group>";
+		};
+		7FC22ADA1EDC193B0062A084 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7FC22ADB1EDC193B0062A084 /* GameKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,6 +321,9 @@
 						DevelopmentTeam = WBZ6T2AKNS;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
 							com.apple.iCloud = {
 								enabled = 1;
 							};
@@ -384,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7F909A8D1ED8A2DA00978FD0 /* EFCountingLabel.swift in Sources */,
+				7FC22AD91EDC192D0062A084 /* GCHelper.swift in Sources */,
 				7F7D0AA51ED7616D0082FB33 /* storeElementTableViewCell.swift in Sources */,
 				7F3033FA1ECC4F0000AFF021 /* ViewController.swift in Sources */,
 				7F909A8F1ED96D4D00978FD0 /* PublicMethods.swift in Sources */,

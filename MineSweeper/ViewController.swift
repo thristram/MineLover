@@ -65,6 +65,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var timerProtector = Timer()
     var timerProtectorFlag = false
     var totalProtectorTime = 500;
+    
+    var complementaryPassesAfterUnlock = 2
 
     
     var ifReadLove = false;
@@ -157,7 +159,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var priceList: [String:Int] = [
         "Passes_XRay" : 1000, "Passes_XRay_type": 1,
         "Passes_Sweeper" : 1500, "Passes_Sweeper_type": 1,
-        "Passes_Corrector" : 1000, "Passes_Corrector_type": 1,
+        "Passes_Corrector" : 5000, "Passes_Corrector_type": 1,
         
         
         "Ability_XRay_lv_1" : 2, "Ability_XRay_lv_1_type": 2,
@@ -178,15 +180,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         "Ability_Sweeper_time_4" : 5, "Ability_Sweeper_time_4_type": 2,
         "Ability_Sweeper_time_5" : 6, "Ability_Sweeper_time_5_type": 2,
         
-        "Ability_Corrector_lv_1" : 2, "Ability_Corrector_lv_1_type": 2,
-        "Ability_Corrector_lv_2" : 3, "Ability_Corrector_lv_2_type": 2,
-        "Ability_Corrector_lv_3" : 5, "Ability_Corrector_lv_3_type": 2,
-        "Ability_Corrector_lv_4" : 8, "Ability_Corrector_lv_4_type": 2,
-        "Ability_Corrector_lv_5" : 10, "Ability_Corrector_lv_5_type": 2,
+        "Ability_Corrector_lv_1" : 5, "Ability_Corrector_lv_1_type": 2,
+        "Ability_Corrector_lv_2" : 10, "Ability_Corrector_lv_2_type": 2,
+        "Ability_Corrector_lv_3" : 20, "Ability_Corrector_lv_3_type": 2,
+        "Ability_Corrector_lv_4" : 30, "Ability_Corrector_lv_4_type": 2,
+        "Ability_Corrector_lv_5" : 50, "Ability_Corrector_lv_5_type": 2,
         
         "currency_1_price" : 1, "currency_1_price_type": 2, "currency_1_product": 2000, "currency_1_product_type": 1,
         "currency_2_price" : 2, "currency_2_price_type": 2, "currency_2_product": 4500, "currency_2_product_type": 1,
-        "currency_3_price" : 5, "currency_3_price_type": 2, "currency_3_product": 15000, "currency_3_product_type": 1,
+        "currency_3_price" : 5, "currency_3_price_type": 2, "currency_3_product": 12000, "currency_3_product_type": 1,
         
     ]
     
@@ -366,6 +368,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func switchToStoreDeals(){
+        self.storeSegmentControl.selectedSegmentIndex = 0
         self.dealsTableView.isHidden = false;
         self.currencyTableView.isHidden = true;
         self.abilitiesTableView.isHidden = true;
@@ -378,6 +381,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     }
     func switchToStoreCurrency(){
+        self.storeSegmentControl.selectedSegmentIndex = 1
         self.dealsTableView.isHidden = true;
         self.currencyTableView.isHidden = false;
         self.abilitiesTableView.isHidden = true;
@@ -390,6 +394,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     }
     func switchToStoreAbility(){
+        self.storeSegmentControl.selectedSegmentIndex = 2
         self.dealsTableView.isHidden = true;
         self.currencyTableView.isHidden = true;
         self.abilitiesTableView.isHidden = false;
@@ -402,6 +407,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func switchToStorePasses(){
+        self.storeSegmentControl.selectedSegmentIndex = 3
         self.dealsTableView.isHidden = true;
         self.currencyTableView.isHidden = true;
         self.abilitiesTableView.isHidden = true;
@@ -766,7 +772,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             disablePowerUp1()
             
         }   else    {
-
+            self.powerUp3Lock.isHidden = true
             if(powerUp1["remaining"]! < 1){
                 self.powerUp1Status.isHidden = false
                 self.powerUp1Status.text = "NO PASSES LEFT"
@@ -797,7 +803,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             self.powerUp2Lock.isHidden = false;
             disablePowerUp2()
         }   else{
-            
+            self.powerUp3Lock.isHidden = true
             if(powerUp2["remaining"]! < 1){
                 self.powerUp2Status.isHidden = false
                 self.powerUp2Status.text = "NO PASSES LEFT"
@@ -1482,6 +1488,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
                 
             }   else{
+                self.PO_mode = "none"
                 if(self.game_mode == "sweep"){
                     self.topMineChangeAnimation(to: "heart")
                 }   else{
@@ -2219,7 +2226,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             cell.storeElementBarContainer.isHidden = true;
             cell.storeElementButton.tag = indexPath.row
             cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromDealsTableView(sender:)), for: UIControlEvents.touchUpInside)
-            
+            cell.storeElementLock.isHidden = true;
+            cell.storeElementView.alpha = 1.0
             switch (indexPath.row){
             case 0:
                 cell.storeElementImage.image = UIImage(named: "gift_coin")
@@ -2279,6 +2287,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             cell.storeElementButton.tag = indexPath.row
             cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromCurrencyTableView(sender:)), for: UIControlEvents.touchUpInside)
             cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(self.storePriceButtonTitleOffset), 0, 0)
+            cell.storeElementLock.isHidden = true;
+            cell.storeElementView.alpha = 1.0
             switch (indexPath.row){
             case 3:
                 break;
@@ -2318,7 +2328,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
             var remaining = 0
             var name = ""
-            
+            cell.storeElementLock.isHidden = true;
+            cell.storeElementView.alpha = 1.0
             switch (indexPath.row){
             case 0:
                 if((self.powerUp1["level"]!) == 0){
@@ -2354,7 +2365,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementImage.image = UIImage(named: "crazy_time");
                 remaining =  powerUp2["time"]!
                 name = "Ability_Sweeper_time_";
-                //cell.storeElementProgress.image = UIImage(named: "progress_long_\(String(describing: powerUp2["time"]!))");
+                if((powerUp2["level"]!) < 1) {
+                    cell.storeElementView.alpha = 0.5
+                    cell.storeElementLock.isHidden = false;
+                }
                 break;
                 
             case 3:
@@ -2457,7 +2471,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
             var remaining = 0
             var name = ""
-            
+            cell.storeElementLock.isHidden = true;
+            cell.storeElementView.alpha = 1.0
             switch (indexPath.row){
             case 0:
                 cell.storeElementTitle.text = "Mines X-Ray"
@@ -2465,7 +2480,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementDescription.text = "Wanna see what's underground?"
                 remaining =  powerUp1["remaining"]!
                 name = "Passes_XRay";
-                
+                if((powerUp1["level"]!) < 1) {
+                    cell.storeElementView.alpha = 0.5
+                    cell.storeElementLock.isHidden = false;
+                }
                 break;
             case 1:
                 cell.storeElementTitle.text = "Crazy Sweeper"
@@ -2473,6 +2491,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementDescription.text = "Go CRAZY and click EVERYWHERE!"
                 remaining =  powerUp2["remaining"]!
                 name = "Passes_Sweeper";
+                if((powerUp2["level"]!) < 1) {
+                    cell.storeElementView.alpha = 0.5
+                    cell.storeElementLock.isHidden = false;
+                }
                 break;
             case 2:
                 cell.storeElementTitle.text = "Miss-Sweep Proof"
@@ -2480,6 +2502,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.storeElementDescription.text = "Never SWEEP WRONG!"
                 remaining =  powerUp3["remaining"]!
                 name = "Passes_Corrector";
+                if((powerUp3["level"]!) < 1) {
+                    cell.storeElementView.alpha = 0.5
+                    cell.storeElementLock.isHidden = false;
+                }
                 break;
             default:
                 break;
@@ -2578,58 +2604,74 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         switch (buttonRow){
         case 0:
-            if((powerUp1["remaining"])! < 5){
-                let priceName = "Passes_XRay"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-            
-                if(deductFromMoney(price: price, type: priceType)){
-                    let oldValue = self.powerUp1["remaining"]!
-                    self.powerUp1["remaining"] = oldValue + 1;
-                    saveRecord()
-                }   else    {
-                    notifyUser("CAUTION", message: "Insufficient Fund")
+            if((powerUp1["level"]!) > 0){
+                if((powerUp1["remaining"])! < 5){
+                    let priceName = "Passes_XRay"
+                    let price = self.priceList["\(priceName)"]!
+                    let priceType = self.priceList["\(priceName)_type"]!
+                    
+                    if(deductFromMoney(price: price, type: priceType)){
+                        let oldValue = self.powerUp1["remaining"]!
+                        self.powerUp1["remaining"] = oldValue + 1;
+                        saveRecord()
+                    }   else    {
+                        notifyUser("CAUTION", message: "Insufficient Fund")
+                    }
+                    
+                }   else{
+                    notifyUser("CAUTION", message: "5 is Enough, Man!")
                 }
 
-            }   else{
-                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }   else    {
+                notifyUser("CAUTION", message: "Please Unlock Mine X-Ray First!")
+                self.switchToStoreAbility()
             }
             
             break;
         case 1:
-            if((powerUp2["remaining"])! < 5){
-                let priceName = "Passes_Sweeper"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    let oldValue = self.powerUp2["remaining"]!
-                    self.powerUp2["remaining"] = oldValue + 1;
-                    saveRecord()
-                }   else    {
-                    notifyUser("CAUTION", message: "Insufficient Fund")
+            if((powerUp2["level"]!) > 0){
+                if((powerUp2["remaining"])! < 5){
+                    let priceName = "Passes_Sweeper"
+                    let price = self.priceList["\(priceName)"]!
+                    let priceType = self.priceList["\(priceName)_type"]!
+                    
+                    if(deductFromMoney(price: price, type: priceType)){
+                        let oldValue = self.powerUp2["remaining"]!
+                        self.powerUp2["remaining"] = oldValue + 1;
+                        saveRecord()
+                    }   else    {
+                        notifyUser("CAUTION", message: "Insufficient Fund")
+                    }
+                    
+                }   else{
+                    notifyUser("CAUTION", message: "5 is Enough, Man!")
                 }
-                
-            }   else{
-                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }   else    {
+                notifyUser("CAUTION", message: "Please Unlock Crazy Sweeper First!")
+                self.switchToStoreAbility()
             }
             break;
         case 2:
-            if((powerUp3["remaining"])! < 5){
-                let priceName = "Passes_Corrector"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    let oldValue = self.powerUp3["remaining"]!
-                    self.powerUp3["remaining"] = oldValue + 1;
-                    saveRecord()
-                }   else    {
-                    notifyUser("CAUTION", message: "Insufficient Fund")
+            if((powerUp2["level"]!) > 0){
+                if((powerUp3["remaining"])! < 5){
+                    let priceName = "Passes_Corrector"
+                    let price = self.priceList["\(priceName)"]!
+                    let priceType = self.priceList["\(priceName)_type"]!
+                    
+                    if(deductFromMoney(price: price, type: priceType)){
+                        let oldValue = self.powerUp3["remaining"]!
+                        self.powerUp3["remaining"] = oldValue + 1;
+                        saveRecord()
+                    }   else    {
+                        notifyUser("CAUTION", message: "Insufficient Fund")
+                    }
+                    
+                }   else{
+                    notifyUser("CAUTION", message: "5 is Enough, Man!")
                 }
-                
-            }   else{
-                notifyUser("CAUTION", message: "5 is Enough, Man!")
+            }   else   {
+                notifyUser("CAUTION", message: "Please Unlock Miss-Sweep Proof First!")
+                self.switchToStoreAbility()
             }
             break;
         default:
@@ -2655,6 +2697,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 
                 if(deductFromMoney(price: price, type: priceType)){
                     self.powerUp1["level"] = oldValue + 1;
+                    if(oldValue == 0){
+                        notifyUser("Congratulations", message: "You've Unlock Mine X-Ray! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
+                        self.powerUp1["remaining"] = self.powerUp1["remaining"]! + self.complementaryPassesAfterUnlock
+                        self.switchToStorePasses()
+                    }
+
                     saveRecord()
                 }   else    {
                     notifyUser("CAUTION", message: "Insufficient Fund")
@@ -2675,6 +2723,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 
                 if(deductFromMoney(price: price, type: priceType)){
                     self.powerUp2["level"] = oldValue + 1;
+                    if(oldValue == 0){
+                        notifyUser("Congratulations", message: "You've Unlock Crazy Sweeper! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
+                        self.powerUp2["remaining"] = self.powerUp2["remaining"]! + self.complementaryPassesAfterUnlock
+                        self.switchToStorePasses()
+                    }
                     saveRecord()
                 }   else    {
                     notifyUser("CAUTION", message: "Insufficient Fund")
@@ -2686,21 +2739,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
             break;
         case 2:
-            if((powerUp2["time"])! < 5){
-                let oldValue = self.powerUp2["time"]!
-                let priceName = "Ability_Sweeper_time_\(oldValue + 1)"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    self.powerUp2["time"] = oldValue + 1;
-                    saveRecord()
-                }   else    {
-                    notifyUser("CAUTION", message: "Insufficient Fund")
+            if((powerUp2["level"])! > 0){
+                if((powerUp2["time"])! < 5){
+                    let oldValue = self.powerUp2["time"]!
+                    let priceName = "Ability_Sweeper_time_\(oldValue + 1)"
+                    let price = self.priceList["\(priceName)"]!
+                    let priceType = self.priceList["\(priceName)_type"]!
+                    
+                    if(deductFromMoney(price: price, type: priceType)){
+                        self.powerUp2["time"] = oldValue + 1;
+                        saveRecord()
+                    }   else    {
+                        notifyUser("CAUTION", message: "Insufficient Fund")
+                    }
+                    
+                }   else{
+                    notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
                 }
-                
-            }   else{
-                notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
+
+            }   else   {
+                notifyUser("CAUTION", message: "Please Unlock Crazy Sweeper First!")
             }
 
             break;
@@ -2713,6 +2771,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 
                 if(deductFromMoney(price: price, type: priceType)){
                     self.powerUp3["level"] = oldValue + 1;
+                    if(oldValue == 0){
+                        notifyUser("Congratulations", message: "You've Unlock Miss-Sweep Proof! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
+                        self.powerUp3["remaining"] = self.powerUp3["remaining"]! + self.complementaryPassesAfterUnlock
+                        self.switchToStorePasses()
+                    }
                     saveRecord()
                 }   else    {
                     notifyUser("CAUTION", message: "Insufficient Fund")
@@ -2729,6 +2792,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         
         abilitiesTableView.reloadData()
+        passesTableView.reloadData()
     }
     func buttonClickedFromCurrencyTableView(sender:UIButton) {
         
