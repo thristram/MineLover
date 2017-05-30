@@ -32,7 +32,6 @@
 		7F909A881ED8A27B00978FD0 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F909A7E1ED8A27B00978FD0 /* OpenSans-Semibold.ttf */; };
 		7F909A891ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F909A7F1ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf */; };
 		7F909A8D1ED8A2DA00978FD0 /* EFCountingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F909A8C1ED8A2DA00978FD0 /* EFCountingLabel.swift */; };
-		7F909A8F1ED96D4D00978FD0 /* PublicMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F909A8E1ED96D4D00978FD0 /* PublicMethods.swift */; };
 		7FC22AD91EDC192D0062A084 /* GCHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC22AD81EDC192D0062A084 /* GCHelper.swift */; };
 		7FC22ADC1EDC193B0062A084 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC22ADB1EDC193B0062A084 /* GameKit.framework */; };
 		7FC70FC81ED52FC2002D176C /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7FC70FC71ED52FC2002D176C /* index.html */; };
@@ -88,7 +87,6 @@
 		7F909A7E1ED8A27B00978FD0 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-Semibold.ttf"; path = "font/OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		7F909A7F1ED8A27B00978FD0 /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-SemiboldItalic.ttf"; path = "font/OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		7F909A8C1ED8A2DA00978FD0 /* EFCountingLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EFCountingLabel.swift; path = Library/EFCountingLabel/EFCountingLabel.swift; sourceTree = "<group>"; };
-		7F909A8E1ED96D4D00978FD0 /* PublicMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicMethods.swift; sourceTree = "<group>"; };
 		7FC22AD81EDC192D0062A084 /* GCHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GCHelper.swift; path = Library/GCHelper/GCHelper.swift; sourceTree = "<group>"; };
 		7FC22ADB1EDC193B0062A084 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		7FC70FC71ED52FC2002D176C /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = html/index.html; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 				7F3034251ECC50E400AFF021 /* html */,
 				7F3033F71ECC4F0000AFF021 /* AppDelegate.swift */,
 				7F3033F91ECC4F0000AFF021 /* ViewController.swift */,
-				7F909A8E1ED96D4D00978FD0 /* PublicMethods.swift */,
 				7F7D0A761ED6FE300082FB33 /* JavascriptProtocol.swift */,
 				7F3033FB1ECC4F0000AFF021 /* Main.storyboard */,
 				7F3033FE1ECC4F0000AFF021 /* Assets.xcassets */,
@@ -413,7 +410,6 @@
 				7FC22AD91EDC192D0062A084 /* GCHelper.swift in Sources */,
 				7F7D0AA51ED7616D0082FB33 /* storeElementTableViewCell.swift in Sources */,
 				7F3033FA1ECC4F0000AFF021 /* ViewController.swift in Sources */,
-				7F909A8F1ED96D4D00978FD0 /* PublicMethods.swift in Sources */,
 				7F7D0A771ED6FE300082FB33 /* JavascriptProtocol.swift in Sources */,
 				7F3033F81ECC4F0000AFF021 /* AppDelegate.swift in Sources */,
 			);

@@ -245,12 +245,13 @@ public class GCHelper: NSObject, GKMatchmakerViewControllerDelegate, GKGameCente
      :param: viewController The view controller to present GameKit's view controller from.
      :param: viewState The state in which to present the new view controller.
      */
-    public func showGameCenter(_ viewController: UIViewController, viewState: GKGameCenterViewControllerState) {
+    public func showGameCenter(_ viewController: UIViewController, viewState: GKGameCenterViewControllerState, leaderboardID: String) {
         presentingViewController = viewController
         
         let gcvc = GKGameCenterViewController()
         gcvc.viewState = viewState
         gcvc.gameCenterDelegate = self
+        gcvc.leaderboardIdentifier = leaderboardID
         presentingViewController.present(gcvc, animated: true, completion: nil)
     }
     

@@ -30,7 +30,9 @@ var gameMode = "normal"
 
 $("#map").nodoubletapzoom();
 
-//Touch Method
+//GC
+
+var GCMines = [];
 
 
 
@@ -128,7 +130,15 @@ function reConstructMap() {
 }
 
 //Construct Blocks
+function constructminesByMap(map){
+    mines = JSON.parse(map)
+    for (var key in mines){
+        mapBlockCoords[mines[key]] = -1
+    }
+    swiftConsole("Mines Constructed");
+    swiftConsole(mines);
 
+}
 function constructMines(index) {
     if (index < totalMines) {
         var mine = constructSingleMine(width, height);
@@ -148,6 +158,27 @@ function constructMines(index) {
     }
 }
 
+function constructMinesGC(GCwidth, GCheight, GCtotalMines, index){
+    if (index < GCtotalMines) {
+        var mine = constructSingleMine(GCwidth, GCheight);
+        if (GCMines.indexOf(mine) > -1) {
+            constructMines(index);
+
+        } else {
+            GCMines.push(mine);
+            constructMines(index + 1);
+
+        }
+    } else {
+        swiftConsole("GC Mines Constructed");
+        swiftConsole(mines);
+        swiftBridge(JSON.stringify(GCMines), "GCMap")
+    }
+}
+function constructMapsGC(GCwidth, GCheight, GCtotalMines){
+    constructMinesGC(GCwidth, GCheight, GCtotalMines, 0)
+}
+
 function constructSingleMine(maxWidth, maxHeight) {
     var mineX = Math.floor(Math.random() * maxWidth + 0);
     var mineY = Math.floor(Math.random() * maxHeight + 0);
@@ -155,8 +186,13 @@ function constructSingleMine(maxWidth, maxHeight) {
     return mineCoord;
 }
 
-function constructAllBlockContents() {
-    constructMines(0);
+function constructAllBlockContents(map) {
+    if(map){
+        constructminesByMap(map)
+    }   else    {
+        constructMines(0);
+    }
+
     swiftConsole("Constructing Blocks");
     checkMinesArounds(1, 1, 1);
 
@@ -189,6 +225,7 @@ function constructAllBlockContents() {
 
 
 }
+
 
 function checkMinesArounds(i, j, mode) {
     //Mode 1: Mine, Mode 2: Sweeped
@@ -569,9 +606,23 @@ function unsweepSlot(i, j) {
 }
 
 function restartGame() {
-    PO_Mode = "none"
+    PO_Mode = "none";
+    mineHelper = true;
     resetAllVariables();
     constructAllBlockContents()
+
+    if (connectSwift) {
+        swiftBridge("mines", totalMines);
+    }
+
+    cleanMap();
+
+}
+function restartGameFromMap(map) {
+    PO_Mode = "none"
+    mineHelper = false;
+    resetAllVariables();
+    constructAllBlockContents(map)
 
     if (connectSwift) {
         swiftBridge("mines", totalMines);
@@ -702,7 +753,7 @@ function setViewPoint(setScale, setScaleable, setMaxScale, setMinScale) {
     $("#viewPoint").attr("content", viewPoints.join(","));
 }
 
-function resetGame(setWidth, setHeight, setMines, setScale, setScaleable, setMaxScale, setMinScale, marginTop, marginLeft, tdWidth, tdHeight, divWidth, divHeight, fontSize, iconFontSize) {
+function resetGame(setWidth, setHeight, setMines, setScale, setScaleable, setMaxScale, setMinScale, marginTop, marginLeft, tdWidth, tdHeight, divWidth, divHeight, fontSize, iconFontSize, map) {
 
     width = parseInt(setWidth);
     height = parseInt(setHeight);
@@ -743,7 +794,12 @@ function resetGame(setWidth, setHeight, setMines, setScale, setScaleable, setMax
 
     reConstructMap();
     fillGradientColor("#c42935", "#7f4291", height, "#801ecc" ,"#16009e");
-    restartGame();
+    if(map){
+        restartGameFromMap(map);
+    }   else    {
+        restartGame();
+    }
+
 
     /*
      $(".cellContainer").css({

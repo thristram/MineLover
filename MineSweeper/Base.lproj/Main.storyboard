@@ -106,100 +106,6 @@
                                     <constraint firstItem="g7k-Ov-z2R" firstAttribute="centerY" secondItem="7dZ-aa-cTB" secondAttribute="centerY" id="rG1-wI-VCz"/>
                                 </constraints>
                             </view>
-                            <view hidden="YES" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9il-SD-uiz">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gem" translatesAutoresizingMaskIntoConstraints="NO" id="MKD-cZ-mkQ">
-                                        <rect key="frame" x="112" y="158.5" width="150" height="150"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="150" id="0tP-qp-mhz"/>
-                                            <constraint firstAttribute="height" constant="150" id="7Jc-65-dAG"/>
-                                        </constraints>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You got a GEM!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BgD-qZ-zPB">
-                                        <rect key="frame" x="114" y="358.5" width="147.5" height="29"/>
-                                        <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="21"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AsJ-xm-mKT">
-                                        <rect key="frame" x="28.5" y="397.5" width="318.5" height="41"/>
-                                        <string key="text">You may use the GEM to purchase Power-Ups
-or Upgrade Power-Ups</string>
-                                        <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="15"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dYF-Zk-B0G">
-                                        <rect key="frame" x="30" y="588" width="315" height="44"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="hH7-6X-Kk3"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="21"/>
-                                        <state key="normal" title="RESUME">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="20"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                                <integer key="value" value="3"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="resumeGemViewPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mce-Vh-0uK"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e4y-Hf-Ds7">
-                                        <rect key="frame" x="301" y="22.5" width="10" height="23.5"/>
-                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L4O-Gt-g9L">
-                                        <rect key="frame" x="354" y="22.5" width="10" height="23.5"/>
-                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gem" translatesAutoresizingMaskIntoConstraints="NO" id="Fg6-Tx-QkD">
-                                        <rect key="frame" x="331" y="24" width="18" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="Ckg-nT-Pt2"/>
-                                            <constraint firstAttribute="width" constant="18" id="Lq7-X9-J4o"/>
-                                        </constraints>
-                                    </imageView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin" translatesAutoresizingMaskIntoConstraints="NO" id="2Eq-50-8Pm">
-                                        <rect key="frame" x="276" y="24" width="20" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="BhI-QZ-BOP"/>
-                                            <constraint firstAttribute="height" constant="20" id="azl-B9-FBe"/>
-                                        </constraints>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstItem="L4O-Gt-g9L" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="22.5" id="87E-dL-eaR"/>
-                                    <constraint firstItem="AsJ-xm-mKT" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="91Y-Zf-YjJ"/>
-                                    <constraint firstItem="BgD-qZ-zPB" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="B4H-iG-1s5"/>
-                                    <constraint firstAttribute="trailing" secondItem="L4O-Gt-g9L" secondAttribute="trailing" constant="11" id="EPD-IY-Iiy"/>
-                                    <constraint firstItem="BgD-qZ-zPB" firstAttribute="top" secondItem="MKD-cZ-mkQ" secondAttribute="bottom" constant="50" id="Hqn-dp-1OA"/>
-                                    <constraint firstAttribute="bottom" secondItem="dYF-Zk-B0G" secondAttribute="bottom" constant="35" id="IiX-Rg-AYX"/>
-                                    <constraint firstItem="Fg6-Tx-QkD" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="24" id="NtZ-y3-j6x"/>
-                                    <constraint firstItem="Fg6-Tx-QkD" firstAttribute="leading" secondItem="e4y-Hf-Ds7" secondAttribute="trailing" constant="20" id="Pmd-sP-eJ3"/>
-                                    <constraint firstItem="MKD-cZ-mkQ" firstAttribute="centerY" secondItem="9il-SD-uiz" secondAttribute="centerY" constant="-100" id="REg-9K-uOD"/>
-                                    <constraint firstItem="MKD-cZ-mkQ" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="SBD-G4-aCR"/>
-                                    <constraint firstItem="AsJ-xm-mKT" firstAttribute="top" secondItem="BgD-qZ-zPB" secondAttribute="bottom" constant="10" id="SGU-60-VIp"/>
-                                    <constraint firstItem="e4y-Hf-Ds7" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="22.5" id="Z95-X2-rB6"/>
-                                    <constraint firstItem="2Eq-50-8Pm" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="24" id="d4g-fA-xsq"/>
-                                    <constraint firstAttribute="trailing" secondItem="dYF-Zk-B0G" secondAttribute="trailing" constant="30" id="gTG-rk-S6A"/>
-                                    <constraint firstItem="e4y-Hf-Ds7" firstAttribute="leading" secondItem="2Eq-50-8Pm" secondAttribute="trailing" constant="5" id="nad-2J-XKZ"/>
-                                    <constraint firstItem="L4O-Gt-g9L" firstAttribute="leading" secondItem="Fg6-Tx-QkD" secondAttribute="trailing" constant="5" id="xaZ-I4-bgm"/>
-                                    <constraint firstItem="dYF-Zk-B0G" firstAttribute="leading" secondItem="9il-SD-uiz" secondAttribute="leading" constant="30" id="xvH-wN-0UV"/>
-                                </constraints>
-                            </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iPQ-V4-Bdb">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
@@ -795,17 +701,31 @@ upgrade power ups</string>
                                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pc2-Nc-9nK">
+                                                                    <rect key="frame" x="332" y="17" width="27" height="27"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="27" id="mZN-ga-2AI"/>
+                                                                        <constraint firstAttribute="width" constant="27" id="saq-ee-bmc"/>
+                                                                    </constraints>
+                                                                    <state key="normal" image="gamecenter"/>
+                                                                    <connections>
+                                                                        <action selector="pressGameCenterLeaderboardButton:" destination="I2z-Tx-JVQ" eventType="touchUpInside" id="FzZ-QS-IcZ"/>
+                                                                    </connections>
+                                                                </button>
                                                             </subviews>
                                                             <constraints>
                                                                 <constraint firstItem="gvQ-M1-AAb" firstAttribute="leading" secondItem="OZV-u9-xAH" secondAttribute="leadingMargin" constant="8" id="6tc-Zm-oyd"/>
+                                                                <constraint firstAttribute="trailingMargin" secondItem="Pc2-Nc-9nK" secondAttribute="trailing" constant="8" id="Uux-u6-FRu"/>
                                                                 <constraint firstItem="02Z-Nf-Iro" firstAttribute="centerY" secondItem="OZV-u9-xAH" secondAttribute="centerY" id="khG-iy-RsW"/>
                                                                 <constraint firstItem="gvQ-M1-AAb" firstAttribute="centerY" secondItem="OZV-u9-xAH" secondAttribute="centerY" id="mXC-XT-juz"/>
                                                                 <constraint firstItem="02Z-Nf-Iro" firstAttribute="leading" secondItem="gvQ-M1-AAb" secondAttribute="trailing" constant="16" id="o4e-PN-dlP"/>
+                                                                <constraint firstItem="Pc2-Nc-9nK" firstAttribute="centerY" secondItem="OZV-u9-xAH" secondAttribute="centerY" id="ttc-t9-5gj"/>
                                                             </constraints>
                                                         </tableViewCellContentView>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         <connections>
                                                             <outlet property="cellBG" destination="OZV-u9-xAH" id="8Ue-KM-7Mq"/>
+                                                            <outlet property="titleGameCenterButton" destination="Pc2-Nc-9nK" id="842-Xw-m1w"/>
                                                             <outlet property="titleImage" destination="gvQ-M1-AAb" id="L7s-Fe-5Fu"/>
                                                             <outlet property="titleLabel" destination="02Z-Nf-Iro" id="6ba-1d-nTs"/>
                                                         </connections>
@@ -1136,10 +1056,20 @@ upgrade power ups</string>
                                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1H-K3-XEM">
+                                                <rect key="frame" x="149.5" y="393" width="76" height="30"/>
+                                                <state key="normal" title="Multiplayer">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="multiPlayerPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ejP-fV-WfT"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="LdX-gD-fig" firstAttribute="leading" secondItem="Esp-9M-mk4" secondAttribute="leading" constant="40" id="35k-ds-G0b"/>
                                             <constraint firstItem="Tcc-jc-zs9" firstAttribute="centerY" secondItem="Esp-9M-mk4" secondAttribute="centerY" constant="-100" id="6BC-19-giz"/>
+                                            <constraint firstItem="LdX-gD-fig" firstAttribute="top" secondItem="w1H-K3-XEM" secondAttribute="bottom" constant="48" id="Afd-gn-YTf"/>
                                             <constraint firstItem="ij7-Zv-c1m" firstAttribute="top" secondItem="LdX-gD-fig" secondAttribute="bottom" constant="30" id="Fcz-Op-7ob"/>
                                             <constraint firstItem="OXn-79-mwH" firstAttribute="leading" secondItem="Esp-9M-mk4" secondAttribute="leading" constant="50" id="G72-jG-dwK"/>
                                             <constraint firstItem="i7H-p3-9Oj" firstAttribute="leading" secondItem="Esp-9M-mk4" secondAttribute="leading" constant="50" id="Hwb-7I-IfY"/>
@@ -1157,6 +1087,7 @@ upgrade power ups</string>
                                             <constraint firstItem="Wwf-HR-lQI" firstAttribute="top" secondItem="Esp-9M-mk4" secondAttribute="top" id="bNp-eq-TSL"/>
                                             <constraint firstItem="Tcc-jc-zs9" firstAttribute="centerX" secondItem="Esp-9M-mk4" secondAttribute="centerX" id="nmj-j3-Anu"/>
                                             <constraint firstItem="Wwf-HR-lQI" firstAttribute="leading" secondItem="Esp-9M-mk4" secondAttribute="leading" id="p2c-S7-KXO"/>
+                                            <constraint firstItem="w1H-K3-XEM" firstAttribute="centerX" secondItem="Esp-9M-mk4" secondAttribute="centerX" id="p7m-Jx-Vyl"/>
                                             <constraint firstAttribute="trailing" secondItem="OXn-79-mwH" secondAttribute="trailing" constant="50" id="qyR-P4-0TQ"/>
                                             <constraint firstAttribute="trailing" secondItem="nmx-g1-2dB" secondAttribute="trailing" constant="30" id="rl6-4G-QxP"/>
                                             <constraint firstItem="nmx-g1-2dB" firstAttribute="leading" secondItem="Esp-9M-mk4" secondAttribute="leading" constant="30" id="s2u-c6-gYv"/>
@@ -1353,6 +1284,100 @@ upgrade power ups</string>
                                     <constraint firstItem="qqM-y0-aEZ" firstAttribute="leading" secondItem="fu9-da-hHQ" secondAttribute="leading" id="yTm-3p-RBg"/>
                                 </constraints>
                             </view>
+                            <view hidden="YES" alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9il-SD-uiz">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gem" translatesAutoresizingMaskIntoConstraints="NO" id="MKD-cZ-mkQ">
+                                        <rect key="frame" x="112" y="158.5" width="150" height="150"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="150" id="0tP-qp-mhz"/>
+                                            <constraint firstAttribute="height" constant="150" id="7Jc-65-dAG"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You got a GEM!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BgD-qZ-zPB">
+                                        <rect key="frame" x="114" y="358.5" width="147.5" height="29"/>
+                                        <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="21"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AsJ-xm-mKT">
+                                        <rect key="frame" x="28.5" y="397.5" width="318.5" height="41"/>
+                                        <string key="text">You may use the GEM to purchase Power-Ups
+or Upgrade Power-Ups</string>
+                                        <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="15"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dYF-Zk-B0G">
+                                        <rect key="frame" x="30" y="588" width="315" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="hH7-6X-Kk3"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="21"/>
+                                        <state key="normal" title="RESUME">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="20"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.maskToBounds" value="YES"/>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                <integer key="value" value="3"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="resumeGemViewPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mce-Vh-0uK"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e4y-Hf-Ds7">
+                                        <rect key="frame" x="301" y="22.5" width="10" height="23.5"/>
+                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L4O-Gt-g9L">
+                                        <rect key="frame" x="354" y="22.5" width="10" height="23.5"/>
+                                        <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gem" translatesAutoresizingMaskIntoConstraints="NO" id="Fg6-Tx-QkD">
+                                        <rect key="frame" x="331" y="24" width="18" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="Ckg-nT-Pt2"/>
+                                            <constraint firstAttribute="width" constant="18" id="Lq7-X9-J4o"/>
+                                        </constraints>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coin" translatesAutoresizingMaskIntoConstraints="NO" id="2Eq-50-8Pm">
+                                        <rect key="frame" x="276" y="24" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="BhI-QZ-BOP"/>
+                                            <constraint firstAttribute="height" constant="20" id="azl-B9-FBe"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="L4O-Gt-g9L" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="22.5" id="87E-dL-eaR"/>
+                                    <constraint firstItem="AsJ-xm-mKT" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="91Y-Zf-YjJ"/>
+                                    <constraint firstItem="BgD-qZ-zPB" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="B4H-iG-1s5"/>
+                                    <constraint firstAttribute="trailing" secondItem="L4O-Gt-g9L" secondAttribute="trailing" constant="11" id="EPD-IY-Iiy"/>
+                                    <constraint firstItem="BgD-qZ-zPB" firstAttribute="top" secondItem="MKD-cZ-mkQ" secondAttribute="bottom" constant="50" id="Hqn-dp-1OA"/>
+                                    <constraint firstAttribute="bottom" secondItem="dYF-Zk-B0G" secondAttribute="bottom" constant="35" id="IiX-Rg-AYX"/>
+                                    <constraint firstItem="Fg6-Tx-QkD" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="24" id="NtZ-y3-j6x"/>
+                                    <constraint firstItem="Fg6-Tx-QkD" firstAttribute="leading" secondItem="e4y-Hf-Ds7" secondAttribute="trailing" constant="20" id="Pmd-sP-eJ3"/>
+                                    <constraint firstItem="MKD-cZ-mkQ" firstAttribute="centerY" secondItem="9il-SD-uiz" secondAttribute="centerY" constant="-100" id="REg-9K-uOD"/>
+                                    <constraint firstItem="MKD-cZ-mkQ" firstAttribute="centerX" secondItem="9il-SD-uiz" secondAttribute="centerX" id="SBD-G4-aCR"/>
+                                    <constraint firstItem="AsJ-xm-mKT" firstAttribute="top" secondItem="BgD-qZ-zPB" secondAttribute="bottom" constant="10" id="SGU-60-VIp"/>
+                                    <constraint firstItem="e4y-Hf-Ds7" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="22.5" id="Z95-X2-rB6"/>
+                                    <constraint firstItem="2Eq-50-8Pm" firstAttribute="top" secondItem="9il-SD-uiz" secondAttribute="top" constant="24" id="d4g-fA-xsq"/>
+                                    <constraint firstAttribute="trailing" secondItem="dYF-Zk-B0G" secondAttribute="trailing" constant="30" id="gTG-rk-S6A"/>
+                                    <constraint firstItem="e4y-Hf-Ds7" firstAttribute="leading" secondItem="2Eq-50-8Pm" secondAttribute="trailing" constant="5" id="nad-2J-XKZ"/>
+                                    <constraint firstItem="L4O-Gt-g9L" firstAttribute="leading" secondItem="Fg6-Tx-QkD" secondAttribute="trailing" constant="5" id="xaZ-I4-bgm"/>
+                                    <constraint firstItem="dYF-Zk-B0G" firstAttribute="leading" secondItem="9il-SD-uiz" secondAttribute="leading" constant="30" id="xvH-wN-0UV"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.079081803560256958" green="0.085732206702232361" blue="0.1295405775308609" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
@@ -1474,6 +1499,7 @@ upgrade power ups</string>
         <image name="coin" width="150" height="150"/>
         <image name="corrector" width="150" height="150"/>
         <image name="crazy" width="150" height="150"/>
+        <image name="gamecenter" width="192" height="192"/>
         <image name="gem" width="151" height="151"/>
         <image name="icon_pause" width="143" height="143"/>
         <image name="icon_powerup" width="360" height="360"/>

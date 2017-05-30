@@ -8,11 +8,12 @@
 
 import UIKit
 import JavaScriptCore
+import GameKit
 
 
 
-
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, GCHelperDelegate {
+    
     
     
     ////////////////////////////////
@@ -312,8 +313,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var gemImage: UIImageView!
     @IBOutlet weak var gemTitle: UILabel!
     @IBOutlet weak var gemDescription: UILabel!
-    @IBOutlet weak var coinGemViewButton: UIButton!
-    @IBOutlet weak var gemGemViewButton: UIButton!
     @IBOutlet weak var coinGemViewLabel: UILabel!
     @IBOutlet weak var gemGemViewLabel: UILabel!
     @IBOutlet weak var resumeGemViewButton: UIButton!
@@ -589,6 +588,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
     }
     @IBAction func switchToLeaderboard(_ sender: Any) {
+        
         let _self = self;
         self.tableView.reloadData();
         _self.leaderboardView.isHidden = false
@@ -723,6 +723,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
 
+    @IBAction func multiPlayerPressed(_ sender: Any) {
+        GCHelper.sharedInstance.findMatchWithMinPlayers(2, maxPlayers: 2, viewController: self, delegate: self)
+    }
     @IBAction func powerUpStoreClick(_ sender: Any) {
         showStoreView();
     }
@@ -979,6 +982,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         //RECORD
         getRecord()
         iCloudSetUp()
+        
         
         //TableView
         tableView.delegate = self
@@ -1869,10 +1873,30 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         updateSingleRecord(level: currentLevel, name: "totalMineSweeped", value: newMineSweeped as AnyObject)
         
         var cPlace = 11;
-        
+        var levelIdentifier = ""
+        switch (currentLevel){
+        case 1:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.beginner"
+            break;
+        case 2:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.medium"
+            break;
+        case 3:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.expert"
+            break;
+        case 4:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.crazy"
+            break;
+        default:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.beginner"
+            break;
+            
+        }
+        GCHelper.sharedInstance.reportLeaderboardIdentifier(levelIdentifier, score: cTime)
         for i in (0...9).reversed(){
             print("[SAVE] Checking record No. \(i+1)")
             let thisTimeRecord = Int(currentStatistics["\(i+1)_Record"]!)!;
+            
             if(thisTimeRecord != 0){
                 print("[SAVE] Record No. \(i+1): \(thisTimeRecord), this time: \(cTime)")
                 if(thisTimeRecord < cTime){
@@ -1881,6 +1905,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Record", value: cTime as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Date", value: getTimestamp() as AnyObject)
                     updateSingleRecord(level: currentLevel, name: "\(i+2)_Map", value: currentMap as AnyObject)
+                    
                     break;
                 }   else if(i < 9){
                     print("[SAVE] Old No. \(i+1) move to No. \(i+2)")
@@ -2092,10 +2117,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if (tableView == self.tableView) {
-            switch (indexPath.row){
+                        switch (indexPath.row){
             case 0:
                 let identfier = "lbTitleCell"
                 let cell:leaderboardTitleableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! leaderboardTitleableViewCell
+                cell.titleGameCenterButton.tag = indexPath.section
+                cell.titleGameCenterButton.addTarget(self, action: #selector(self.GCButtonClickedFromLeaderboardTableView(sender:)), for: UIControlEvents.touchUpInside)
+
                 cell.selectionStyle = .none
                 
                 switch (indexPath.section){
@@ -2595,7 +2623,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
         
     }
-    
+    func GCButtonClickedFromLeaderboardTableView(sender:UIButton){
+        let buttonRow = sender.tag
+        print("\(buttonRow) Button Clicked")
+        var levelIdentifier = "";
+        switch (buttonRow){
+        case 0:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.beginner"
+            break;
+        case 1:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.medium"
+            break;
+        case 2:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.expert"
+            break;
+        case 3:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.crazy"
+            break;
+        default:
+            levelIdentifier = "grp.SeraphTechnology.MineSweeper.lbrd.beginner"
+            break;
+            
+        }
+
+        GCHelper.sharedInstance.showGameCenter(self, viewState: .leaderboards, leaderboardID: levelIdentifier)
+        
+    }
     func buttonClickedFromPassesTableView(sender:UIButton) {
         
         let buttonRow = sender.tag
@@ -2940,6 +2993,108 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     }
     
+    var opponentID = "";
+    func sendMatchData(data: String){
+        let matchData = data.data(using: .utf8)
+        do {
+            try GCHelper.sharedInstance.match.sendData(toAllPlayers: matchData!, with: GKMatchSendDataMode.reliable)
+        } catch _ {
+            
+        }
+    }
+    
+    
+    /// Method called when the device received data about the match from another device in the match.
+    func match(_ match: GKMatch, didReceiveData: Data, fromPlayer: String) {
+        self.opponentID = fromPlayer
+        let dataString = String(data: didReceiveData, encoding: String.Encoding.utf8) as String!
+        if let str = dataString{
+            print(str)
+            let commands = str.components(separatedBy: ",")
+            if commands.count > 0{
+                for (_, val) in commands.enumerated() {
+                    let command = val.components(separatedBy: ":")
+                    self.handelGCCommands(command: command[0], value: command[1])
+                    
+                }
+            }
+
+        }
+
+    }
+    
+    func handelGCCommands(command: String, value: String){
+        switch (command){
+            case "maps":
+                break;
+            case "mapInit":
+                break;
+            case "time":
+                break;
+            case "gameoverWin":
+                break;
+            case "gameoverLose":
+                break;
+            case "abrot":
+                break;
+            case "remaining":
+                break;
+            default:
+                break;
+        }
+    }
+    
+    /// Method called when a match has been initiated.
+    func matchStarted() {
+        print("match start")
+        sendMatchData(data: "ababababab")
+        showMatchView()
+    }
+    func matchEnded() {
+    }
+    
+
+    func showMatchView(){
+        self.stopTimer()
+        self.gemView.isHidden = false;
+        self.coinGemViewLabel.text = "\(self.saveCoins)";
+        self.gemImage.image = UIImage(named: "competition")
+        self.gemTitle.text = "Initializing"
+        self.gemDescription.text = "Connecting with your opponent\nPlease wait......"
+        
+        self.resumeGemViewButton.isHidden = true;
+        self.gemView.alpha = 1.0
+        self.mainViewStatusBar.alpha = 0.0
+
+        /*
+        UIView.animate(withDuration: 0.5, animations: {
+            self.gemView.alpha = 1.0
+            self.mainViewStatusBar.alpha = 0.0
+        }, completion: { (finished: Bool) in
+            
+            let when = DispatchTime.now();
+            DispatchQueue.main.asyncAfter(deadline: when + 1) {
+                self.gemImage.image = UIImage(named: "number_2")
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 2) {
+                self.gemImage.image = UIImage(named: "number_1")
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 3) {
+                self.hideGemView()
+                
+            }
+            DispatchQueue.main.asyncAfter(deadline: when + 3.5) {
+                self.executeJS(jsCode: "startPOProtector()")
+                self.topMineChangeAnimation(to: "crazy")
+                self.startProtectorTimer(timeInput: (self.powerUp2TimeLimitInt[self.powerUp2["time"]!] * 100))
+            }
+            
+        });
+ */
+
+    }
+
+    
 }
 extension ViewController : UIWebViewDelegate {
     func webViewDidFinishLoad(_ webView: UIWebView) {
@@ -2976,6 +3131,10 @@ class leaderboardTitleableViewCell: UITableViewCell {
     @IBOutlet weak var cellBG: UIView!
     @IBOutlet weak var titleImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var titleGameCenterButton: UIButton!
+    
+    @IBAction func pressGameCenterLeaderboardButton(_ sender: Any) {
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
