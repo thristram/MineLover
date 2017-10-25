@@ -35,12 +35,13 @@ class storeElementTableViewCell: UITableViewCell {
         
     }
 
+    var progressBarsElements: [UIView] = []
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        updateCellConstraints()
-        storeElementButton.layer.borderColor = UIColor.white.cgColor
-        
+        self.updateCellConstraints()
+        self.storeElementButton.layer.borderColor = UIColor.white.cgColor
+        self.progressBarsElements = [self.storeElementProgress_1, self.storeElementProgress_2, self.storeElementProgress_3, self.storeElementProgress_4, self.storeElementProgress_5]
         
         //self.selectBox.borderColors(UIColor(red: 0, green: 0, blue: 0, alpha: 0.1))
         // Initialization code
@@ -50,6 +51,46 @@ class storeElementTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         // Configure the view for the selected state
+    }
+    func displayPrice(item: StoreItem){
+        if item.soldOutFlag{
+            self.storeElementButton.setTitle("SOLD OUT", for: .normal)
+            self.storeElementButton.setImage(UIImage(named:""), for: .normal)
+            self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        }   else{
+            self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(MinesLover.UIElements["storePriceButtonTitleOffset"]!), 0, 0)
+            
+            switch item.priceUnit{
+            case .coin:
+                self.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
+                break;
+            case .gem:
+                self.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
+                break;
+            default:
+                break;
+            }
+            self.storeElementButton.setTitle("\(item.price)", for: .normal)
+            
+        }
+    }
+    func lockItem(ifLock:Bool){
+        if ifLock{
+            self.storeElementView.alpha = 0.5
+            self.storeElementLock.isHidden = false;
+        }   else{
+            self.storeElementLock.isHidden = true;
+            self.storeElementView.alpha = 1.0
+        }
+    }
+    func displayProgressBar(number: Int){
+        for i in 1...5{
+            if (number - i) > -1 {
+                self.progressBarsElements[i-1].isHidden = false
+            }   else{
+                self.progressBarsElements[i-1].isHidden = true
+            }
+        }
     }
     func screenCellSize()->String{
         let screenSize = UIScreen.main.bounds

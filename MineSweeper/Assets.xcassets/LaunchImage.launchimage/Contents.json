@@ -34,12 +34,14 @@
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
+      "filename" : "iPad_Landscape@1024x748.png",
       "extent" : "to-status-bar",
       "scale" : "1x"
     },
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
+      "filename" : "iPad_Landscape@1024x768.png",
       "extent" : "full-screen",
       "scale" : "1x"
     },

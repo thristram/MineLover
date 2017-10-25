@@ -26,7 +26,7 @@ var timeOutEvent = 0;
 
 //POWERUPS
 var PO_Mode = "none";
-var gameMode = "normal"
+var gameMode = "normal";
 
 $("#map").nodoubletapzoom();
 
@@ -162,17 +162,17 @@ function constructMinesGC(GCwidth, GCheight, GCtotalMines, index){
     if (index < GCtotalMines) {
         var mine = constructSingleMine(GCwidth, GCheight);
         if (GCMines.indexOf(mine) > -1) {
-            constructMines(index);
+            constructMinesGC(GCwidth, GCheight, GCtotalMines, index);
 
         } else {
             GCMines.push(mine);
-            constructMines(index + 1);
+            constructMinesGC(GCwidth, GCheight, GCtotalMines, index + 1);
 
         }
     } else {
         swiftConsole("GC Mines Constructed");
-        swiftConsole(mines);
-        swiftBridge(JSON.stringify(GCMines), "GCMap")
+        swiftConsole(GCMines);
+        swiftBridge("GCMap", JSON.stringify(GCMines))
     }
 }
 function constructMapsGC(GCwidth, GCheight, GCtotalMines){
@@ -297,8 +297,11 @@ function gameStart(i, j) {
     }
     mapBlocks();
 }
-function checkMine(i, j) {
+function checkMine(i, j, ifNotSend) {
     var cellName = i + "-" + j;
+    if(!ifNotSend){
+        swiftBridge("GCcheckMine",cellName)
+    }
 
     if (!stopMove) {
         //swiftConsole("Valid Click");
@@ -388,7 +391,7 @@ function checkSeconderyMine(i, j) {
         }
 
         if (!(checkCoordIf(cellName, "checked"))) {
-            countGem(i, j)
+            countGem(i, j);
             openSlot(i, j, true);
             if (checkCoordIf(cellName, "blank")) {
                 checkSurroundMine(i, j)
@@ -412,11 +415,14 @@ function checkSurroundMine(i, j) {
     }
 }
 
-function sweepMine(i, j) {
+function sweepMine(i, j, ifNotSend) {
     var cellName = i + "-" + j;
-
+    if(!ifNotSend){
+        swiftBridge("GCsweepMine",cellName)
+    }
     //If the first click is a sweep, start timer and start game
     if (clicks == 0) {
+
         gameStart(i, j);
     }
     clicks++;
@@ -425,13 +431,17 @@ function sweepMine(i, j) {
     if (!stopMove) {
 
         if (checkCoordIf(cellName, "unchecked")) {
+
             if (checkCoordIf(cellName, "sweeped")) {
+
                 unsweepSlot(i, j)
             } else {
+
                 sweepSlot(i, j);
             }
         } else {
             if (checkCoordIf(cellName, "sweeped")) {
+
                 unsweepSlot(i, j)
             }
         }
@@ -567,8 +577,19 @@ function sweepSlot(i, j) {
         minesSweeped++;
     } else {
         $(".cell-" + i + "-" + j).addClass("sweepWrong");
+
         if(PO_Mode = "correct"){
-            correctSlot(i,j)
+            if(correctorCurrent > 0){
+                swiftConsole("Sweep Wrong, Entering Correcting...");
+                correctSlot(i,j);
+
+            }   else    {
+                swiftConsole("Sweep Wrong, Out of Corrector");
+                stopCorrector();
+                sweepNotCorrected++;
+                minesSweeped++;
+            }
+
 
         }   else{
             swiftConsole("Sweep Wrong");

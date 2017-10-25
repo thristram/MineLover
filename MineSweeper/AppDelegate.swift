@@ -8,6 +8,7 @@
 
 import UIKit
 
+let MinesLover = MineLover()
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -17,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         GCHelper.sharedInstance.authenticateLocalUser()
+        completeIAPTransactions()
+
         return true
     }
 
@@ -41,6 +44,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    func completeIAPTransactions() {
+        
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            
+            for purchase in purchases {
+                // swiftlint:disable:next for_where
+                if purchase.transaction.transactionState == .purchased || purchase.transaction.transactionState == .restored {
+                    
+                    if purchase.needsFinishTransaction {
+                        // Deliver content from server, then:
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                    print("purchased: \(purchase.productId)")
+                }
+            }
+        }
+    }
+
+    
 
 
 }
