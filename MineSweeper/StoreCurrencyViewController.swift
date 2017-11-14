@@ -8,116 +8,131 @@
 
 import UIKit
 import XLPagerTabStrip
-import StoreKit
 
-class StoreCurrencyViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate {
+
+class StoreCurrencyViewController: UIViewController, IndicatorInfoProvider, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    @IBOutlet weak var currencyTableView: UITableView!
-    var itemInfo: IndicatorInfo = "Passes"
-    
+
+    @IBOutlet weak var collectionView: UICollectionView!
+    var itemInfo: IndicatorInfo = "Currency"
+    var items: [StoreItem] = []
+    var itemDeals: [StoreItem] = []
+    let reuseIdentifier = "newStoreCollectionCell"
+    let reuseIdentifierSmall = "newStoreCollectionCellSmall"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        currencyTableView.delegate = self
-        currencyTableView.dataSource = self
-        currencyTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        self.items = MinesLover.store.getProductBy(type: [.currency])
+        for item in MinesLover.store.getProductBy(type: [.deal]){
+            if !item.soldOutFlag{
+                self.itemDeals.append(item)
+            }
+        }
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        self.collectionView!.register(UINib(nibName: "newStoreElementItem", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifier)
+        self.collectionView!.register(UINib(nibName: "newStoreSmallElementCollectionCell", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifierSmall)
         // Do any additional setup after loading the view.
     }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch MinesLover.screenSize(){
+            
+        default:
+            switch indexPath.section{
+            case 0:
+                return CGSize(width: UIScreen.main.bounds.width - 32, height: 54)
+            case 1:
+                return CGSize(width: (UIScreen.main.bounds.width - 48) / 3, height: 70)
+            default:
+                return CGSize(width: UIScreen.main.bounds.width - 32, height: 54)
+            }
+            
+        }
+    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch section{
+        case 0:
+            return self.items.count
+        case 1:
+            return self.itemDeals.count
+        default:
+            return 0
+        }
+        
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120.0
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch indexPath.section{
+        case 0:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! newStoreElementCollectionViewCell
+            let item = self.items[indexPath.item]
+            cell.storeElementTitle.text = item.displayName.uppercased()
+            cell.storeElementImage.image = UIImage(named: "\(item.shortCode)_currency");
+            cell.setSingleLine()
+            cell.displayPrice(item: item)
+            cell.storeElementLock.isHidden = true
+            return cell
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifierSmall, for: indexPath as IndexPath) as! newStoreSmallElementCollectionViewCell
+            let item = self.itemDeals[indexPath.item]
+            cell.storeElementTitle.text = "\(item.numberOfProducts)"
+            cell.storeElementView.backgroundColor = UIColor(hex: 0xFF3464)
+            switch item.productCategory{
+            case .coin:
+                cell.storeElementImage.image = UIImage(named: "coin")
+                break
+            case .gem:
+                cell.storeElementImage.image = UIImage(named: "gem")
+                break
+            default:
+                break
+            }
+            cell.storeCoverView.isHidden = false
+            return cell
+        }
+        
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identfier = "storeTbCell"
-        let cell:storeElementTableViewCell = self.currencyTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
-        cell.storeElementTitleConstraintsTop.constant = 35.0
-        cell.storeElementBarContainer.isHidden = true;
-        cell.storeElementButton.tag = indexPath.row
-        cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromCurrencyTableView(sender:)), for: UIControlEvents.touchUpInside)
-        cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(self.storePriceButtonTitleOffset), 0, 0)
-        cell.storeElementLock.isHidden = true;
-        cell.storeElementView.alpha = 1.0
-        switch (indexPath.row){
-        case 3:
-            cell.storeElementTitle.text = "5 Gems"
-            cell.storeElementImage.image = UIImage(named: "gem")
-            cell.storeElementButton.setTitle("$0.99", for: .normal)
-            cell.storeElementDescription.text = "5 Gems for $0.99";
-            cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
-            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        switch indexPath.section{
+        case 0:
+            print("Row: \(indexPath.item) Selected")
+            let index = indexPath.item
+            MinesLover.store.purchase(item: self.items[index], vc: self)
+            self.collectionView.reloadData()
+        case 1:
+            let cell = self.collectionView.cellForItem(at: indexPath) as! newStoreSmallElementCollectionViewCell
+            print("Row: \(indexPath.item) Selected")
+            let buttonRow = indexPath.item
+            let storeItem = self.itemDeals[buttonRow]
+            cell.storeCoverView.isHidden = true
+            cell.storeElementView.isHidden = false
+            cell.storeElementView.backgroundColor = UIColor(hex: 0x1B1B1B)
+            if !storeItem.soldOutFlag{
+                MinesLover.store.purchase(item: storeItem, vc: self)
+            }
+            
             break
-        case 4:
-            cell.storeElementTitle.text = "15 Gems"
-            cell.storeElementImage.image = UIImage(named: "gem")
-            cell.storeElementButton.setTitle("$1.99", for: .normal)
-            cell.storeElementDescription.text = "15 Gems for $1.99";
-            cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
-            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
-            break;
         default:
-            if(indexPath.row < 3){
-                cell.storeElementTitle.text = "\(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) Coins"
-                
-                switch (self.priceList["currency_\(indexPath.row + 1)_price_type"]!){
-                case 1:
-                    cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
-                    break;
-                case 2:
-                    cell.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
-                    break;
-                default:
-                    break;
-                }
-                cell.storeElementImage.image = UIImage(named: "moneyBag_\(indexPath.row)")
-                cell.storeElementButton.setTitle("\(self.priceList["currency_\(indexPath.row + 1)_price"]!)", for: .normal)
-                cell.storeElementDescription.text = "Buy \(String(describing: self.priceList["currency_\(indexPath.row + 1)_product"]!)) coins with \(self.priceList["currency_\(indexPath.row + 1)_price"]!) gems"
-                
-            }
-            break;
-        }
-        return cell
-    }
-    func buttonClickedFromCurrencyTableView(sender:UIButton) {
-        
-        let buttonRow = sender.tag
-        print("\(buttonRow) Button Clicked")
-        
-        switch (buttonRow){
-        case 3:
-            self.purchase(purchaseGem5Suffix)
-            break;
-        case 4:
-            self.purchase(purchaseGem15Suffix)
-            break;
-        default:
-            if(buttonRow < 3){
-                let price = self.priceList["currency_\(buttonRow + 1)_price"]!
-                let priceType = self.priceList["currency_\(buttonRow + 1)_price_type"]!
-                let addPrice = (-1) * (self.priceList["currency_\(buttonRow + 1)_product"]!)
-                let addPriceType = self.priceList["currency_\(buttonRow + 1)_product_type"]!
-                if(deductFromMoney(price: price, type: priceType)){
-                    print("Adding Coins \(addPrice)");
-                    _ = deductFromMoney(price: addPrice, type: addPriceType)
-                    saveRecord()
-                }   else    {
-                    self.notifyUser("CAUTION", message: "Insufficient Fund")
-                }
-            }
-            break;
+            break
         }
         
-        currencyTableView.reloadData()
+    }
+    
+
+    func buttonActions(index: Int){
+        
+        MinesLover.store.purchase(item: self.items[index], vc: self)
+        self.collectionView.reloadData()
         
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -138,84 +153,6 @@ class StoreCurrencyViewController: UIViewController, IndicatorInfoProvider, UITa
     }
     */
     
-    //In-App Purchase
-    
-    
-    func getInfo(_ purchase: RegisteredPurchase) {
-        
-        NetworkActivityIndicatorManager.networkOperationStarted()
-        SwiftyStoreKit.retrieveProductsInfo([appBundleId + ".purchase." + purchase.rawValue]) { result in
-            NetworkActivityIndicatorManager.networkOperationFinished()
-            
-            self.showAlert(self.alertForProductRetrievalInfo(result))
-        }
-    }
-    
-    func purchase(_ purchase: RegisteredPurchase) {
-        
-        NetworkActivityIndicatorManager.networkOperationStarted()
-        SwiftyStoreKit.purchaseProduct(appBundleId + ".purchase." + purchase.rawValue, atomically: true) { result in
-            NetworkActivityIndicatorManager.networkOperationFinished()
-            
-            if case .success(let purchase) = result {
-                // Deliver content from server, then:
-                if purchase.needsFinishTransaction {
-                    SwiftyStoreKit.finishTransaction(purchase.transaction)
-                }
-            }
-            if let alert = self.alertForPurchaseResult(result) {
-                self.showAlert(alert)
-            }
-        }
-    }
-    func verifyReceipt(completion: @escaping (VerifyReceiptResult) -> Void) {
-        
-        let appleValidator = AppleReceiptValidator(service: .production)
-        let password = "your-shared-secret"
-        SwiftyStoreKit.verifyReceipt(using: appleValidator, password: password, completion: completion)
-    }
-    
-    func verifyPurchase(_ purchase: RegisteredPurchase) {
-        
-        NetworkActivityIndicatorManager.networkOperationStarted()
-        verifyReceipt { result in
-            NetworkActivityIndicatorManager.networkOperationFinished()
-            
-            switch result {
-            case .success(let receipt):
-                
-                let productId = self.appBundleId + ".purchase." + purchase.rawValue
-                
-                switch purchase {
-                case .autoRenewablePurchase:
-                    let purchaseResult = SwiftyStoreKit.verifySubscription(
-                        type: .autoRenewable,
-                        productId: productId,
-                        inReceipt: receipt,
-                        validUntil: Date()
-                    )
-                    self.showAlert(self.alertForVerifySubscription(purchaseResult))
-                case .nonRenewingPurchase:
-                    let purchaseResult = SwiftyStoreKit.verifySubscription(
-                        type: .nonRenewing(validDuration: 60),
-                        productId: productId,
-                        inReceipt: receipt,
-                        validUntil: Date()
-                    )
-                    self.showAlert(self.alertForVerifySubscription(purchaseResult))
-                default:
-                    let purchaseResult = SwiftyStoreKit.verifyPurchase(
-                        productId: productId,
-                        inReceipt: receipt
-                    )
-                    self.showAlert(self.alertForVerifyPurchase(purchaseResult))
-                }
-                
-            case .error:
-                self.showAlert(self.alertForVerifyReceipt(result))
-            }
-        }
-    }
-
+  
 
 }

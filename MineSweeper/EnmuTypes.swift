@@ -11,14 +11,20 @@ import Foundation
 
 enum RegisteredPurchase: String {
     
-    case gem5
-    case gem15
+    case gem5 = "SeraphTechnology.MineSweeper.purchase.gem5"
+    case gem15 = "SeraphTechnology.MineSweeper.purchase.gem15"
     case nonConsumablePurchase
     case consumablePurchase
     case autoRenewablePurchase
     case nonRenewingPurchase
 }
 
+enum StoreItemStatus: Int{
+    case none
+    case locked
+    case soldOut
+    case fullyUpgraded
+}
 
 enum GemViewFunctions: Int{
     case gemFound
@@ -26,11 +32,10 @@ enum GemViewFunctions: Int{
     case multiplerMatch
 }
 
-enum PowerUpMode: Int{
-    case protector
-    case corrector
+enum TimerMode: Int{
+    case normal
+    case crazySweeper
 }
-
 
 enum GameMode: Int{
     case normal
@@ -41,6 +46,12 @@ enum MenuState: Int{
     case win
     case gameOver
     case pause
+}
+enum GameState: Int{
+    case win = 1
+    case lose = 2
+    case inPorgress = 0
+    case pendingStart = 3
 }
 
 enum TitleIconState: Int{
@@ -57,7 +68,7 @@ enum PowerUpType: Int{
     case xray = 1
     case crazySweeper = 2
     case protector = 3
-    
+    case none = 0
     
     static let allValues = [xray, crazySweeper, protector]
     static func getBy(rawValue: Int) -> PowerUpType{
@@ -96,4 +107,12 @@ enum StoreItemType: Int{
     case abilitiesLevel
     case abilitiesTime
     case currency
+    case deal
 }
+
+enum NotificaitonType: Int{
+    case coinEarned
+    case gemEarned
+    case normal
+}
+

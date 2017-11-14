@@ -13,16 +13,17 @@ import JavaScriptCore
 
 
 extension UIViewController{
-    func notifyUser(_ title: String, message: String) -> Void{
-        let alert = UIAlertController(title: title,
-                                      message: message,
-                                      preferredStyle: UIAlertControllerStyle.alert)
+    func notifyUser(_ title: String, message: String, type: NotificaitonType = .normal) -> Void{
         
-        let cancelAction = UIAlertAction(title: "OK",
-                                         style: .cancel, handler: nil)
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "notification") as! NotificationViewController
+        popupVC.modalPresentationStyle = .overCurrentContext
+        popupVC.modalTransitionStyle = .crossDissolve
+        popupVC.notificationTitle = title
+        popupVC.notificationContent = message
+        popupVC.notificationType = type
+        self.present(popupVC, animated: true, completion: nil)
         
-        alert.addAction(cancelAction)
-        self.present(alert, animated: true)
+    
     }
 }
 

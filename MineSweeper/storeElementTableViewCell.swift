@@ -57,20 +57,29 @@ class storeElementTableViewCell: UITableViewCell {
             self.storeElementButton.setTitle("SOLD OUT", for: .normal)
             self.storeElementButton.setImage(UIImage(named:""), for: .normal)
             self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
-        }   else{
+        }   else if item.price == 0{
+            self.storeElementButton.setTitle("FREE", for: .normal)
+            self.storeElementButton.setImage(UIImage(named:""), for: .normal)
+            self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        }   else    {
             self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(MinesLover.UIElements["storePriceButtonTitleOffset"]!), 0, 0)
             
             switch item.priceUnit{
             case .coin:
                 self.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
+                self.storeElementButton.setTitle("\(item.price)", for: .normal)
                 break;
             case .gem:
                 self.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
+                self.storeElementButton.setTitle("\(item.price)", for: .normal)
                 break;
-            default:
-                break;
+            case .realMoney:
+                self.storeElementButton.setTitle("$ \(item.price)", for: .normal)
+                self.storeElementButton.setImage(UIImage(named:""), for: .normal)
+                self.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+            
             }
-            self.storeElementButton.setTitle("\(item.price)", for: .normal)
+            
             
         }
     }

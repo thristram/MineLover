@@ -10,7 +10,7 @@ import UIKit
 import GameKit
 
 
-class LeaderboardViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
+class LeaderboardViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MIBlurPopupDelegate{
     
     
     ////////////////////////////////
@@ -19,15 +19,30 @@ class LeaderboardViewController: UIViewController, UITableViewDataSource, UITabl
     
     @IBOutlet weak var leaderboardView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var statusBarHeight: NSLayoutConstraint!
     
     @IBAction func backToMenu(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    var popupView: UIView {
+        return self.tableView
+    }
+    var blurEffectStyle: UIBlurEffectStyle {
+        return .dark
+    }
+    var initialScaleAmmount: CGFloat {
+        return 0.8
+    }
+    var animationDuration: TimeInterval {
+        return TimeInterval(1)
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.statusBarHeight.constant = CGFloat(MinesLover.UIElements["statusBarHeight"]!)
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -85,34 +100,34 @@ class LeaderboardViewController: UIViewController, UITableViewDataSource, UITabl
             let cell:LeaderboardContentTableViewCell = self.tableView.dequeueReusableCell(withIdentifier: identfier) as! LeaderboardContentTableViewCell
             cell.selectionStyle = .none
             
-            let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
+            let currentStatistics = MinesLover.record.getRecord(level: (indexPath.section + 1))!
             
             print("\n\n//////////////////////////")
             print("        STATISTICS \(indexPath.section + 1)      ")
             print("//////////////////////////\n")
-            print("1st Record: \(currentStatistics["1_Date"]!) - \(currentStatistics["1_Record"]!)s")
-            print("2nd Record: \(currentStatistics["2_Date"]!) - \(currentStatistics["2_Record"]!)s")
-            print("3rd Record: \(currentStatistics["3_Date"]!) - \(currentStatistics["3_Record"]!)s")
-            print("4th Record: \(currentStatistics["4_Date"]!) - \(currentStatistics["4_Record"]!)s")
-            print("5th Record: \(currentStatistics["5_Date"]!) - \(currentStatistics["5_Record"]!)s")
+            print("1st Record: \(currentStatistics.records[1]!.date) - \(currentStatistics.records[1]!.record)s")
+            print("2nd Record: \(currentStatistics.records[2]!.date) - \(currentStatistics.records[2]!.record)s")
+            print("3rd Record: \(currentStatistics.records[3]!.date) - \(currentStatistics.records[3]!.record)s")
+            print("4th Record: \(currentStatistics.records[4]!.date) - \(currentStatistics.records[4]!.record)s")
+            print("5th Record: \(currentStatistics.records[5]!.date) - \(currentStatistics.records[5]!.record)s")
             
-            print("Average Time: \(currentStatistics["averageTime"]!)")
-            print("Average Win Time: \(currentStatistics["averageTimeWin"]!)")
-            print("Average Lose Time: \(currentStatistics["averageTimeLose"]!)")
-            print("Average Exploration Percentage: \(currentStatistics["explorationPercentage"]!)")
-            print("Total Wins: \(currentStatistics["totalWin"]!)")
-            print("Total Loses: \(currentStatistics["totalLose"]!)")
-            print("Total Games: \(currentStatistics["totalGame"]!)")
-            print("Longest Game: \(currentStatistics["longestGame"]!)s")
-            print("Longest Win Game: \(currentStatistics["longestWin"]!)s")
-            print("Longest Lose Game: \(currentStatistics["longestLose"]!)s")
-            print("Shortest Lose Game: \(currentStatistics["shortestLose"]!)s")
-            print("Total Checked Block: \(currentStatistics["totalChecked"]!)")
-            print("Total Mine Sweeped: \(currentStatistics["totalMineSweeped"]!)")
-            print("Total Mine Sweeped Wrong: \(currentStatistics["totalMineSweepedWrong"]!)")
+            print("Average Time: \(currentStatistics.averageTime)")
+            print("Average Win Time: \(currentStatistics.averageTimeWin)")
+            print("Average Lose Time: \(currentStatistics.averageTimeLose)")
+            print("Average Exploration Percentage: \(currentStatistics.explorationPercentage)")
+            print("Total Wins: \(currentStatistics.totalWin)")
+            print("Total Loses: \(currentStatistics.totalLose)")
+            print("Total Games: \(currentStatistics.totalGame)")
+            print("Longest Game: \(currentStatistics.longestGame)s")
+            print("Longest Win Game: \(currentStatistics.longestWin)s")
+            print("Longest Lose Game: \(currentStatistics.longestLose)s")
+            print("Shortest Lose Game: \(currentStatistics.shortestLose)s")
+            print("Total Checked Block: \(currentStatistics.totalChecked)")
+            print("Total Mine Sweeped: \(currentStatistics.totalMineSweeped)")
+            print("Total Mine Sweeped Wrong: \(currentStatistics.totalMineSweepedWrong)")
             
             cell.lbContent.text = "Average Time:\nExploration Percentage:\nTotal Wins:\nTotal Loses:\nTotal Games:\nTotal Mine Sweeped:";
-            cell.lbContentValue.text = "\(MinesLover.publicMethods.sec2Min(time: currentStatistics["averageTimeWin"]!))\n\(currentStatistics["explorationPercentage"]!)%\n\(currentStatistics["totalWin"]!)\n\(currentStatistics["totalLose"]!)\n\(currentStatistics["totalGame"]!)\n\(currentStatistics["totalMineSweeped"]!)"
+            cell.lbContentValue.text = "\(MinesLover.publicMethods.sec2Min(time: currentStatistics.averageTimeWin))\n\(currentStatistics.explorationPercentage)%\n\(currentStatistics.totalWin)\n\(currentStatistics.totalLose)\n\(currentStatistics.totalGame)\n\(currentStatistics.totalMineSweeped)"
  
             return cell
             
@@ -165,13 +180,13 @@ class LeaderboardViewController: UIViewController, UITableViewDataSource, UITabl
             cell.selectionStyle = .none
             cell.numberLabel.text = "\(indexPath.row)"
             
-            let currentStatistics = getCurrentStatistics(level: (indexPath.section + 1))
+            let currentStatistics = MinesLover.record.getRecord(level: (indexPath.section + 1))
             
-            if let currentRecordDate = currentStatistics["\(indexPath.row)_Date"] {
+            if let currentRecordDate = currentStatistics?.records[indexPath.row]?.date {
                 print("Loading \(indexPath.section + 1)-\(indexPath.row)")
-                if(currentRecordDate != "0"){
-                    cell.dateLabel.text = self.timestamp2Date(timestamp: currentRecordDate)
-                    cell.recordLabel.text = "\(String(describing: sec2Min(time: currentStatistics["\(indexPath.row)_Record"]!)))"
+                if(currentRecordDate != 0){
+                    cell.dateLabel.text = "\(MinesLover.publicMethods.timestamp2Date(timestamp: currentRecordDate))"
+                    cell.recordLabel.text = "\(String(describing: MinesLover.publicMethods.sec2Min(time: currentStatistics!.records[indexPath.row]!.record)))"
                 }   else{
                     cell.dateLabel.text = "N/A"
                     cell.recordLabel.text = "N/A"

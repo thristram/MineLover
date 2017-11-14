@@ -9,221 +9,203 @@
 import UIKit
 import XLPagerTabStrip
 
-class StoreAbilitiesViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate {
+class StoreAbilitiesViewController: UIViewController, IndicatorInfoProvider,UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    @IBOutlet weak var abilitiesTableView: UITableView!
-    var itemInfo: IndicatorInfo = "Passes"; 
+
+    @IBOutlet weak var collectionView: UICollectionView!
+    var itemInfo: IndicatorInfo = "Passes"
+    var itemAbilities: [StoreItem] = []
+    var itemPasses: [StoreItem] = []
+    var itemCurrency: [StoreItem] = []
+    var itemDeals: [StoreItem] = []
+    let reuseIdentifier = "newStoreCollectionCell"
+    let reuseIdentifierSmall = "newStoreCollectionCellSmall"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.abilitiesTableView.delegate = self
-        self.abilitiesTableView.dataSource = self
-        self.abilitiesTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        self.itemAbilities = MinesLover.store.getProductBy(type: [.abilitiesLevel, .abilitiesTime])
+        self.itemPasses = MinesLover.store.getProductBy(type: [.passes])
+        self.itemCurrency = MinesLover.store.getProductBy(type: [.currency])
+        for item in MinesLover.store.getProductBy(type: [.deal]){
+            if !item.soldOutFlag{
+                self.itemDeals.append(item)
+            }
+        }
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        self.collectionView!.register(UINib(nibName: "newStoreElementItem", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifier)
+        self.collectionView!.register(UINib(nibName: "newStoreSmallElementCollectionCell", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifierSmall)
+        self.collectionView!.register(UINib(nibName: "StoreSectionTitleView", bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "storeSectionTitle")
         // Do any additional setup after loading the view.
     }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch indexPath.section{
+        case 3:
+            return CGSize(width: (UIScreen.main.bounds.width - 48) / 3, height: 70)
+        default:
+            return CGSize(width: UIScreen.main.bounds.width - 32, height: 54)
+        }
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 4
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120.0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identfier = "storeTbCell"
-        let cell:storeElementTableViewCell = self.abilitiesTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
-        
-        cell.storeElementButton.tag = indexPath.row
-        cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromAblititiesTableView(sender:)), for: UIControlEvents.touchUpInside)
-        
-        
-        var remaining = 0
-        var name = ""
-        var secondaryType = "lv"
-        cell.storeElementLock.isHidden = true;
-        cell.storeElementView.alpha = 1.0
-        
-        
-        
-        if indexPath.row < 3{
-            if let pu = MinesLover.powerUps[PowerUpType.getBy(rawValue: indexPath.row)]{
-                cell.storeElementTitle.text = pu.getStoreUpgradeText()
-                cell.storeElementDescription.text = pu.storeDescription
-                cell.storeElementImage.image = UIImage(named: "\(pu.storeShortCode)_lv");
-                name = pu.storeShortCode
-                remaining = pu.currentLevel
-                if(pu.currentLevel < 1) {
-                    cell.storeElementView.alpha = 0.5
-                    cell.storeElementLock.isHidden = false;
-                }
-            }
-        }
-        
-        if let pu = MinesLover.powerUps[.crazySweeper]{
-            if indexPath.row == 3{
-                cell.storeElementTitle.text = pu.getStoreSecondaryUpgradeText()
-                cell.storeElementDescription.text = "Expand Crazy Click Time"
-                cell.storeElementImage.image = UIImage(named: "crazy_time");
-                remaining =  pu.currentSecondaryLevel
-                secondaryType = "time";
-                name = pu.storeShortCode
-                if(pu.currentLevel < 1) {
-                    cell.storeElementView.alpha = 0.5
-                    cell.storeElementLock.isHidden = false;
-                }
-            }
-        }
-        
-        
-       
-        if(remaining >= 5){
-            cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
-            cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
-            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
-        }   else{
-            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, CGFloat(MinesLover.UIElements["storePriceButtonTitleOffset"]!), 0, 0)
-            switch (MinesLover.store.getPriceType(type: "Ability", key: name, secondaryType: secondaryType, level: (remaining + 1))){
-            case .coin:
-                cell.storeElementButton.setImage(UIImage(named:"coin"), for: .normal)
-                break;
-            case .gem:
-                cell.storeElementButton.setImage(UIImage(named:"gem"), for: .normal)
-                break;
-            default:
-                break;
-            }
-            let price = MinesLover.store.getPrice(type: "Ability", key: name, secondaryType: secondaryType, level: (remaining + 1))
-            cell.storeElementButton.setTitle("\(price)", for: .normal)
-            
-        }
-        
-        cell.displayProgressBar(number: remaining)
-        
-        
-        
-        return cell
-    }
-    
-    func buttonClickedFromAblititiesTableView(sender:UIButton) {
-        
-        let buttonRow = sender.tag
-        print("\(buttonRow) Button Clicked")
-        
-        switch (buttonRow){
-        case 0:
-            if((powerUp1["level"])! < 5){
-                let oldValue = self.powerUp1["level"]!
-                let priceName = "Ability_XRay_lv_\(oldValue + 1)"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    self.powerUp1["level"] = oldValue + 1;
-                    if(oldValue == 0){
-                        self.notifyUser("Congratulations", message: "You've Unlock Mine X-Ray! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
-                        self.powerUp1["remaining"] = self.powerUp1["remaining"]! + self.complementaryPassesAfterUnlock
-                        self.updatePowerUpText()
-                        self.switchToStorePasses()
-                    }
-                    
-                    saveRecord()
-                }   else    {
-                    self.notifyUser("CAUTION", message: "Insufficient Fund")
-                }
-                
-            }   else{
-                self.notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
-            }
-            
-            break;
-        case 1:
-            
-            if((powerUp2["level"])! < 5){
-                let oldValue = self.powerUp2["level"]!
-                let priceName = "Ability_Sweeper_lv_\(oldValue + 1)"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    self.powerUp2["level"] = oldValue + 1;
-                    if(oldValue == 0){
-                        self.notifyUser("Congratulations", message: "You've Unlock Crazy Sweeper! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
-                        self.powerUp2["remaining"] = self.powerUp2["remaining"]! + self.complementaryPassesAfterUnlock
-                        self.updatePowerUpText()
-                        self.switchToStorePasses()
-                    }
-                    saveRecord()
-                }   else    {
-                    self.notifyUser("CAUTION", message: "Insufficient Fund")
-                }
-                
-            }   else{
-                self.notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
-            }
-            
-            break;
-        case 2:
-            if((powerUp2["level"])! > 0){
-                if((powerUp2["time"])! < 5){
-                    let oldValue = self.powerUp2["time"]!
-                    let priceName = "Ability_Sweeper_time_\(oldValue + 1)"
-                    let price = self.priceList["\(priceName)"]!
-                    let priceType = self.priceList["\(priceName)_type"]!
-                    
-                    if(deductFromMoney(price: price, type: priceType)){
-                        self.powerUp2["time"] = oldValue + 1;
-                        self.updatePowerUpText()
-                        saveRecord()
-                    }   else    {
-                        self.notifyUser("CAUTION", message: "Insufficient Fund")
-                    }
-                    
-                }   else{
-                    self.notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
-                }
-                
-            }   else   {
-                self.notifyUser("CAUTION", message: "Please Unlock Crazy Sweeper First!")
-            }
-            
-            break;
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForHeaderInSection section: Int) -> CGSize{
+        switch section{
         case 3:
-            if((powerUp3["level"])! < 5){
-                let oldValue = self.powerUp3["level"]!
-                let priceName = "Ability_Corrector_lv_\(oldValue + 1)"
-                let price = self.priceList["\(priceName)"]!
-                let priceType = self.priceList["\(priceName)_type"]!
-                
-                if(deductFromMoney(price: price, type: priceType)){
-                    self.powerUp3["level"] = oldValue + 1;
-                    if(oldValue == 0){
-                        self.notifyUser("Congratulations", message: "You've Unlock Miss-Sweep Proof! We'll Also Reward You \(self.complementaryPassesAfterUnlock) Complementary Passes, Check it Out!")
-                        self.powerUp3["remaining"] = self.powerUp3["remaining"]! + self.complementaryPassesAfterUnlock
-                        self.updatePowerUpText()
-                        self.switchToStorePasses()
-                        
-                    }
-                    saveRecord()
-                }   else    {
-                    self.notifyUser("CAUTION", message: "Insufficient Fund")
-                }
-                
-            }   else{
-                self.notifyUser("CAUTION", message: "You CANNOT go up if you are already on the top! What do you say?")
-            }
-            break;
-            
+            return CGSize(width: UIScreen.main.bounds.width, height: 0)
         default:
-            break;
+            return CGSize(width: UIScreen.main.bounds.width, height: 54)
         }
         
-        
-        abilitiesTableView.reloadData()
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "storeSectionTitle", for: indexPath as IndexPath) as! StoreSectionTitleCollectionReusableView
+        switch indexPath.section{
+        case 0:
+            headerView.sectionTitle.text = "ABILITIES"
+            break
+        case 1:
+            headerView.sectionTitle.text = "PASSES"
+            break
+        case 2:
+            headerView.sectionTitle.text = "CURRENCY"
+            break
+        default:
+            break
+        }
+        
+        return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch section{
+        case 0:
+            return self.itemAbilities.count
+        case 1:
+            return self.itemPasses.count
+        case 2:
+            return self.itemCurrency.count
+        case 3:
+            return self.itemDeals.count
+        default:
+            return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        
+        
+        switch indexPath.section{
+        case 0:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! newStoreElementCollectionViewCell
+            cell.storeElementLock.isHidden = true
+            let item = self.itemAbilities[indexPath.row]
+            cell.storeElementTitle.text = item.getName()
+            cell.storeElementImage.image = UIImage(named: "\(item.shortCode)_pass_solid")
+            cell.displayPrice(item: item)
+            cell.storeElementView.backgroundColor = UIColor.seraphDarkPurple
+            cell.storeElementPriceContainer.backgroundColor = UIColor.seraphLightPurple
+            cell.setSingleLine()
+            return cell
+        case 1:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! newStoreElementCollectionViewCell
+            cell.storeElementLock.isHidden = true
+            let item = self.itemPasses[indexPath.row]
+            switch item.productCategory{
+            case .crazySweeper:
+                cell.storeElementTitle.text = "CRAZY PASS"
+                break
+            case .protector:
+                cell.storeElementTitle.text = "PROTECTOR PASS"
+                break
+            case .xray:
+                cell.storeElementTitle.text = "X-RAY PASS"
+                break
+            default:
+                break
+            }
+
+            cell.storeElementImage.image = UIImage(named: "\(item.shortCode)_pass_solid")
+            cell.displayPrice(item: item)
+            cell.storeElementView.backgroundColor = UIColor.seraphDarkBlue
+            cell.storeElementPriceContainer.backgroundColor = UIColor(hex: 0x2069CF)
+            cell.setSingleLine()
+            return cell
+        case 2:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! newStoreElementCollectionViewCell
+            let item = self.itemCurrency[indexPath.item]
+            cell.storeElementTitle.text = item.displayName.uppercased()
+            cell.storeElementImage.image = UIImage(named: "\(item.shortCode)_currency");
+            cell.setSingleLine()
+            cell.displayPrice(item: item)
+            cell.storeElementLock.isHidden = true
+            return cell
+        case 3:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifierSmall, for: indexPath as IndexPath) as! newStoreSmallElementCollectionViewCell
+            let item = self.itemDeals[indexPath.item]
+            cell.storeElementTitle.text = "\(item.numberOfProducts)"
+            cell.storeElementView.backgroundColor = UIColor(hex: 0xFF3464)
+            switch item.productCategory{
+            case .coin:
+                cell.storeElementImage.image = UIImage(named: "coin")
+                break
+            case .gem:
+                cell.storeElementImage.image = UIImage(named: "gem")
+                break
+            default:
+                break
+            }
+            cell.storeCoverView.isHidden = false
+            return cell
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! newStoreElementCollectionViewCell
+            return cell
+
+        }
+
+        
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Row: \(indexPath.item) Selected")
+        let index = indexPath.item
+        switch indexPath.section{
+        case 0:
+            
+            MinesLover.store.purchase(item: self.itemAbilities[index], vc: self)
+            self.collectionView.reloadData()
+            self.itemAbilities = []
+            self.itemAbilities = MinesLover.store.getProductBy(type: [.abilitiesLevel, .abilitiesTime])
+            break
+        case 1:
+            MinesLover.store.purchase(item: self.itemPasses[index], vc: self)
+            self.collectionView.reloadData()
+            break
+        case 2:
+            MinesLover.store.purchase(item: self.itemCurrency[index], vc: self)
+            self.collectionView.reloadData()
+            break
+        case 3:
+            let cell = self.collectionView.cellForItem(at: indexPath) as! newStoreSmallElementCollectionViewCell
+            let storeItem = self.itemDeals[index]
+            cell.storeCoverView.isHidden = true
+            cell.storeElementView.isHidden = false
+            cell.storeElementView.backgroundColor = UIColor(hex: 0x1B1B1B)
+            if !storeItem.soldOutFlag{
+                MinesLover.store.purchase(item: storeItem, vc: self)
+            }
+            
+            break
+        default:
+            break
+        }
+        
+    }
+    
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

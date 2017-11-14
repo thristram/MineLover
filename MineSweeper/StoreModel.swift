@@ -8,9 +8,13 @@
 
 import Foundation
 import UIKit
+import StoreKit
+import SwiftyStoreKit
+
 
 class StoreItem{
     var displayName: String = ""
+    var nameSufix:String = ""
     var shortCode: String = ""
     var description: String = ""
     var price: Int = 0
@@ -25,6 +29,10 @@ class StoreItem{
     var soldOutFlag: Bool = false
     var maxProducts:Int = 5
     
+    var soldOutText:String = ""
+    var lockText:String = ""
+    var claimIntval:Int = 0
+    
     init(price: Int?, priceUnit: CurrencyType, productType: StoreItemType, productCategory: StoreItemName, numberOfProducts:Int = 1, forLevel: Int? = nil){
         
         if let pprice = price{
@@ -34,33 +42,52 @@ class StoreItem{
         }
         
         self.numberOfProducts = numberOfProducts
-        
+        self.priceUnit = priceUnit
         self.productType = productType
         self.productCategory = productCategory
         self.forLevel = forLevel
         
         switch productCategory {
         case .coin:
-            self.shortCode = "coin"
             self.displayName = "\(numberOfProducts) Coins"
             break
         case .gem:
-            self.shortCode = "gem"
             self.displayName = "\(numberOfProducts) Gems"
             break
         case .crazySweeper:
             self.shortCode = "sweeper"
-            self.displayName = "Crazy Sweeper"
+            if productType == .abilitiesLevel{
+                self.displayName = "Crazy-Sweep"
+            }   else if productType == .abilitiesTime   {
+                self.displayName = "Crazy Time"
+            }
+            
             break
         case .xray:
             self.shortCode = "xray"
-            self.displayName = "Mine X-Ray"
+            self.displayName = "X-Ray"
             break
         case .protector:
             self.shortCode = "protector"
-            self.displayName = "Mine Protector"
+            self.displayName = "Protector"
             break
         }
+        
+    }
+    
+    func getName() -> String{
+        if (self.productType == .abilitiesLevel) || (self.productType == .abilitiesTime){
+            if self.nameSufix == ""{
+                return self.displayName.uppercased()
+            }   else    {
+                return self.displayName.uppercased() + " " + self.nameSufix
+            }
+        }   else    {
+            return self.displayName.uppercased()
+        }
+    }
+    func getSufix() -> String{
+        return self.nameSufix
     }
     
     func getCurrentData(){
@@ -68,17 +95,15 @@ class StoreItem{
             
             switch self.productType{
             case .abilitiesLevel:
-                self.displayName += powerUp.levels[self.forLevel!]!.displayText
+                self.nameSufix = powerUp.levels[self.forLevel!]!.displayText
                 self.productsLeft = powerUp.currentLevel
-                if powerUp.currentLevel == 0{
-                    self.ifLocked = true
-                }   else    {
-                    self.ifLocked = false
-                }
+                self.soldOutText = "Fully Upgraded"
                 break
             case .abilitiesTime:
-                self.displayName += powerUp.levels[self.forLevel!]!.displayText
+                self.nameSufix = powerUp.secondaryLevels[self.forLevel!]!.displayText
                 self.productsLeft = powerUp.currentSecondaryLevel
+                self.soldOutText = "Fully Upgraded"
+                self.lockText = "Pleas Unlock \(powerUp.name) First"
                 if powerUp.currentLevel == 0{
                     self.ifLocked = true
                 }   else    {
@@ -87,6 +112,8 @@ class StoreItem{
                 break
             case .passes:
                 self.productsLeft = powerUp.remainingPass
+                self.soldOutText = "5 is Enough, Man!"
+                self.lockText = "Pleas Unlock \(powerUp.name) First"
                 if powerUp.currentLevel == 0{
                     self.ifLocked = true
                 }   else    {
@@ -97,6 +124,20 @@ class StoreItem{
                     self.soldOutFlag = true
                 }
                 break
+            case .deal:
+                let currentTime = Int(MinesLover.publicMethods.getTimestamp())!
+                if let lastClaim = MinesLover.record.getKeyValueRecord(key: self.shortCode){
+                    if (currentTime - Int(lastClaim)!) > self.claimIntval{
+                        self.soldOutFlag = false
+                    }   else    {
+                        self.soldOutFlag = true
+                    }
+                }   else    {
+                    self.soldOutFlag = false
+                }
+                
+                break
+                
             default:
                 break
             }
@@ -119,6 +160,15 @@ class StoreItem{
 
 
 class Store{
+    
+    ////////////////////////////////
+    ////////////STORE KIT///////////
+    ////////////////////////////////
+    
+    let appBundleId = "SeraphTechnology.MineSweeper"
+    let purchaseGem5Suffix = RegisteredPurchase.gem5
+    let purchaseGem15Suffix = RegisteredPurchase.gem15
+    
     
     var products: [StoreItem] = []
     
@@ -181,78 +231,11 @@ class Store{
         return result
     }
     
-    var priceList: [String:Int] = [
-        "Passes_xray" : 1000, "Passes_xray_type": 1,
-        "Passes_Sweeper" : 1500, "Passes_Sweeper_type": 1,
-        "Passes_Corrector" : 5000, "Passes_Corrector_type": 1,
-        
-        
-        "Ability_xray_lv_1" : 2, "Ability_xray_lv_1_type": 2,
-        "Ability_xray_lv_2" : 3, "Ability_xray_lv_2_type": 2,
-        "Ability_xray_lv_3" : 5, "Ability_xray_lv_3_type": 2,
-        "Ability_xray_lv_4" : 8, "Ability_xray_lv_4_type": 2,
-        "Ability_xray_lv_5" : 10, "Ability_xray_lv_5_type": 2,
-        
-        "Ability_sweeper_lv_1" : 2, "Ability_sweeper_lv_1_type": 2,
-        "Ability_sweeper_lv_2" : 3, "Ability_sweeper_lv_2_type": 2,
-        "Ability_sweeper_lv_3" : 5, "Ability_sweeper_lv_3_type": 2,
-        "Ability_sweeper_lv_4" : 8, "Ability_sweeper_lv_4_type": 2,
-        "Ability_sweeper_lv_5" : 10, "Ability_sweeper_lv_5_type": 2,
-        
-        "Ability_Sweeper_time_1" : 2, "Ability_Sweeper_time_1_type": 2,
-        "Ability_Sweeper_time_2" : 3, "Ability_Sweeper_time_2_type": 2,
-        "Ability_Sweeper_time_3" : 4, "Ability_Sweeper_time_3_type": 2,
-        "Ability_Sweeper_time_4" : 5, "Ability_Sweeper_time_4_type": 2,
-        "Ability_Sweeper_time_5" : 6, "Ability_Sweeper_time_5_type": 2,
-        
-        "Ability_Corrector_lv_1" : 5, "Ability_Corrector_lv_1_type": 2,
-        "Ability_Corrector_lv_2" : 10, "Ability_Corrector_lv_2_type": 2,
-        "Ability_Corrector_lv_3" : 20, "Ability_Corrector_lv_3_type": 2,
-        "Ability_Corrector_lv_4" : 30, "Ability_Corrector_lv_4_type": 2,
-        "Ability_Corrector_lv_5" : 50, "Ability_Corrector_lv_5_type": 2,
-        
-        "Currency_1_price" : 1, "Currency_1_price_type": 2, "Currency_1_product": 2000, "Currency_1_product_type": 1,
-        "Currency_2_price" : 2, "Currency_2_price_type": 2, "Currency_2_product": 4500, "Currency_2_product_type": 1,
-        "Currency_3_price" : 5, "Currency_3_price_type": 2, "Currency_3_product": 12000, "Currency_3_product_type": 1,
-        
-        ]
     
     init(){
         
     }
-    func getPrice(type: String, key: String, secondaryType: String = "", level: Int? = nil) -> Int{
-        var DicKey = "\(type)_\(key)"
-        if secondaryType != ""{
-            DicKey += secondaryType
-        }
-        if level != nil {
-            DicKey += "\(level!)"
-        }
-        if let price = self.priceList[DicKey]{
-            return price
-        }
-        return 0
-    }
     
-    func getPriceType(type: String, key: String, secondaryType: String = "", level: Int? = nil) -> CurrencyType{
-        var DicKey = "\(type)_\(key)"
-        if secondaryType != ""{
-            DicKey += secondaryType
-        }
-        if level != nil {
-            DicKey += "\(level!)"
-        }
-        DicKey += "_type"
-        
-        if let priceType = self.priceList[DicKey]{
-            if priceType == 1{
-                return CurrencyType.coin
-            }   else if priceType == 2{
-                return CurrencyType.gem
-            }
-        }
-        return CurrencyType.gem
-    }
     
     func purchase(item: StoreItem, vc: UIViewController){
         
@@ -261,37 +244,98 @@ class Store{
     
         if !item.ifLocked{
             if !item.soldOutFlag{
-                if(self.virtualSales(price: item.price, currencyType: item.priceUnit)){
-                    switch item.productType{
-                    case .abilitiesLevel:
-                        powerUp?.currentLevel += item.numberOfProducts
-                        break
-                    case .abilitiesTime:
-                        powerUp?.currentSecondaryLevel += item.numberOfProducts
-                        break
-                    case .passes:
-                        powerUp?.remainingPass += item.numberOfProducts
-                        break
-                    case .currency:
-                        if item.productCategory == .coin{
-                            MinesLover.Coins += item.numberOfProducts
-                        }
-                        if item.productCategory == .gem{
-                            MinesLover.Gems += item.numberOfProducts
+                
+                if item.priceUnit == .realMoney{
+                    SwiftyStoreKit.purchaseProduct(RegisteredPurchase.gem5.rawValue, quantity: 1, atomically: true) { result in
+                        switch result {
+                        case .success(let purchase):
+//                            vc.notifyUser("Success", message: "\(purchase.productId)")
+                            print("Purchase Success: \(purchase.productId)")
+                            if item.productCategory == .coin{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Coins!", type: .coinEarned)
+                                MinesLover.setCoins(coins: MinesLover.Coins + item.numberOfProducts)
+                            }
+                            if item.productCategory == .gem{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Gems!", type: .gemEarned)
+                                MinesLover.setGems(gems: MinesLover.Gems + item.numberOfProducts)
+                            }
+                        case .error(let error):
+                            switch error.code {
+                            case .unknown: vc.notifyUser("Error", message: "Unknown error. Please contact support")
+                            case .clientInvalid: vc.notifyUser("Error", message: "Not allowed to make the payment")
+                            case .paymentCancelled: break
+                            case .paymentInvalid: vc.notifyUser("Error", message: "The purchase identifier was invalid")
+                            case .paymentNotAllowed: print("The device is not allowed to make the payment")
+                            case .storeProductNotAvailable: print("The product is not available in the current storefront")
+                            case .cloudServicePermissionDenied: print("Access to cloud service information is not allowed")
+                            case .cloudServiceNetworkConnectionFailed: print("Could not connect to the network")
+                            case .cloudServiceRevoked: print("User has revoked permission to use this cloud service")
+                            }
                         }
                     }
-                    item.getCurrentData()
-                    //MinesLover.record.saveRecord()
+
                 }   else    {
-                    vc.notifyUser("CAUTION", message: "Insufficient Fund")
+                    if(self.virtualSales(price: item.price, currencyType: item.priceUnit)){
+                        switch item.productType{
+                        case .abilitiesLevel:
+                            powerUp?.currentLevel += item.numberOfProducts
+                            break
+                        case .abilitiesTime:
+                            powerUp?.currentSecondaryLevel += item.numberOfProducts
+                            break
+                        case .passes:
+                            powerUp?.remainingPass += item.numberOfProducts
+                            break
+                        case .deal:
+                            let currentTimeStamp = MinesLover.publicMethods.getTimestamp()
+                            MinesLover.record.saveKeyValueRecord(key: item.shortCode, value: currentTimeStamp)
+                            if item.productCategory == .coin{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Coins!", type: .coinEarned)
+                                MinesLover.setCoins(coins: MinesLover.Coins + item.numberOfProducts)
+                            }
+                            if item.productCategory == .gem{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Gems!", type: .gemEarned)
+                                MinesLover.setGems(gems: MinesLover.Gems + item.numberOfProducts)
+                            }
+                            break
+                        case .currency:
+                            
+                            if item.productCategory == .coin{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Coins!", type: .coinEarned)
+                                
+                                MinesLover.setCoins(coins: MinesLover.Coins + item.numberOfProducts)
+                            }
+                            if item.productCategory == .gem{
+                                vc.notifyUser("Congratulations", message: "You Got \(item.numberOfProducts) Gems!", type: .gemEarned)
+                                MinesLover.setGems(gems: MinesLover.Gems + item.numberOfProducts)
+                            }
+                            break
+                        }
+                        item.getCurrentData()
+                        MinesLover.record.saveRecord()
+                    }   else    {
+                        vc.notifyUser("CAUTION", message: "Insufficient Fund")
+                    }
                 }
                 
+                
+                
             }   else{
-                vc.notifyUser("CAUTION", message: "5 is Enough, Man!")
+                if item.soldOutText != ""{
+                    vc.notifyUser("CAUTION", message: item.soldOutText)
+                }   else    {
+                    vc.notifyUser("CAUTION", message: "This item is Sold Out!")
+                }
+                
             }
             
         }   else    {
-            vc.notifyUser("CAUTION", message: "Please Unlock Mine X-Ray First!")
+            if item.lockText != ""{
+                vc.notifyUser("CAUTION", message: item.lockText)
+            }   else    {
+                vc.notifyUser("CAUTION", message: "This item is Locked!")
+            }
+            
         }
             
     }
@@ -301,8 +345,8 @@ class Store{
         case .coin:
             let newBlance = MinesLover.Coins - price
             if(newBlance >= 0){
-                MinesLover.Coins -= price
-                //MinesLover.record.saveRecord()
+                MinesLover.setCoins(coins: newBlance)
+                MinesLover.record.saveRecord()
                 return true
             }   else{
                 return false;
@@ -310,16 +354,17 @@ class Store{
         case .gem:
             let newBlance = MinesLover.Gems - price
             if(newBlance >= 0){
-                MinesLover.Gems -= price
-                //MinesLover.record.saveRecord()
+                MinesLover.setGems(gems: newBlance)
+                MinesLover.record.saveRecord()
                 return true
             }   else{
                 return false;
             }
+       
         default:
             return false
             
         }
-        return false
+
     }
 }

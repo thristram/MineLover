@@ -9,98 +9,73 @@
 import UIKit
 import XLPagerTabStrip
 
-class StoreDealsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate {
+class StoreDealsViewController: UIViewController, IndicatorInfoProvider, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    @IBOutlet weak var dealsTableView: UITableView!
+    @IBOutlet weak var collectionView: UICollectionView!
     var itemInfo: IndicatorInfo = "Passes"
-
+    var items: [StoreItem] = []
+    let reuseIdentifier = "storeTbCollectionCell"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dealsTableView.delegate = self
-        self.dealsTableView.dataSource = self
-        
-        self.dealsTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        self.items = MinesLover.store.getProductBy(type: [.deal])
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        self.collectionView!.register(UINib(nibName: "storeElementItem", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifier)
         // Do any additional setup after loading the view.
     }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch MinesLover.screenSize(){
+        case "7":
+            return CGSize(width: 175, height: 270)
+        case "7+":
+            return CGSize(width: 195, height: 300)
+        default:
+            return CGSize(width: 175, height: 270)
+        }
+    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.items.count
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120.0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identfier = "storeTbCell"
-        let cell:storeElementTableViewCell = self.dealsTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
-        cell.storeElementTitleConstraintsTop.constant = 35.0
-        cell.storeElementBarContainer.isHidden = true;
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! storeElementCollectionViewCell
+        let item = self.items[indexPath.row]
+        
         cell.storeElementButton.tag = indexPath.row
-        cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromDealsTableView(sender:)), for: UIControlEvents.touchUpInside)
-        cell.storeElementLock.isHidden = true;
-        cell.storeElementView.alpha = 1.0
+        cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromcollectionView(sender:)), for: UIControlEvents.touchUpInside)
+        cell.storeElementBarContainer.isHidden = true;
+        cell.displayPrice(item: item)
+        cell.storeElementImage.image = UIImage(named: item.shortCode)
+        cell.storeElementTitle.text = item.displayName
+        cell.storeElementDescription.text = item.description
         
-        
-        if let dc = MinesLover.dailyCheckIns[DailyCheckInType.getBy(rawValue: (indexPath.row + 1))]{
-            cell.storeElementImage.image = UIImage(named: "gift_\(dc.name.lowercased())")
-            cell.storeElementTitle.text = "Gift \(dc.name) By TT"
-            cell.storeElementDescription.text = "Free \(dc.name.lowercased()) from some loves you"
-            cell.storeElementButton.setTitle("FREE", for: .normal)
-            cell.storeElementButton.setImage(UIImage(named:""), for: .normal)
-            cell.storeElementButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
-            
-            let currentTimeStamp = Int(MinesLover.publicMethods.getTimestamp())!
-            let timeIntival = currentTimeStamp - dc.lastClaim
-            
-            if(timeIntival < dc.claimIntval){
-                cell.storeElementButton.setTitle("SOLD OUT", for: .normal)
-            }
-            
-        }
  
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.dealsTableView.deselectRow(at: indexPath, animated: true)
-        print("Row: \(indexPath.row) Selected")
-        if let dc = MinesLover.dailyCheckIns[DailyCheckInType.getBy(rawValue: (indexPath.row + 1))]{
-            var timeIntivalString = "tomorrow"
-            var currencyType: CurrencyType = .gem
-            switch indexPath.row {
-            case 1:
-                currencyType = .coin
-            case 2:
-                timeIntivalString = "next week"
-                break
-            default:
-                break
-            }
-            
-            let currentTimeStamp = Int(MinesLover.publicMethods.getTimestamp())!
-            let timeIntival = currentTimeStamp - dc.lastClaim
-            
-            if(timeIntival > dc.claimIntval){
-                _ = MinesLover.store.virtualSales(price: (-1) * dc.amount, currencyType: currencyType)
-            }   else{
-                self.notifyUser("CAUTION", message: "Get more \(dc.name) \(timeIntivalString)!")
-            }
-        }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        print("Row: \(indexPath.item) Selected")
+        let buttonRow = indexPath.item
+        self.buttonActions(index: buttonRow)
     }
     
-    func buttonClickedFromDealsTableView(sender:UIButton) {
+    func buttonClickedFromcollectionView(sender:UIButton) {
         
         let buttonRow = sender.tag
         print("\(buttonRow) Button Clicked")
-        
-        
+        self.buttonActions(index: buttonRow)
     }
 
+    func buttonActions(index: Int){
+        MinesLover.store.purchase(item: self.items[index], vc: self)
+        self.collectionView.reloadData()
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

@@ -1,3 +1,7 @@
+//Gem System
+var gemProbability = 0.4
+var gemContentLimit = 5
+
 //Map Arrays
 var mines = [];
 var blankBlockCoords = [];
@@ -34,6 +38,19 @@ $("#map").nodoubletapzoom();
 
 var GCMines = [];
 
+//Gem System
+
+function setGemProbabiliy(probability){
+    if ((probability >= 0) && (probability <= 1)){
+        gemProbability = probability
+    }
+}
+
+function setGemContentLimit(limit){
+    if ((limit >= 1) && (limit <= 8)){
+        gemContentLimit = limit
+    }
+}
 
 
 //Public
@@ -328,8 +345,26 @@ function checkMine(i, j, ifNotSend) {
 
                 } else if (checkCoordIf(cellName, "mine")) {
 
-                    openSlot(i, j, false);
-                    gameOver();
+                    if(PO_Mode = "correct"){
+                        if(correctorCurrent > 0){
+                            swiftConsole("Sweep Wrong, Entering Correcting...");
+                            correctSlot(i,j);
+                            
+                        }   else    {
+                            swiftConsole("Check Wrong, Out of Corrector");
+                            stopCorrector();
+                            openSlot(i, j, false);
+                            gameOver();
+                        }
+                        
+                        
+                    }   else{
+                        openSlot(i, j, false);
+                        gameOver();
+                    }
+                    
+                    
+                    
 
                 } else if (checkCoordIf(cellName, "checked")) {
 

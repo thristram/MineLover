@@ -9,40 +9,52 @@
 import UIKit
 import XLPagerTabStrip
 
-class StorePassesViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate {
+class StorePassesViewController: UIViewController, IndicatorInfoProvider, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    @IBOutlet weak var passesTableView: UITableView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     var itemInfo: IndicatorInfo = "Passes"
     var items: [StoreItem] = []
+    let reuseIdentifier = "storeTbCollectionCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.items = MinesLover.store.getProductBy(type: [.passes])
-        self.passesTableView.delegate = self
-        self.passesTableView.dataSource = self
-        self.passesTableView.register(UINib(nibName: "storeElementCell", bundle: nil), forCellReuseIdentifier: "storeTbCell")
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        
+        self.collectionView!.register(UINib(nibName: "storeElementItem", bundle: nil), forCellWithReuseIdentifier: self.reuseIdentifier)
         // Do any additional setup after loading the view.
     }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.collectionView.reloadData()
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch MinesLover.screenSize(){
+        case "7":
+            return CGSize(width: 175, height: 270)
+        case "7+":
+            return CGSize(width: 195, height: 300)
+        default:
+            return CGSize(width: 175, height: 270)
+        }
+    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.items.count
     }
+  
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120.0
-    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath as IndexPath) as! storeElementCollectionViewCell
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identfier = "storeTbCell"
-        let cell:storeElementTableViewCell = self.passesTableView.dequeueReusableCell(withIdentifier: identfier) as! storeElementTableViewCell
-        let item = self.items[indexPath.row]
-        cell.storeElementButton.tag = indexPath.row
-        cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromPassesTableView(sender:)), for: UIControlEvents.touchUpInside)
+        let item = self.items[indexPath.item]
+        //cell.storeElementButton.tag = indexPath.item
+        //cell.storeElementButton.addTarget(self, action: #selector(self.buttonClickedFromcollectionView(sender:)), for: UIControlEvents.touchUpInside)
         
         cell.lockItem(ifLock: item.ifLocked)
         cell.storeElementTitle.text = item.displayName
@@ -55,14 +67,14 @@ class StorePassesViewController: UIViewController, IndicatorInfoProvider, UITabl
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        print("Row: \(indexPath.row) Selected")
-        self.passesTableView.deselectRow(at: indexPath, animated: true)
-
+        print("Row: \(indexPath.item) Selected")
+        let buttonRow = indexPath.item
+        self.buttonActions(index: buttonRow)
     }
     
-    func buttonClickedFromPassesTableView(sender:UIButton) {
+    func buttonClickedFromcollectionView(sender:UIButton) {
         
         let buttonRow = sender.tag
         print("\(buttonRow) Button Clicked")
@@ -74,7 +86,7 @@ class StorePassesViewController: UIViewController, IndicatorInfoProvider, UITabl
     func buttonActions(index: Int){
         
         MinesLover.store.purchase(item: self.items[index], vc: self)
-        self.passesTableView.reloadData()
+        self.collectionView.reloadData()
         
     }
     

@@ -13,14 +13,13 @@ class MenuViewController: UIViewController {
     //////////MENU ELEMENTS/////////
     ////////////////////////////////
     
-    var menuStatus: MenuState = .pause
+    var gameState: GameState = .pendingStart
     
     @IBOutlet weak var pauseView: UIView!
     @IBOutlet weak var menuView: UIView!
     
-    //COIN & GEMS
-    @IBOutlet weak var gemLabel: UILabel!
-    @IBOutlet weak var coinLabel: UILabel!
+    @IBOutlet weak var statusBarHeight: NSLayoutConstraint!
+    @IBOutlet weak var menuBottomHeight: NSLayoutConstraint!
     
     //MENU BUTTONS
     @IBOutlet weak var tryAgainButton: UIButton!
@@ -33,14 +32,31 @@ class MenuViewController: UIViewController {
     @IBOutlet weak var menuText1: UILabel!
     @IBOutlet weak var menuText2: UILabel!
     
+    @IBOutlet weak var iconView: UIView!
+    @IBOutlet weak var timerLabel: UILabel!
+    
+    
+    @IBAction func levelSelected(_ sender: UISegmentedControl) {
+        let selectedLevel = sender.selectedSegmentIndex + 1
+        if MinesLover.currentLevel != selectedLevel{
+            MinesLover.isLevelChanged = true
+            MinesLover.currentLevel = selectedLevel
+        }
+    }
     @IBAction func newGameButtonPressed(_ sender: Any) {
         
         MinesLover.startNewGame()
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false, completion: {
+            finish in
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menuDidConfig"), object: nil, userInfo: [:])
+        })
     }
     
     @IBAction func resumeButtonPressed(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false, completion: {
+            finish in
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menuDidConfig"), object: nil, userInfo: [:])
+        })
         
     }
     
@@ -51,9 +67,32 @@ class MenuViewController: UIViewController {
     }
     
     @IBAction func switchToLeaderboard(_ sender: Any) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "leaderboard") as! LeaderboardViewController
-        vc.modalPresentationStyle = .overCurrentContext
-        self.present(vc, animated: true, completion: nil)
+//        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "leaderboard") as! LeaderboardViewController
+//        vc.modalPresentationStyle = .overCurrentContext
+//        self.present(vc, animated: true, completion: nil)
+        
+        performSegue(withIdentifier: "menuShowLeaderboard", sender: nil)
+    }
+
+    
+    @IBAction func switchToStore(_ sender: Any) {
+//        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "store") as! StoreMainViewController
+//        vc.modalPresentationStyle = .overCurrentContext
+//        self.present(vc, animated: true, completion: nil)
+        
+        performSegue(withIdentifier: "menuShowStoreView", sender: nil)
+    }
+    
+    @IBAction func switchToLevelSelect(_ sender: Any) {
+//        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "levelSelect") as! LevelSelectViewController
+//        vc.modalPresentationStyle = .overCurrentContext
+//        self.present(vc, animated: true, completion: nil)
+        
+        UIView.animate(withDuration: 1.0, animations: {
+            self.view.alpha = 0
+        })
+        performSegue(withIdentifier: "showLevelSelect", sender: nil)
+        
     }
     
     
@@ -62,22 +101,39 @@ class MenuViewController: UIViewController {
 
         self.tryAgainButton.layer.borderColor = UIColor.white.cgColor
         self.resumeButton.layer.borderColor = UIColor.white.cgColor
-        self.levelSegmentControl.selectedSegmentIndex = 1;
-        
+        self.levelSegmentControl.selectedSegmentIndex = MinesLover.currentLevel - 1
+        self.statusBarHeight.constant = CGFloat(MinesLover.UIElements["statusBarHeight"]!)
+        self.menuBottomHeight.constant = CGFloat(MinesLover.UIElements["menuBottomHeight"]!)
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                 self.versionLabel.text = "MineLover v\(version) Build \(build)"
             }
         }
+        self.iconView.clipsToBounds = true
+        NotificationCenter.default.addObserver(self, selector: #selector(self.shouldDismissMenu(_:)), name: NSNotification.Name(rawValue: "dismissMenu"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.willBackToMenu(_:)), name: NSNotification.Name(rawValue: "LevelBackToMenu"), object: nil)
+        
         
         
         // Do any additional setup after loading the view.
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateMenuText()
-        switch self.menuStatus{
+        self.timerLabel.text = MinesLover.publicMethods.formatMineDisplay(mineInput: MinesLover.getCurrentLevel().mines)
+        
+        let timeCounter = MinesLover.timerCounter
+        
+        let min = (timeCounter / 100) / 60;
+        let sec = (timeCounter / 100) % 60;
+        if(sec < 10){
+            self.timerLabel.text = "\(min):0\(sec)"
+        }   else{
+            self.timerLabel.text = "\(min):\(sec)"
+        }
+        
+        switch MinesLover.gameState{
 
         case .win:
             self.menuText1.text = "You got everything"
@@ -87,7 +143,7 @@ class MenuViewController: UIViewController {
             self.tryAgainButton.setTitle("TRY AGAIN", for: .normal)
             break;
             
-        case .gameOver:
+        case .lose:
             
             self.menuText1.text = "You found \(MinesLover.sweepCorrected) out"
             self.menuText2.text = "of \(MinesLover.getCurrentLevelMines()) mines"
@@ -97,7 +153,7 @@ class MenuViewController: UIViewController {
             self.tryAgainButton.setTitle("TRY AGAIN", for: .normal)
             break;
             
-        case .pause:
+        default:
             self.menuText1.text = "Paused";
             self.menuText2.text = "Click resume to play";
             self.menuIcon.image = UIImage(named: "pause");
@@ -108,16 +164,21 @@ class MenuViewController: UIViewController {
         }
     }
 
+    func shouldDismissMenu(_ notification: NSNotification){
+        self.dismiss(animated: false, completion: {
+            finish in
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "menuDidConfig"), object: nil, userInfo: [:])
+        })
+    }
+    func willBackToMenu(_ notification: NSNotification){
+        self.view.alpha = 1
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    func updateMenuText(){
-        self.coinLabel.text = "\(MinesLover.Coins)";
-        self.gemLabel.text = "\(MinesLover.Gems)";
-        
-    }
+
     
 
     /*

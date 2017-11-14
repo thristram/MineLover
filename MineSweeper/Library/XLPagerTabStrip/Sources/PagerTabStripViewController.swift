@@ -86,7 +86,7 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
     override open func viewDidLoad() {
         super.viewDidLoad()
         let conteinerViewAux = containerView ?? {
-            let containerView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height))
+            let containerView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height - (UIScreen.main.bounds.height == 812 ? 128 : 98)))
             containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             return containerView
         }()
@@ -102,6 +102,7 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
         containerView.showsVerticalScrollIndicator = false
         containerView.showsHorizontalScrollIndicator = false
         containerView.isPagingEnabled = true
+        
         reloadViewControllers()
 
         let childController = viewControllers[currentIndex]
@@ -250,7 +251,8 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
             containerView.contentOffset = CGPoint(x: pageOffsetForChild(at: currentIndex), y: 0)
         }
         lastSize = containerView.bounds.size
-
+        containerView.frame.origin = CGPoint(x: containerView.frame.origin.x, y: (UIScreen.main.bounds.height == 812 ? 128 : 98))
+        
         let pagerViewControllers = pagerTabStripChildViewControllersForScrolling ?? viewControllers
         containerView.contentSize = CGSize(width: containerView.bounds.width * CGFloat(pagerViewControllers.count), height: containerView.contentSize.height)
         containerView.contentOffset.y = 0

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StoreKit
 // MARK: User facing alerts
 extension UIViewController {
     

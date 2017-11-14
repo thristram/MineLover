@@ -34,6 +34,9 @@
 #map .corrector.correctorActive {
     background-color: #FFFFFF
 }
+#map .corrector.correctorActive span {
+    display:block
+}
 
 /* Standard syntax */
 @keyframes squareFillChange {

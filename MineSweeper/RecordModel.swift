@@ -26,6 +26,7 @@ class SingleRecord{
     init(record:Int, map:String){
         self.record = record
         self.map = map
+        
     }
     init(record:Int, map:String, date: Int){
         self.record = record
@@ -54,14 +55,18 @@ class LevelRecord{
     var records: [Int:SingleRecord] = [:]
     
     init(){
-        
+        for i in 1...10{
+            records[i] = SingleRecord(record: 0, map: "{}")
+        }
     }
     
-    func getRecord(){
-        
+    func startRecord(){
+        self.totalGame += 1
+        MinesLover.record.saveRecord()
     }
 
-    func saveRecord(ifWin: Bool, timeUsed: Int){
+    func saveRecord(ifWin: Bool){
+        let timeUsed = MinesLover.timerCounter / 100
         let totalNumberOfBlocks = MinesLover.getCurrentLevel().height * MinesLover.getCurrentLevel().height;
         let percentageCompleted = ((MinesLover.checked * 100) / (totalNumberOfBlocks - MinesLover.getCurrentLevelMines()));
         let totalGameFinished = self.totalWin + self.totalLose;
@@ -99,21 +104,26 @@ class LevelRecord{
                 }
             }
         }
-        
-        
+        MinesLover.record.saveRecord()
 
     }
     
     func recordLeaderboard(record: Int){
         
-        let newRecord = SingleRecord(record: record, map: MinesLover.currentMap)
+        let newRecord = SingleRecord(record: record, map: MinesLover.currentMap, date:  Int(MinesLover.publicMethods.getTimestamp())!)
         
         if records.isEmpty{
             self.records[1] = newRecord
         }   else{
             for i in (1...10).reversed(){
                 if let recordToCompare = self.records[i]{
-                    if recordToCompare.record >= record{
+                    if recordToCompare.date == 0{
+                        if i == 1{
+                            self.records[1] = newRecord
+                        }   else    {
+                            continue
+                        }
+                    }   else if recordToCompare.record >= record{
                         self.records[i+1] = self.records[i]
                         self.records[i] = newRecord
                     }   else{
@@ -185,6 +195,73 @@ class LevelRecord{
     
     func importRecordObject(levelStatistics:[String:String]){
         
+        if let result = levelStatistics["averageTime"]{
+            self.averageTime = Int(result)!
+        }
+        
+        if let result = levelStatistics["averageTimeWin"]{
+            self.averageTimeWin = Int(result)!
+        }
+        
+        if let result = levelStatistics["averageTimeLose"]{
+            self.averageTimeLose = Int(result)!
+        }
+        
+        if let result = levelStatistics["explorationPercentage"]{
+            self.explorationPercentage = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalWin"]{
+            self.totalWin = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalLose"]{
+            self.totalLose = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalGame"]{
+            self.totalGame = Int(result)!
+        }
+        
+        if let result = levelStatistics["longestWin"]{
+            self.longestWin = Int(result)!
+        }
+        
+        if let result = levelStatistics["longestLose"]{
+            self.longestLose = Int(result)!
+        }
+        
+        if let result = levelStatistics["shortestLose"]{
+            self.shortestLose = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalChecked"]{
+            self.totalChecked = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalMineSweeped"]{
+            self.totalMineSweeped = Int(result)!
+        }
+        
+        if let result = levelStatistics["totalMineSweepedWrong"]{
+            self.totalMineSweepedWrong = Int(result)!
+        }
+        
+        for i in 1...10{
+            
+            if let result = levelStatistics["\(i)_Date"]{
+                self.records[i]!.date = Int(result)!
+            }
+            
+            if let result = levelStatistics["\(i)_Record"]{
+                self.records[i]!.record = Int(result)!
+            }
+            
+            if let result = levelStatistics["\(i)_map"]{
+                self.records[i]!.map = result
+            }
+            
+        }
         
     }
     
@@ -209,13 +286,40 @@ class Record{
     var localRecordLastModified = 0
     var iCloudRecordLastModified = 0
     
+    var otherRecord: [String: String] = [:]
+    
+    
     init(){
         self.iCloudKeyStore?.synchronize()
     }
     
+    func initRecord(){
+        self.sync()
+    }
+    
+    func getRecord(level: Int) -> LevelRecord?{
+        if let level = MinesLover.levels[level]{
+            return level.record
+        }   else    {
+            return nil
+        }
+    }
+    
+    func saveKeyValueRecord(key: String, value: String){
+        self.otherRecord[key] = value
+        self.saveRecord()
+    }
+    func getKeyValueRecord(key: String) -> String?{
+        if let result = self.otherRecord[key]{
+            return result
+        }   else    {
+            return nil
+        }
+    }
+    
     func saveRecord(){
         print("RECORD SAVED");
-        print("Coins: \(MinesLover.Coins), Gems: \(MinesLover.Coins)");
+        print("Coins: \(MinesLover.Coins), Gems: \(MinesLover.Gems)");
         let currentTime:String = MinesLover.publicMethods.getTimestamp()
         
         for (_, level) in MinesLover.levels{
@@ -230,11 +334,9 @@ class Record{
             self.iCloudKeyStore?.set(powerUpRecord, forKey: "powerUp\(powerUpType.rawValue)")
         }
         
-        for (DailyCheckInType, dailyCheckIn) in MinesLover.dailyCheckIns{
-            let dailyCheckInRecord = dailyCheckIn.lastClaim
-            self.defaultKeyStore.set(dailyCheckInRecord, forKey: "dailyCheckIn_\(DailyCheckInType.rawValue)")
-            self.iCloudKeyStore?.set(dailyCheckInRecord, forKey: "dailyCheckIn_\(DailyCheckInType.rawValue)")
-        }
+        
+        self.defaultKeyStore.set(otherRecord, forKey: "otherData")
+        self.iCloudKeyStore?.set(otherRecord, forKey: "otherData")
         
         self.defaultKeyStore.set(MinesLover.Coins, forKey: "coin")
         self.defaultKeyStore.set(MinesLover.Gems, forKey: "gem")
@@ -278,6 +380,12 @@ class Record{
             MinesLover.Gems = Int(result)!
         }
         
+        if let result = iCloudKeyStore?.dictionary(forKey: "otherData"){
+            for (key,value) in result as! [String:String] {
+                otherRecord[key] = value
+            }
+        }
+        
         for i in 1...4{
             if let result = iCloudKeyStore?.dictionary(forKey: "lv_\(i)_Statistics\(MinesLover.HDIdentifier)"){
                 var levelRecord: [String: String] = [:]
@@ -299,14 +407,7 @@ class Record{
             }
             
         }
-        for i in DailyCheckInType.allValues{
-            let index = i.rawValue
-            if let result = iCloudKeyStore?.longLong(forKey: "dailyCheckIn_\(index)"){
-                MinesLover.dailyCheckIns[i]?.lastClaim = Int(truncatingBitPattern: result)
-            }
-            
-        }
-       
+        
       
 
     }
@@ -319,6 +420,12 @@ class Record{
         
         if let result = self.defaultKeyStore.value(forKey: "gem") as? Int{
             MinesLover.Gems = result
+        }
+        
+        if let result = self.defaultKeyStore.value(forKey: "otherData"){
+            for (key,value) in result as! [String:String] {
+                otherRecord[key] = value
+            }
         }
         
         for i in 1...4{
@@ -342,13 +449,7 @@ class Record{
             }
             
         }
-        for i in DailyCheckInType.allValues{
-            let index = i.hashValue
-            if let result = self.defaultKeyStore.value(forKey: "dailyCheckIn_\(index)") as? Int{
-                MinesLover.dailyCheckIns[i]?.lastClaim = result
-            }
-            
-        }
+        
 
     }
     

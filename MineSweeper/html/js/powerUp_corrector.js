@@ -23,6 +23,7 @@ function correctSlot(i,j){
     $(".cell-" + i + "-" + j).addClass("corrector");
     $(".cell-" + i + "-" + j).addClass("correctorActive");
     $(".cell-" + i + "-" + j).removeClass("sweeped");
+    $(".cell-" + i + "-" + j).removeClass("checked");
     $(".cell-" + i + "-" + j).html("<span><i class='" + wrongIcon + "'></i></span>");
     $(".cell-" + i + "-" + j).removeClass("sweepWrong");
     animateWrongSlot(i,j)
