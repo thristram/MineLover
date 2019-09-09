@@ -1,0 +1,39 @@
+
+/* Class = "UILabel"; text = "10 days"; ObjectID = "6UI-uh-w5n"; */
+"6UI-uh-w5n.text" = "10 days";
+
+/* Class = "UIButton"; normalTitle = "Restore Purchases"; ObjectID = "CG8-Ue-vcg"; */
+"CG8-Ue-vcg.normalTitle" = "Restore Purchases";
+
+/* Class = "UIButton"; normalTitle = "Purchase"; ObjectID = "DnE-MP-9Li"; */
+"DnE-MP-9Li.normalTitle" = "Purchase";
+
+/* Class = "UILabel"; text = "SwiftyStoreKit"; ObjectID = "FTs-3H-z8C"; */
+"FTs-3H-z8C.text" = "SwiftyStoreKit";
+
+/* Class = "UIButton"; normalTitle = "Verify Receipt"; ObjectID = "Hpv-ED-Dlg"; */
+"Hpv-ED-Dlg.normalTitle" = "Verify Receipt";
+
+/* Class = "UIButton"; normalTitle = "Get Info"; ObjectID = "L02-jg-tgd"; */
+"L02-jg-tgd.normalTitle" = "Get Info";
+
+/* Class = "UIButton"; normalTitle = "Verify Purchase"; ObjectID = "TLr-vr-TSi"; */
+"TLr-vr-TSi.normalTitle" = "Verify Purchase";
+
+/* Class = "UIButton"; normalTitle = "Purchase"; ObjectID = "XP6-KY-8rd"; */
+"XP6-KY-8rd.normalTitle" = "Purchase";
+
+/* Class = "UIButton"; normalTitle = "Verify Purchase"; ObjectID = "bVC-6b-q8f"; */
+"bVC-6b-q8f.normalTitle" = "Verify Purchase";
+
+/* Class = "UILabel"; text = "Lightweight In App Purchases framework for iOS 8.0+"; ObjectID = "gg1-bw-Mzz"; */
+"gg1-bw-Mzz.text" = "Lightweight In App Purchases framework for iOS 8.0+";
+
+/* Class = "UIButton"; normalTitle = "Get Info"; ObjectID = "miS-cF-iGP"; */
+"miS-cF-iGP.normalTitle" = "Get Info";
+
+/* Class = "UILabel"; text = "Available purchases:"; ObjectID = "s8k-6i-mKn"; */
+"s8k-6i-mKn.text" = "Available purchases:";
+
+/* Class = "UILabel"; text = "5 days"; ObjectID = "uz9-cT-1WH"; */
+"uz9-cT-1WH.text" = "5 days";

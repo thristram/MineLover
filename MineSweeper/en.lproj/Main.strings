@@ -1,0 +1,129 @@
+
+/* Class = "UILabel"; text = "Beginner"; ObjectID = "02Z-Nf-Iro"; */
+"02Z-Nf-Iro.text" = "Beginner";
+
+/* Class = "UILabel"; text = "v1.0 Build 30"; ObjectID = "35d-UF-JJI"; */
+"35d-UF-JJI.text" = "v1.0 Build 30";
+
+/* Class = "UILabel"; text = "You may use the GEM to purchase Power-Ups\nor Upgrade Power-Ups"; ObjectID = "AsJ-xm-mKT"; */
+"AsJ-xm-mKT.text" = "You may use the GEM to purchase Power-Ups\nor Upgrade Power-Ups";
+
+/* Class = "UILabel"; text = "You got a GEM!"; ObjectID = "BgD-qZ-zPB"; */
+"BgD-qZ-zPB.text" = "You got a GEM!";
+
+/* Class = "UILabel"; text = "THEME"; ObjectID = "FUE-w1-wA5"; */
+"FUE-w1-wA5.text" = "THEME";
+
+/* Class = "UILabel"; text = "099"; ObjectID = "GFg-u4-NXL"; */
+"GFg-u4-NXL.text" = "099";
+
+/* Class = "UILabel"; text = "MineLover"; ObjectID = "H7A-B9-7ya"; */
+"H7A-B9-7ya.text" = "MineLover";
+
+/* Class = "UILabel"; text = "YOU GOT 5 GEMS"; ObjectID = "HWh-WA-794"; */
+"HWh-WA-794.text" = "YOU GOT 5 GEMS";
+
+/* Class = "UIButton"; normalTitle = "TRY POWERUP"; ObjectID = "ITj-R9-M3e"; */
+"ITj-R9-M3e.normalTitle" = "TRY POWERUP";
+
+/* Class = "UILabel"; text = "About"; ObjectID = "IsN-xG-tPg"; */
+"IsN-xG-tPg.text" = "About";
+
+/* Class = "UILabel"; text = "Store"; ObjectID = "Km4-tf-6eG"; */
+"Km4-tf-6eG.text" = "Store";
+
+/* Class = "UILabel"; text = "0:00"; ObjectID = "Lva-xo-E2s"; */
+"Lva-xo-E2s.text" = "0:00";
+
+/* Class = "UILabel"; text = "ABOUT"; ObjectID = "MKh-WQ-0dN"; */
+"MKh-WQ-0dN.text" = "ABOUT";
+
+/* Class = "UILabel"; text = "POWER-UPS"; ObjectID = "NHJ-xQ-set"; */
+"NHJ-xQ-set.text" = "POWER-UPS";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "NuQ-sa-eyI"; */
+"NuQ-sa-eyI.text" = "Label";
+
+/* Class = "UILabel"; text = "You found 6 out"; ObjectID = "OXn-79-mwH"; */
+"OXn-79-mwH.text" = "You found 6 out";
+
+/* Class = "UILabel"; text = "Difficulty"; ObjectID = "Q6P-e8-k3g"; */
+"Q6P-e8-k3g.text" = "Difficulty";
+
+/* Class = "UILabel"; text = "Jun 16, 2017"; ObjectID = "QdR-mS-pRh"; */
+"QdR-mS-pRh.text" = "Jun 16, 2017";
+
+/* Class = "UIButton"; normalTitle = "NEW GAME"; ObjectID = "SbU-JW-yJx"; */
+"SbU-JW-yJx.normalTitle" = "NEW GAME";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "SxL-PP-Zq6"; */
+"SxL-PP-Zq6.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "U5i-YM-56c"; */
+"U5i-YM-56c.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "DIFFICULTY"; ObjectID = "UJf-Xm-S9B"; */
+"UJf-Xm-S9B.text" = "DIFFICULTY";
+
+/* Class = "UILabel"; text = "⇦ POWER UP!"; ObjectID = "Vru-bT-Ldk"; */
+"Vru-bT-Ldk.text" = "⇦ POWER UP!";
+
+/* Class = "UILabel"; text = "STORE"; ObjectID = "Y5t-i0-4iO"; */
+"Y5t-i0-4iO.text" = "STORE";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "YZD-0e-lZh"; */
+"YZD-0e-lZh.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "All Right Reserved."; ObjectID = "Z7u-ow-X5j"; */
+"Z7u-ow-X5j.text" = "All Right Reserved.";
+
+/* Class = "UILabel"; text = "Theme"; ObjectID = "cUk-rf-N58"; */
+"cUk-rf-N58.text" = "Theme";
+
+/* Class = "UIButton"; normalTitle = "RESUME"; ObjectID = "dYF-Zk-B0G"; */
+"dYF-Zk-B0G.normalTitle" = "RESUME";
+
+/* Class = "UILabel"; text = "Congratulations"; ObjectID = "fyW-kA-dj4"; */
+"fyW-kA-dj4.text" = "Congratulations";
+
+/* Class = "UILabel"; text = "0:00"; ObjectID = "g7k-Ov-z2R"; */
+"g7k-Ov-z2R.text" = "0:00";
+
+/* Class = "UILabel"; text = "of 13 mines"; ObjectID = "i7H-p3-9Oj"; */
+"i7H-p3-9Oj.text" = "of 13 mines";
+
+/* Class = "UIButton"; normalTitle = "RESUME"; ObjectID = "ij7-Zv-c1m"; */
+"ij7-Zv-c1m.normalTitle" = "RESUME";
+
+/* Class = "UILabel"; text = "Store"; ObjectID = "jLM-Oz-a7L"; */
+"jLM-Oz-a7L.text" = "Store";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "jiY-A7-8eW"; */
+"jiY-A7-8eW.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "NEW GAME"; ObjectID = "nmx-g1-2dB"; */
+"nmx-g1-2dB.normalTitle" = "NEW GAME";
+
+/* Class = "UILabel"; text = "LEADERBOARD"; ObjectID = "nrt-En-6rB"; */
+"nrt-En-6rB.text" = "LEADERBOARD";
+
+/* Class = "UILabel"; text = "Copyright 2017 Fangchen Li"; ObjectID = "nvS-Bo-PmF"; */
+"nvS-Bo-PmF.text" = "Copyright 2017 Fangchen Li";
+
+/* Class = "UILabel"; text = "1"; ObjectID = "oR5-nG-IQe"; */
+"oR5-nG-IQe.text" = "1";
+
+/* Class = "UILabel"; text = "⇧\nCLICK TO POWER UP"; ObjectID = "oXC-1w-LOh"; */
+"oXC-1w-LOh.text" = "⇧\nCLICK TO POWER UP";
+
+/* Class = "UILabel"; text = "10s"; ObjectID = "sd2-bX-nfR"; */
+"sd2-bX-nfR.text" = "10s";
+
+/* Class = "UILabel"; text = "Stats"; ObjectID = "vKm-NY-7KG"; */
+"vKm-NY-7KG.text" = "Stats";
+
+/* Class = "UIButton"; normalTitle = "Multiplayer"; ObjectID = "w1H-K3-XEM"; */
+"w1H-K3-XEM.normalTitle" = "Multiplayer";
+
+/* Class = "UILabel"; text = "Store"; ObjectID = "z0g-rJ-E8Y"; */
+"z0g-rJ-E8Y.text" = "Store";
